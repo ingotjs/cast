@@ -1,0 +1,129 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.7/schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": false,
+		"includes": [
+			"**",
+			"!**/node_modules",
+			"!**/.next",
+			"!**/dist",
+			"!**/build",
+			"!**/out",
+			"!**/.turbo",
+			"!**/coverage",
+			"!**/.vercel",
+			"!**/.cache"
+		]
+	},
+	"formatter": {
+		"enabled": true,
+		"indentStyle": "tab",
+		"lineWidth": 120
+	},
+	"css": {
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"domains": {
+			"next": "recommended",
+			"project": "recommended"
+		},
+		"rules": {
+			"recommended": true,
+			"a11y": {
+				"recommended": true,
+				"useKeyWithClickEvents": "off",
+				"useSemanticElements": "off"
+			},
+			"nursery": {
+				"useSortedClasses": "on",
+				"noMisusedPromises": "on",
+				"noShadow": "on",
+				"noUnnecessaryConditions": "on",
+				"useExhaustiveSwitchCases": "on",
+				"noFloatingPromises": "on",
+				"noContinue": "on"
+			},
+			"correctness": {
+				"noUndeclaredDependencies": "on",
+				"noChildrenProp": "on",
+				"useSingleJsDocAsterisk": "on",
+				"useJsxKeyInIterable": "on",
+				"useJsonImportAttributes": "on",
+				"useHookAtTopLevel": "on",
+				"useExhaustiveDependencies": "on",
+				"noReactPropAssignments": "on",
+				"noNextAsyncClientComponent": "on"
+			},
+			"security": {
+				"noGlobalEval": "off"
+			},
+			"complexity": {
+				"noExcessiveCognitiveComplexity": "on",
+				"useSimplifiedLogicExpression": "on",
+				"useWhile": "on",
+				"noUselessStringConcat": "on",
+				"useMaxParams": { "level": "on", "options": { "max": 2 } }
+			},
+			"suspicious": {
+				"noConstantBinaryExpressions": "on",
+				"noEmptyBlockStatements": "on",
+				"noUnassignedVariables": "on",
+				"noBitwiseOperators": "on",
+				"noAlert": "on",
+				"useAwait": "on",
+				"noImportCycles": "on",
+				"noReactForwardRef": "on",
+				"noUnusedExpressions": "on"
+			},
+			"performance": {
+				"noAwaitInLoops": "on",
+				"noBarrelFile": "on",
+				"noImgElement": "on",
+				"useTopLevelRegex": "on"
+			},
+			"style": {
+				"useCollapsedIf": "on",
+				"useShorthandAssign": "on",
+				"useSelfClosingElements": "on",
+				"useFragmentSyntax": "on",
+				"useConsistentTypeDefinitions": {
+					"level": "on",
+					"options": {
+						"style": "type"
+					}
+				},
+				"useFilenamingConvention": {
+					"level": "on",
+					"options": {
+						"filenameCases": ["kebab-case"]
+					}
+				},
+				"useConsistentCurlyBraces": "on",
+				"noYodaExpression": "on",
+				"noCommonJs": "on",
+				"noNegationElse": "on",
+				"noNestedTernary": "on",
+				"noSubstr": "on",
+				"noUnusedTemplateLiteral": "on",
+				"noUselessElse": "on",
+				"useConsistentArrowReturn": "on"
+			}
+		}
+	},
+	"javascript": {
+		"formatter": {
+			"trailingCommas": "all",
+			"semicolons": "asNeeded",
+			"quoteStyle": "double"
+		}
+	}
+}
