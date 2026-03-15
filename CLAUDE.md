@@ -1,13 +1,15 @@
 # Start
 
 > **Keep docs in sync:** If any information in this file is wrong or outdated, or if important new information should be captured, update this file. Also keep `README.md` up to date — this is a public project.
+>
+> **Prefer CLAUDE.md over memory:** Always save instructions and feedback in this file instead of the local memory system (`~/.claude/projects/.../memory/`). CLAUDE.md is committed to the repo and persists across machines.
 
 Turborepo monorepo using bun as the package manager.
 
 ## Structure
 
 - `apps/web` — Next.js app
-- `packages/ui` — Shared React component library (`@repo/ui`)
+- `packages/ui` — Shared UI component library (`@repo/ui`) — shadcn v4 + Tailwind CSS + Base UI
 - `packages/typescript-config` — Shared TS config (`@repo/typescript-config`)
 
 ## Internal Packages
@@ -60,7 +62,8 @@ We use [Biome](https://biomejs.dev/) for linting and formatting (replaces ESLint
 ## Git Workflow
 
 - **NEVER commit or push code unless explicitly instructed.** Do not commit as part of a workflow (e.g., after fixing PR comments, after completing a task, after `bun ok`). Show what changed and wait for explicit instruction.
-- When told to "commit", **MUST commit EVERYTHING** — all unstaged, staged, modified, and untracked files. Use `git add -A` to stage all changes. Also push to the remote.
+- When told to "commit", **MUST commit EVERYTHING** — all unstaged, staged, modified, and untracked files. Also push to the remote. **NEVER skip files or question what should be committed.** The instruction is absolute.
+- Use a single chained command for committing: `git add -A && git commit -m "..." && git push`. No separate calls.
 - When creating a new branch, ALWAYS base it on `origin/main` (remote), not local `main`. Use `git fetch origin && git checkout -b <branch-name> origin/main`.
 - When creating a branch, immediately set tracking on first push with `git push -u origin <branch-name>`.
 - Always use `gh` CLI for GitHub operations (viewing PRs, checking CI status, etc.) instead of accessing GitHub URLs directly.

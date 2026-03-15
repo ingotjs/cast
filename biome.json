@@ -17,7 +17,10 @@
 			"!**/.turbo",
 			"!**/coverage",
 			"!**/.vercel",
-			"!**/.cache"
+			"!**/.cache",
+			"!**/.agents",
+			"!**/.claude",
+			"!skills-lock.json"
 		]
 	},
 	"formatter": {

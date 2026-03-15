@@ -17,7 +17,7 @@ This Turborepo includes the following packages/apps:
 ### Apps and Packages
 
 - `web`: a [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by the `web` application
+- `@repo/ui`: shared UI component library ([shadcn v4](https://ui.shadcn.com/) + Tailwind CSS + Base UI)
 - `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
