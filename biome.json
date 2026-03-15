@@ -8,19 +8,13 @@
 	"files": {
 		"ignoreUnknown": false,
 		"includes": [
-			"**",
-			"!**/node_modules",
-			"!**/.next",
-			"!**/dist",
-			"!**/build",
-			"!**/out",
-			"!**/.turbo",
-			"!**/coverage",
-			"!**/.vercel",
-			"!**/.cache",
-			"!**/.agents",
-			"!**/.claude",
-			"!skills-lock.json"
+			"apps/**",
+			"packages/**",
+			"biome.json",
+			"package.json",
+			"turbo.json",
+			"tsconfig.json",
+			"!**/routeTree.gen.ts"
 		]
 	},
 	"formatter": {
@@ -36,7 +30,6 @@
 	"linter": {
 		"enabled": true,
 		"domains": {
-			"next": "recommended",
 			"project": "recommended"
 		},
 		"rules": {

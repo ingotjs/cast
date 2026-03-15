@@ -8,7 +8,7 @@ Turborepo monorepo using bun as the package manager.
 
 ## Structure
 
-- `apps/web` — Next.js app
+- `apps/web` — TanStack Start app (Vite + TanStack Router)
 - `packages/ui` — Shared UI component library (`@repo/ui`) — shadcn v4 + Tailwind CSS + Base UI
 - `packages/typescript-config` — Shared TS config (`@repo/typescript-config`)
 
