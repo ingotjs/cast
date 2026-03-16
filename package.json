@@ -7,8 +7,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
+    "build": "turbo --output-logs=errors-only build",
+    "dev": "turbo dev",
     "ok": "syncpack fix --log-levels error && bun ts && ultracite fix",
     "ok:ci": "syncpack lint --log-levels error && bun ts && ultracite check",
     "ts": "turbo --output-logs=errors-only ts",

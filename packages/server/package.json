@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./env": "./src/env.ts",
     "./orpc/*": "./src/orpc/*.ts",
     "./orpc": "./src/orpc/index.ts"
   },
@@ -12,6 +13,7 @@
   },
   "dependencies": {
     "@orpc/server": "1.13.7",
+    "@t3-oss/env-core": "0.13.10",
     "zod": "4.3.6"
   },
   "devDependencies": {
