@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.4.7/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -46,7 +46,13 @@
 				"noUnnecessaryConditions": "on",
 				"useExhaustiveSwitchCases": "on",
 				"noFloatingPromises": "on",
-				"noContinue": "on"
+				"noContinue": "on",
+				"noNextAsyncClientComponent": "on",
+				"useMaxParams": { "level": "on", "options": { "max": 2 } },
+				"noImportCycles": "on",
+				"noReactForwardRef": "on",
+				"noUnusedExpressions": "on",
+				"useConsistentArrowReturn": "on"
 			},
 			"correctness": {
 				"noUndeclaredDependencies": "on",
@@ -56,8 +62,7 @@
 				"useJsonImportAttributes": "on",
 				"useHookAtTopLevel": "on",
 				"useExhaustiveDependencies": "on",
-				"noReactPropAssignments": "on",
-				"noNextAsyncClientComponent": "on"
+				"noReactPropAssignments": "on"
 			},
 			"security": {
 				"noGlobalEval": "off"
@@ -66,8 +71,7 @@
 				"noExcessiveCognitiveComplexity": "on",
 				"useSimplifiedLogicExpression": "on",
 				"useWhile": "on",
-				"noUselessStringConcat": "on",
-				"useMaxParams": { "level": "on", "options": { "max": 2 } }
+				"noUselessStringConcat": "on"
 			},
 			"suspicious": {
 				"noConstantBinaryExpressions": "on",
@@ -75,10 +79,7 @@
 				"noUnassignedVariables": "on",
 				"noBitwiseOperators": "on",
 				"noAlert": "on",
-				"useAwait": "on",
-				"noImportCycles": "on",
-				"noReactForwardRef": "on",
-				"noUnusedExpressions": "on"
+				"useAwait": "on"
 			},
 			"performance": {
 				"noAwaitInLoops": "on",
@@ -110,8 +111,7 @@
 				"noNestedTernary": "on",
 				"noSubstr": "on",
 				"noUnusedTemplateLiteral": "on",
-				"noUselessElse": "on",
-				"useConsistentArrowReturn": "on"
+				"noUselessElse": "on"
 			}
 		}
 	},

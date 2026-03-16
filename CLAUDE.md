@@ -8,7 +8,7 @@ Turborepo monorepo using bun as the package manager.
 
 ## Structure
 
-- `apps/web` — TanStack Start app (Vite + TanStack Router)
+- `apps/web` — TanStack Start app (Vite + TanStack Router + Nitro, deployed on Railway)
 - `packages/ui` — Shared UI component library (`@repo/ui`) — shadcn v4 + Tailwind CSS + Base UI
 - `packages/typescript-config` — Shared TS config (`@repo/typescript-config`)
 
@@ -25,6 +25,16 @@ We use [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) for 
 ## Linting & Formatting
 
 We use [Biome](https://biomejs.dev/) for linting and formatting (replaces ESLint + Prettier). Config is in `biome.json` at the repo root.
+
+## Dependency Management
+
+- All dependency versions MUST be pinned (no `^` or `~`). Enforced by [syncpack](https://syncpack.dev/) and `bunfig.toml` (`install.exact = true`).
+- New packages won't install if published less than 3 days ago (`install.minimumReleaseAge` in `bunfig.toml`).
+- [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) is installed for supply chain security scanning (free tier). It checks for known vulnerabilities on `bun install`.
+
+## Hosting
+
+Deployed on [Railway](https://railway.com/). Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#railway--official-partner
 
 ## Commands
 

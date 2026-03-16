@@ -1,0 +1,20 @@
+{
+	"$schema": "https://unpkg.com/syncpack/dist/schema.json",
+	"versionGroups": [
+		{
+			"label": "Internal @repo/* packages use workspace wildcard",
+			"dependencies": ["@repo/**"],
+			"pinVersion": "*"
+		},
+		{
+			"label": "No range specifiers — use exact versions only",
+			"isBanned": true,
+			"specifierTypes": ["range", "range-complex", "range-major", "range-minor"]
+		},
+		{
+			"label": "Enforce same version across all packages",
+			"dependencies": ["**"],
+			"dependencyTypes": ["!peer"]
+		}
+	]
+}
