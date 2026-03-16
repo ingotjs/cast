@@ -7,8 +7,8 @@ Turborepo monorepo using [Bun](https://bun.sh/) as the package manager.
 ### Apps and Packages
 
 - `web`: a [TanStack Start](https://tanstack.com/start) app (Vite + TanStack Router)
-- `@repo/ui`: shared UI component library ([shadcn v4](https://ui.shadcn.com/) + Tailwind CSS + Base UI)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- `@packages/ui`: shared UI component library ([shadcn v4](https://ui.shadcn.com/) + Tailwind CSS + Base UI)
+- `@packages/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
 ### Utilities
 

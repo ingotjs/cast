@@ -8,15 +8,14 @@
     "dev": "bun --bun vite dev --port 3000",
     "preview": "bun --bun vite preview",
     "start": "bun run .output/server/index.mjs",
-    "test": "vitest run",
     "ts": "tsgo --noEmit"
   },
   "dependencies": {
     "@orpc/client": "1.13.7",
     "@orpc/server": "1.13.7",
     "@orpc/tanstack-query": "1.13.7",
-    "@repo/server": "*",
-    "@repo/ui": "*",
+    "@packages/server": "*",
+    "@packages/ui": "*",
     "@t3-oss/env-core": "0.13.10",
     "@tailwindcss/vite": "4.1.18",
     "@tanstack/react-devtools": "latest",

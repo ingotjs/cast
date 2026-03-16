@@ -3,8 +3,8 @@ import { RPCLink } from "@orpc/client/fetch";
 import { createRouterClient } from "@orpc/server";
 import type { RouterClient } from "@orpc/server";
 import { createRouterUtils } from "@orpc/tanstack-query";
-import type { Router } from "@repo/server/orpc";
-import { router } from "@repo/server/orpc";
+import type { Router } from "@packages/server/orpc";
+import { router } from "@packages/server/orpc";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 

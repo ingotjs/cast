@@ -7,8 +7,17 @@
     "./node_modules/ultracite/config/oxlint/remix/.oxlintrc.json",
     "./node_modules/ultracite/config/oxlint/vitest/.oxlintrc.json"
   ],
+  "overrides": [
+    {
+      "files": ["**/env.ts"],
+      "rules": {
+        "node/no-process-env": "off"
+      }
+    }
+  ],
   "rules": {
     "eslint/sort-keys": "off",
+    "node/no-process-env": "error",
     "promise/prefer-await-to-callbacks": "off",
     "typescript/consistent-type-definitions": ["error", "type"]
   }

@@ -9,9 +9,9 @@ Turborepo monorepo using bun as the package manager.
 ## Structure
 
 - `apps/web` — TanStack Start app (Vite + TanStack Router + Nitro, deployed on Railway)
-- `packages/server` — Server-side logic (`@repo/server`) — oRPC router, procedures, db, auth
-- `packages/ui` — Shared UI component library (`@repo/ui`) — shadcn v4 + Tailwind CSS + Base UI
-- `packages/typescript-config` — Shared TS config (`@repo/typescript-config`)
+- `packages/server` — Server-side logic (`@packages/server`) — oRPC router, procedures, db, auth
+- `packages/ui` — Shared UI component library (`@packages/ui`) — shadcn v4 + Tailwind CSS + Base UI
+- `packages/typescript-config` — Shared TS config (`@packages/typescript-config`)
 
 ## Internal Packages
 
@@ -26,6 +26,15 @@ We use [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) for 
 ## Linting & Formatting
 
 We use [Ultracite](https://github.com/haydenbleasel/ultracite), a zero-config preset that enforces strict code quality through Oxlint + Oxfmt. Config files: `.oxlintrc.json` and `.oxfmtrc.jsonc`.
+
+## Environment Variables
+
+**NEVER use `process.env` or `import.meta.env` directly.** Enforced by `node/no-process-env` oxlint rule. Use the typed env objects instead:
+
+- **Server env:** `import { serverEnv } from "@packages/server/env"` — for server-only vars (`DATABASE_URL`, `URL`, `NODE_ENV`)
+- **Client env:** `import { env } from "@/lib/env"` — for `VITE_` prefixed client vars
+
+The only files allowed to access `process.env` are the env definition files themselves (`**/env.ts`).
 
 ## Dependency Management
 

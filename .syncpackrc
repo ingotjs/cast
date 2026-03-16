@@ -2,8 +2,8 @@
 	"$schema": "https://unpkg.com/syncpack/dist/schema.json",
 	"versionGroups": [
 		{
-			"label": "Internal @repo/* packages use workspace wildcard",
-			"dependencies": ["@repo/**"],
+			"label": "Internal @packages/* packages use workspace wildcard",
+			"dependencies": ["@packages/**"],
 			"pinVersion": "*"
 		},
 		{

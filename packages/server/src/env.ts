@@ -18,6 +18,8 @@ export const serverEnv = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+    /** Optional for local dev (uses PGlite), required for production */
+    DATABASE_URL: z.url().optional(),
   },
   runtimeEnvStrict: {
     URL:
@@ -26,6 +28,7 @@ export const serverEnv = createEnv({
         ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
         : "http://localhost:3000"),
     NODE_ENV: process.env.NODE_ENV,
+    DATABASE_URL: process.env.DATABASE_URL,
   },
   emptyStringAsUndefined: true,
   skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),

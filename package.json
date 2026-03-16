@@ -9,8 +9,8 @@
   "scripts": {
     "build": "turbo --output-logs=errors-only build",
     "dev": "turbo dev",
-    "ok": "syncpack fix --log-levels error && bun ts && ultracite fix",
-    "ok:ci": "syncpack lint --log-levels error && bun ts && ultracite check",
+    "ok": "syncpack fix --log-levels error && bun ts && ultracite fix && turbo --output-logs=errors-only test",
+    "ok:ci": "syncpack lint --log-levels error && bun ts && ultracite check && turbo --output-logs=errors-only test",
     "ts": "turbo --output-logs=errors-only ts",
     "prepare": "husky"
   },
