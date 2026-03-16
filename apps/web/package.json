@@ -12,9 +12,14 @@
     "ts": "tsgo --noEmit"
   },
   "dependencies": {
+    "@orpc/client": "1.13.7",
+    "@orpc/server": "1.13.7",
+    "@orpc/tanstack-query": "1.13.7",
+    "@repo/server": "*",
     "@repo/ui": "*",
     "@tailwindcss/vite": "4.1.18",
     "@tanstack/react-devtools": "latest",
+    "@tanstack/react-query": "5.90.21",
     "@tanstack/react-router": "latest",
     "@tanstack/react-router-devtools": "latest",
     "@tanstack/react-router-ssr-query": "latest",

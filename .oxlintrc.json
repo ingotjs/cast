@@ -9,6 +9,7 @@
   ],
   "rules": {
     "eslint/sort-keys": "off",
+    "promise/prefer-await-to-callbacks": "off",
     "typescript/consistent-type-definitions": ["error", "type"]
   }
 }

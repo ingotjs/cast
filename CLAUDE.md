@@ -9,6 +9,7 @@ Turborepo monorepo using bun as the package manager.
 ## Structure
 
 - `apps/web` — TanStack Start app (Vite + TanStack Router + Nitro, deployed on Railway)
+- `packages/server` — Server-side logic (`@repo/server`) — oRPC router, procedures, db, auth
 - `packages/ui` — Shared UI component library (`@repo/ui`) — shadcn v4 + Tailwind CSS + Base UI
 - `packages/typescript-config` — Shared TS config (`@repo/typescript-config`)
 
