@@ -31,6 +31,9 @@ dist
 # Local database
 .pglite
 
+# React Email dev server
+.react-email
+
 
 # Debug
 npm-debug.log*

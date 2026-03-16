@@ -9,6 +9,7 @@
   "scripts": {
     "build": "turbo --output-logs=errors-only build",
     "dev": "turbo dev",
+    "dev:email": "turbo dev --filter @packages/email",
     "ok": "syncpack fix --log-levels error && bun ts && ultracite fix && turbo --output-logs=errors-only test",
     "ok:ci": "syncpack lint --log-levels error && bun ts && ultracite check && turbo --output-logs=errors-only test",
     "ts": "turbo --output-logs=errors-only ts",

@@ -1,0 +1,29 @@
+{
+  "name": "@packages/email",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./emails/*": "./emails/*.tsx",
+    "./send": "./send.ts"
+  },
+  "scripts": {
+    "dev": "email dev --port 3002",
+    "build": "email build",
+    "export": "email export"
+  },
+  "dependencies": {
+    "@react-email/components": "1.0.9",
+    "@react-email/tailwind": "2.0.1",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "resend": "6.9.3"
+  },
+  "devDependencies": {
+    "@packages/typescript-config": "*",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "react-email": "5.2.9",
+    "typescript": "5.9.3"
+  }
+}

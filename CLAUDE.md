@@ -1,8 +1,10 @@
 # Start
 
+> **Keyword Usage:** When writing or updating CLAUDE.md or other instructional files, use **MUST** and **NEVER** keywords to enforce critical requirements. These keywords signal mandatory behavior that AI agents MUST follow without exception.
+>
 > **Keep docs in sync:** If any information in this file is wrong or outdated, or if important new information should be captured, update this file. Also keep `README.md` up to date — this is a public project.
 >
-> **Prefer CLAUDE.md over memory:** Always save instructions and feedback in this file instead of the local memory system (`~/.claude/projects/.../memory/`). CLAUDE.md is committed to the repo and persists across machines.
+> **Prefer CLAUDE.md over memory:** Always save instructions and feedback in this file instead of the local memory system (`~/.claude/projects/.../memory/`). CLAUDE.md is committed to the repo and persists across machines. NEVER use the memory system.
 
 Turborepo monorepo using bun as the package manager.
 
@@ -60,19 +62,19 @@ Deployed on [Railway](https://railway.com/). Reference: https://tanstack.com/sta
 - **ALWAYS run `bun ok` after finishing any task or when facing issues**
 - A task is NOT complete until `bun ok` passes fully
 - **`bun ok` MUST ALWAYS be run from the project root directory** — NEVER from subdirectories
-- **ALWAYS use `bun ok`** for type checking and linting — never use `bun ts`, `bun lint`, or `tsc` directly
+- **ALWAYS use `bun ok`** for type checking and linting — NEVER use `bun ts`, `bun lint`, or `tsc` directly
 - **NEVER run `tsc` or `tsgo` directly** — always use `bun ok`
 - **NEVER run `bun build`** — use `bun ok` to validate types and linting
 
 ## General Rules
 
-- **NEVER remove features, UI elements, or content unless explicitly asked.** If something is broken, FIX IT — never delete or disable it.
+- **NEVER remove features, UI elements, or content unless explicitly asked.** If something is broken, FIX IT — NEVER delete or disable it.
 - **NEVER use placeholder/dummy values when refactoring.** Every field MUST be properly computed. Hardcoding `0`, `null`, `""` is forbidden. If a field existed before, the new implementation MUST compute it correctly.
-- When referring to code (files, functions, lines), ALWAYS provide the reference in `file_path:line_number` format.
-- Do not try to run development servers — they should already be running and are not accessible to you. Do not try to call API endpoints.
+- When referring to code (files, functions, lines), MUST ALWAYS provide the reference in `file_path:line_number` format.
+- NEVER try to run development servers — they should already be running and are not accessible to you. NEVER try to call API endpoints.
 - **NEVER suggest restarting any server.** All services run in watch mode and automatically pick up code changes.
-- Do not undo changes or revert to previous code unless explicitly instructed.
-- **If told to do something in a specific way, do it that way.** Do not substitute with workarounds or alternative approaches.
+- NEVER undo changes or revert to previous code unless explicitly instructed.
+- **If told to do something in a specific way, MUST do it that way.** NEVER substitute with workarounds or alternative approaches.
 - When in doubt, ask for clarifications.
 - NEVER use `setTimeout` or similar for delaying code execution. Use proper async/await patterns or event-driven approaches.
 - NEVER use `sleep` commands — they are unnecessary and wasteful.
@@ -84,10 +86,11 @@ Deployed on [Railway](https://railway.com/). Reference: https://tanstack.com/sta
 - **NEVER commit or push code unless explicitly instructed.** Do not commit as part of a workflow (e.g., after fixing PR comments, after completing a task, after `bun ok`). Show what changed and wait for explicit instruction.
 - When told to "commit", **MUST commit EVERYTHING** — all unstaged, staged, modified, and untracked files. Also push to the remote. **NEVER skip files or question what should be committed.** The instruction is absolute.
 - Use a single chained command for committing: `git add -A && git commit -m "..." && git push`. No separate calls.
-- When creating a new branch, ALWAYS base it on `origin/main` (remote), not local `main`. Use `git fetch origin && git checkout -b <branch-name> origin/main`.
-- When creating a branch, immediately set tracking on first push with `git push -u origin <branch-name>`.
-- Always use `gh` CLI for GitHub operations (viewing PRs, checking CI status, etc.) instead of accessing GitHub URLs directly.
-- When committing, update `CLAUDE.md` (and `README.md` if relevant) to reflect the changes being committed — keep docs in sync with the code.
+- **When reviewing changes for a commit message**, use `git diff HEAD --stat` for a quick summary. If you need to see actual code changes, filter out noise: `git diff HEAD -- '*.ts' '*.tsx' '*.json' ':!bun.lock'`. NEVER read the full unfiltered `git diff` — it's huge (especially `bun.lock`) and wastes time with chunked reads.
+- When creating a new branch, MUST ALWAYS base it on `origin/main` (remote), not local `main`. Use `git fetch origin && git checkout -b <branch-name> origin/main`.
+- When creating a branch, MUST immediately set tracking on first push with `git push -u origin <branch-name>`.
+- MUST ALWAYS use `gh` CLI for GitHub operations (viewing PRs, checking CI status, etc.) — NEVER access GitHub URLs directly.
+- When committing, MUST update `CLAUDE.md` (and `README.md` if relevant) to reflect the changes being committed — keep docs in sync with the code.
 
 ## Code Standards
 
@@ -103,17 +106,17 @@ Follow **Clean Code + SOLID + KISS + YAGNI**:
 - **NEVER use `any` type** — Use `unknown` if type is truly unknown
 - **NEVER use `as any` assertions** — Find the proper type or use specific type assertions
 - **NEVER use `interface`** — Always use `type` instead
-- Do not use `catch (error: any)` — leave it untyped so `unknown` is used by TS
-- Reuse existing types — don't create duplicate types
-- Prefer type-safe solutions. Prefer using existing Zod schemas and types if they fit.
+- NEVER use `catch (error: any)` — leave it untyped so `unknown` is used by TS
+- MUST reuse existing types — NEVER create duplicate types
+- MUST prefer type-safe solutions. MUST use existing Zod schemas and types if they fit.
 - Prefer optional chaining for callbacks: `onComplete?.(data)` instead of `if (onComplete) onComplete(data)`
 - Add comments to properties of object types only if not self-explanatory (skip obvious ones like `className`)
 
 ### Import Conventions
 
 - **NEVER use barrel files** — Barrel files (index.ts files that re-export everything) are forbidden
-- **Always import directly from source files** — Import from the actual file where the code is defined
-- **Avoid dynamic imports** — Prefer static `import` over `await import()`. Only use dynamic imports for genuine code splitting or conditional loading.
+- **MUST ALWAYS import directly from source files** — Import from the actual file where the code is defined
+- **NEVER use dynamic imports** — MUST use static `import` over `await import()`. Only use dynamic imports for genuine code splitting or conditional loading.
 
 ### Function Parameters
 
@@ -122,16 +125,16 @@ Follow **Clean Code + SOLID + KISS + YAGNI**:
 
 ### Comments
 
-- Do NOT add comments explaining what changes you just made
+- NEVER add comments explaining what changes you just made
 - Only add comments for complex logic that isn't self-evident
-- **Always add reference links** when implementing code from documentation or external sources
+- **MUST ALWAYS add reference links** when implementing code from documentation or external sources
   - Format: `// Reference: https://example.com/docs/feature`
 
 ### Console Logging (Debug)
 
-- Always stringify objects: `console.log('DEBUG:', JSON.stringify(data, null, 2))`
-- Use a common keyword prefix (e.g., `DEBUG:`) for easy filtering and bulk copying
-- **Always clean up debug code** once the root cause is found
+- MUST ALWAYS stringify objects: `console.log('DEBUG:', JSON.stringify(data, null, 2))`
+- MUST use a common keyword prefix (e.g., `DEBUG:`) for easy filtering and bulk copying
+- **MUST ALWAYS clean up debug code** once the root cause is found
 
 ### React Conventions
 
@@ -159,19 +162,19 @@ Follow **Clean Code + SOLID + KISS + YAGNI**:
 
 ### Implementation Standards
 
-- When asked to implement something, implement it FULLY and completely
+- When asked to implement something, MUST implement it FULLY and completely
 - NEVER add placeholder comments like "to be implemented later"
-- If something cannot be completed, explain why explicitly rather than leaving incomplete code
+- If something cannot be completed, MUST explain why explicitly rather than leaving incomplete code
 - **NEVER create documentation files** unless explicitly requested — the only exception is updating CLAUDE.md when architecture changes
 
 ### Debugging Mindset
 
-- **Don't assume the cause** — Add targeted debugging to see what's actually happening
-- **Trace data flow backwards** — From error location, work backwards to see where data originates
-- **Question "obvious" fixes** — If data should exist, find out why it doesn't
-- **Try solutions before suggesting them** — Attempt fixes until things fully work
-- **Always clean up debug code** once the root cause is found
+- **NEVER assume the cause** — MUST add targeted debugging to see what's actually happening
+- **MUST trace data flow backwards** — From error location, work backwards to see where data originates
+- **MUST question "obvious" fixes** — If data should exist, find out why it doesn't
+- **MUST try solutions before suggesting them** — Attempt fixes until things fully work
+- **MUST ALWAYS clean up debug code** once the root cause is found
 
 ### Security
 
-- Code MUST always be safe. NEVER allow users to change other users' data when they shouldn't.
+- Code MUST ALWAYS be safe. NEVER allow users to change other users' data when they shouldn't.
