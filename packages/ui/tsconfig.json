@@ -1,5 +1,5 @@
 {
-  "extends": "@packages/typescript-config/react-library.json",
+  "extends": "@packages/config/react-library.json",
   "compilerOptions": {
     "paths": {
       "@packages/ui/*": ["./src/*"]

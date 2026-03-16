@@ -15,7 +15,7 @@ Turborepo monorepo using bun as the package manager.
 - `packages/shared` — Shared utilities (`@packages/shared`) — feature flags, consts, error handling (client + server)
 - `packages/email` — Email templates (`@packages/email`) — react-email + Resend
 - `packages/ui` — Shared UI component library (`@packages/ui`) — shadcn v4 + Tailwind CSS + Base UI
-- `packages/typescript-config` — Shared TS config (`@packages/typescript-config`)
+- `packages/config` — Shared TS config (`@packages/config`)
 
 ## Internal Packages
 
@@ -191,6 +191,7 @@ Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#
 ## Testing
 
 - **Tests are REQUIRED.** MUST add tests when adding or modifying endpoints, server functions, utilities, or business logic.
+- **ALL oRPC endpoints MUST have extensive tests** covering: auth middleware (UNAUTHORIZED/FORBIDDEN), input validation, happy paths, and edge cases.
 - Test files colocated with source: `{name}.test.ts` as siblings or in `__tests__/` directory.
 - Use `bun:test` for packages/server tests.
 - After completing any task, verify test coverage for changed files:
@@ -198,6 +199,25 @@ Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#
   - New functionality — add tests for it
   - Tests MUST catch regressions
 - NEVER ship backend changes without test coverage.
+
+**Test utilities** at `packages/server/src/__tests__/test-utils.ts`:
+
+- `createTestUser({ email, name, password, role? })` — Creates user via Better Auth HTTP handler, returns `{ userId, headers }` with session cookies. For admin users, updates role in DB then re-signs in for fresh session.
+- `cleanupTestUser(userId)` — Deletes user and cascaded data.
+- `uniqueEmail(prefix)` — Generates unique email for test isolation.
+
+**oRPC test pattern** using `createRouterClient` from `@orpc/server`:
+
+```ts
+import { createRouterClient } from "@orpc/server";
+import { router } from "../router";
+
+const client = createRouterClient(router, {
+  context: { headers: adminHeaders },
+});
+
+const result = await client.admin.users.list({ limit: 10 });
+```
 
 ## Quality Verification
 

@@ -11,7 +11,7 @@ Turborepo monorepo using [Bun](https://bun.sh/) as the package manager.
 - `@packages/shared`: shared utilities and feature flags (client + server)
 - `@packages/email`: email templates ([react-email](https://react.email/) + [Resend](https://resend.com/))
 - `@packages/ui`: shared UI component library ([shadcn v4](https://ui.shadcn.com/) + Tailwind CSS + Base UI)
-- `@packages/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- `@packages/config`: `tsconfig.json`s used throughout the monorepo
 
 ### Key Features
 

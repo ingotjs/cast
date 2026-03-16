@@ -19,7 +19,6 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.7",
     "@socketsecurity/bun-security-scanner": "1.1.2",
     "@typescript/native-preview": "7.0.0-dev.20260315.1",
     "husky": "9.1.7",

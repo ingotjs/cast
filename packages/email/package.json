@@ -24,7 +24,7 @@
     "@inlang/paraglide-js": "2.15.0",
     "@inlang/plugin-m-function-matcher": "2.2.2",
     "@inlang/plugin-message-format": "4.4.0",
-    "@packages/typescript-config": "*",
+    "@packages/config": "*",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "react-email": "5.2.9",
