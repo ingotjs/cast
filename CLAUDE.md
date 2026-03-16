@@ -77,6 +77,7 @@ Deployed on [Railway](https://railway.com/). Reference: https://tanstack.com/sta
 - When creating a new branch, ALWAYS base it on `origin/main` (remote), not local `main`. Use `git fetch origin && git checkout -b <branch-name> origin/main`.
 - When creating a branch, immediately set tracking on first push with `git push -u origin <branch-name>`.
 - Always use `gh` CLI for GitHub operations (viewing PRs, checking CI status, etc.) instead of accessing GitHub URLs directly.
+- When committing, update `CLAUDE.md` (and `README.md` if relevant) to reflect the changes being committed — keep docs in sync with the code.
 
 ## Code Standards
 
