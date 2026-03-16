@@ -1,12 +1,17 @@
-import { onError } from "@orpc/server";
+import { LoggingHandlerPlugin } from "@orpc/experimental-pino";
 import { RPCHandler } from "@orpc/server/fetch";
+import { logger } from "@packages/server/logger";
 import { router } from "@packages/server/orpc";
 import { createFileRoute } from "@tanstack/react-router";
 
+// Reference: https://orpc.dev/docs/integrations/pino
 const handler = new RPCHandler(router, {
-  interceptors: [
-    onError((error) => {
-      console.error(error);
+  plugins: [
+    new LoggingHandlerPlugin({
+      logger,
+      generateId: () => crypto.randomUUID(),
+      logRequestResponse: true,
+      logRequestAbort: true,
     }),
   ],
 });

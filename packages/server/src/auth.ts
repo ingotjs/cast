@@ -1,9 +1,17 @@
 import { passkey } from "@better-auth/passkey";
 import { createEmailSender } from "@packages/email/send";
-import { renderResetPasswordEmail } from "@packages/email/templates";
+import {
+  getEmailSubject,
+  renderAccountDeletedEmail,
+  renderEmailVerificationEmail,
+  renderPasswordChangedEmail,
+  renderResetPasswordEmail,
+  renderWelcomeEmail,
+} from "@packages/email/templates";
 import { consts } from "@packages/shared/consts";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { createAuthMiddleware } from "better-auth/api";
 import { admin } from "better-auth/plugins";
 
 import { db } from "./db";
@@ -19,6 +27,28 @@ const emailSender = serverEnv.email
     })
   : null;
 
+/** Send an email notification, falling back to console.log when email is disabled */
+const sendEmailNotification = ({
+  to,
+  subject,
+  html,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+}) => {
+  if (emailSender) {
+    // Don't await send — prevents timing attacks
+    emailSender.sendHtml({ to, subject, html });
+  } else {
+    console.log(`[auth] Email to ${to}: ${subject}`);
+  }
+};
+
+/** Extract locale from a user object (additionalFields are typed as Record<string, unknown> in hooks) */
+const getUserLocale = (user: Record<string, unknown>): string =>
+  typeof user.locale === "string" ? user.locale : consts.defaultLocale;
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", usePlural: true }),
   secret: serverEnv.BETTER_AUTH_SECRET,
@@ -28,21 +58,43 @@ export const auth = betterAuth({
     enabled: !!features.password,
     // Reference: https://better-auth.com/docs/authentication/email-password#forget-password
     sendResetPassword: async ({ user, url }) => {
-      if (emailSender) {
-        const html = await renderResetPasswordEmail({
-          resetLink: url,
+      const locale = getUserLocale(user as unknown as Record<string, unknown>);
+      const html = await renderResetPasswordEmail({
+        resetLink: url,
+        appName: consts.appName,
+        appUrl: serverEnv.URL,
+        locale,
+      });
+      sendEmailNotification({
+        to: user.email,
+        subject: getEmailSubject.resetPassword({
           appName: consts.appName,
-          appUrl: serverEnv.URL,
-        });
-        // Don't await send — prevents timing attacks
-        emailSender.sendHtml({
-          to: user.email,
-          subject: `Reset your ${consts.appName} password`,
-          html,
-        });
-      } else {
-        console.log(`[auth] Reset password link for ${user.email}: ${url}`);
-      }
+          locale,
+        }),
+        html,
+      });
+    },
+  },
+  // Reference: https://better-auth.com/docs/authentication/email-password#email-verification
+  emailVerification: {
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      const locale = getUserLocale(user as unknown as Record<string, unknown>);
+      const html = await renderEmailVerificationEmail({
+        verificationLink: url,
+        appName: consts.appName,
+        appUrl: serverEnv.URL,
+        locale,
+      });
+      sendEmailNotification({
+        to: user.email,
+        subject: getEmailSubject.verification({
+          appName: consts.appName,
+          locale,
+        }),
+        html,
+      });
     },
   },
   // Reference: https://better-auth.com/docs/plugins/admin
@@ -68,7 +120,86 @@ export const auth = betterAuth({
         defaultValue: "user",
         input: false,
       },
+      locale: {
+        type: "string",
+        required: false,
+        defaultValue: consts.defaultLocale,
+        input: true,
+      },
     },
+    // Reference: https://better-auth.com/docs/concepts/users#delete-user
+    deleteUser: {
+      enabled: true,
+      afterDelete: async (user) => {
+        const locale = getUserLocale(user as Record<string, unknown>);
+        const html = await renderAccountDeletedEmail({
+          appName: consts.appName,
+          appUrl: serverEnv.URL,
+          locale,
+        });
+        sendEmailNotification({
+          to: user.email,
+          subject: getEmailSubject.accountDeleted({
+            appName: consts.appName,
+            locale,
+          }),
+          html,
+        });
+      },
+    },
+  },
+  // Reference: https://better-auth.com/docs/concepts/database-hooks
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          if (!consts.auth.welcomeEmail) {
+            return;
+          }
+          const locale = getUserLocale(user);
+          const html = await renderWelcomeEmail({
+            appName: consts.appName,
+            appUrl: serverEnv.URL,
+            locale,
+          });
+          sendEmailNotification({
+            to: user.email,
+            subject: getEmailSubject.welcome({
+              appName: consts.appName,
+              locale,
+            }),
+            html,
+          });
+        },
+      },
+    },
+  },
+  // Reference: https://better-auth.com/docs/concepts/hooks
+  hooks: {
+    after: createAuthMiddleware(async (ctx) => {
+      if (ctx.path === "/change-password") {
+        const { session } = ctx.context;
+        if (!session?.user) {
+          return;
+        }
+        const locale = getUserLocale(session.user as Record<string, unknown>);
+        const resetUrl = `${serverEnv.URL}/auth/forgot-password`;
+        const html = await renderPasswordChangedEmail({
+          resetPasswordLink: resetUrl,
+          appName: consts.appName,
+          appUrl: serverEnv.URL,
+          locale,
+        });
+        sendEmailNotification({
+          to: session.user.email,
+          subject: getEmailSubject.passwordChanged({
+            appName: consts.appName,
+            locale,
+          }),
+          html,
+        });
+      }
+    }),
   },
 });
 

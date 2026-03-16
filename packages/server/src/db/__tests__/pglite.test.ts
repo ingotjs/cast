@@ -28,6 +28,7 @@ describe("PGlite", () => {
         image TEXT,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
         updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        locale TEXT NOT NULL DEFAULT 'en',
         role TEXT DEFAULT 'user',
         banned BOOLEAN DEFAULT FALSE,
         ban_reason TEXT,

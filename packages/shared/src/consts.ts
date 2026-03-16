@@ -4,10 +4,13 @@
  */
 
 export const consts = {
-  appName: "Start",
+  appName: "OmegaStart",
+  defaultLocale: "en",
 
   auth: {
     /** Where to redirect after login */
     pathWhenLoggedIn: "/app",
+    /** Send a welcome email after user registration */
+    welcomeEmail: true,
   },
 } as const;

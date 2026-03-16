@@ -17,6 +17,8 @@ import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AuthPathRouteImport } from './routes/auth/$path'
+import { Route as ApiOgRouteImport } from './routes/api/og'
+import { Route as ApiIconRouteImport } from './routes/api/icon'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
@@ -61,6 +63,16 @@ const AuthPathRoute = AuthPathRouteImport.update({
   path: '/auth/$path',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiOgRoute = ApiOgRouteImport.update({
+  id: '/api/og',
+  path: '/api/og',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiIconRoute = ApiIconRouteImport.update({
+  id: '/api/icon',
+  path: '/api/icon',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminAnalyticsRoute = AdminAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -85,6 +97,8 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/api/icon': typeof ApiIconRoute
+  '/api/og': typeof ApiOgRoute
   '/auth/$path': typeof AuthPathRoute
   '/admin/': typeof AdminIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -97,6 +111,8 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/api/icon': typeof ApiIconRoute
+  '/api/og': typeof ApiOgRoute
   '/auth/$path': typeof AuthPathRoute
   '/admin': typeof AdminIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -111,6 +127,8 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/admin/analytics': typeof AdminAnalyticsRoute
+  '/api/icon': typeof ApiIconRoute
+  '/api/og': typeof ApiOgRoute
   '/auth/$path': typeof AuthPathRoute
   '/admin/': typeof AdminIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
@@ -126,6 +144,8 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/admin/analytics'
+    | '/api/icon'
+    | '/api/og'
     | '/auth/$path'
     | '/admin/'
     | '/api/auth/$'
@@ -138,6 +158,8 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/admin/analytics'
+    | '/api/icon'
+    | '/api/og'
     | '/auth/$path'
     | '/admin'
     | '/api/auth/$'
@@ -151,6 +173,8 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/admin/analytics'
+    | '/api/icon'
+    | '/api/og'
     | '/auth/$path'
     | '/admin/'
     | '/api/auth/$'
@@ -164,6 +188,8 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
+  ApiIconRoute: typeof ApiIconRoute
+  ApiOgRoute: typeof ApiOgRoute
   AuthPathRoute: typeof AuthPathRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
@@ -227,6 +253,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthPathRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/og': {
+      id: '/api/og'
+      path: '/api/og'
+      fullPath: '/api/og'
+      preLoaderRoute: typeof ApiOgRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/icon': {
+      id: '/api/icon'
+      path: '/api/icon'
+      fullPath: '/api/icon'
+      preLoaderRoute: typeof ApiIconRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/analytics': {
       id: '/admin/analytics'
       path: '/analytics'
@@ -272,6 +312,8 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,
+  ApiIconRoute: ApiIconRoute,
+  ApiOgRoute: ApiOgRoute,
   AuthPathRoute: AuthPathRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,

@@ -22,6 +22,7 @@ export const users = pgTable("users", {
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
+  locale: text("locale").default("en").notNull(),
   // Admin plugin fields
   // Reference: https://better-auth.com/docs/plugins/admin
   role: text("role").default("user"),

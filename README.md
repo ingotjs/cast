@@ -1,43 +1,82 @@
-# Start
+# OmegaStart
 
-Turborepo monorepo using [Bun](https://bun.sh/) as the package manager.
+**The full-stack TypeScript starter that actually works.** Ship production apps in minutes, not weeks.
 
-## What's inside?
+Built on [TanStack Start](https://tanstack.com/start) + [Bun](https://bun.sh/) + [Turborepo](https://turborepo.dev/). Everything is type-safe, everything is fast, everything just works.
 
-### Apps and Packages
+## Why OmegaStart?
 
-- `web`: a [TanStack Start](https://tanstack.com/start) app (Vite + TanStack Router). Includes admin dashboard at `/admin` (role-guarded).
-- `@packages/server`: server-side logic — [oRPC](https://orpc.dev/), [Drizzle](https://orm.drizzle.team/) + PGlite/PostgreSQL, [Better Auth](https://better-auth.com/) with admin + passkey plugins
-- `@packages/shared`: shared utilities and feature flags (client + server)
-- `@packages/email`: email templates ([react-email](https://react.email/) + [Resend](https://resend.com/))
-- `@packages/ui`: shared UI component library ([shadcn v4](https://ui.shadcn.com/) + Tailwind CSS + Base UI)
-- `@packages/config`: `tsconfig.json`s used throughout the monorepo
+Most starters give you a skeleton. OmegaStart gives you a **production-ready foundation** — auth, API, database, email, i18n, logging, CI/CD, and deployment are all wired up and working together. No glue code, no boilerplate, no "figure it out yourself."
 
-### Key Features
+### Blazingly Fast Development
 
-- **Auth**: Email/password + passkey login via [Better Auth](https://better-auth.com/) with pre-built UI ([better-auth-ui](https://better-auth-ui.com/))
-- **API**: Type-safe RPC via [oRPC](https://orpc.dev/) with TanStack Query integration
-- **Database**: [Drizzle ORM](https://orm.drizzle.team/) — PGlite for local dev (zero config), PostgreSQL in production. Migrations auto-applied on deploy.
-- **Admin**: Role-guarded admin dashboard with user management (ban, roles, impersonation)
-- **Analytics**: [PostHog](https://posthog.com/) integration (conditional on env)
-- **i18n**: [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe translations
-- **Feature Flags**: Centralized in `packages/shared/consts` with per-environment (`dev`/`prod`) control
+- **Zero-config local database** — [PGlite](https://electric-sql.com/product/pglite) runs PostgreSQL in-process. No Docker, no services, no setup. `bun dev` and you're coding.
+- **Auto-migrations** — PGlite applies Drizzle migrations automatically on startup. Production migrations auto-run on deploy via Railway's pre-deploy command.
+- **Hot reload everything** — Vite + React Compiler + Nitro. Changes reflect instantly.
+- **Type-safe from DB to UI** — Drizzle schema types flow through oRPC procedures to TanStack Query hooks. Change a column, TypeScript catches every broken consumer.
 
-### Utilities
+### Production-Ready from Day One
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking (via [tsgo](https://github.com/microsoft/typescript-go))
-- [Ultracite](https://github.com/haydenbleasel/ultracite) for code linting and formatting (Oxlint + Oxfmt)
-- [syncpack](https://syncpack.dev/) for enforcing pinned dependency versions
-- [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n
-- [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) for supply chain security scanning (free tier — checks for known vulnerabilities on `bun install`)
+- **Auth** — Email/password + passkeys (WebAuthn) via [Better Auth](https://better-auth.com/). Email verification on signup, custom sign-in/sign-up/forgot-password forms. Account settings with session management and account deletion.
+- **API** — Type-safe RPC via [oRPC](https://orpc.dev/) with TanStack Query integration. Public, protected, and admin procedure levels.
+- **Database** — [Drizzle ORM](https://orm.drizzle.team/) with PGlite (dev) / PostgreSQL (prod) auto-switching. Migrations, studio, the works.
+- **Email** — [React Email](https://react.email/) templates + [Resend](https://resend.com/) delivery. Email verification, password reset, password changed notification, account deleted confirmation, and welcome emails — all i18n-ready and sent in the user's preferred locale.
+- **i18n** — [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) across the entire stack — frontend, backend, emails. Type-safe, locale-aware, zero runtime cost.
+- **Feature Flags** — `true | undefined` per feature. Enable a flag, its env vars are validated at startup. Disable it, the whole feature tree-shakes away.
+- **Logging** — [Pino](https://getpino.io/) structured logging with oRPC integration. JSON in prod (Railway-native), pretty-printed in dev. Every request gets a unique ID.
+- **SEO** — Dynamic favicon with dark mode support, OG image generation via `@vercel/og`, proper meta tags.
+- **Admin** — Role-guarded dashboard with user management (ban, roles, sessions).
+- **Analytics** — [PostHog](https://posthog.com/) integration (feature-flagged).
 
-## Hosting
+### Deploy in 60 Seconds
 
-Deployed on [Railway](https://railway.com/) with automatic database migrations on deploy.
+**[Railway](https://railway.com/)** is the recommended deployment target — fastest path from code to production:
 
-See the [TanStack Start Railway hosting guide](https://tanstack.com/start/latest/docs/framework/react/guide/hosting#railway--official-partner) for setup instructions.
+1. Connect your repo to Railway
+2. Set `DATABASE_URL`, `BETTER_AUTH_SECRET`
+3. Deploy. Database migrations run automatically.
 
-### Required Environment Variables (Production)
+That's it. Health checks, restart policies, and build detection are pre-configured in `railway.json`. Other providers (Vercel, Fly.io, etc.) work too.
+
+### CI/CD Included
+
+GitHub Actions runs `bun ok:ci` on every push and PR — type checking, linting, and tests. Push with confidence.
+
+## Quick Start
+
+```sh
+bun install
+bun dev
+```
+
+`bun dev` auto-installs deps and starts all apps. PGlite creates a local database with migrations applied automatically. Open `http://localhost:3000`.
+
+## Architecture
+
+```
+apps/web          → TanStack Start (Vite + Router + Nitro)
+packages/server   → oRPC + Drizzle + Better Auth + Pino
+packages/shared   → Feature flags + constants
+packages/email    → React Email + Resend
+packages/ui       → shadcn v4 + Tailwind CSS + Base UI
+packages/config   → Shared TypeScript configs
+```
+
+## Commands
+
+| Command           | Description                                      |
+| ----------------- | ------------------------------------------------ |
+| `bun dev`         | Start all apps in dev mode                       |
+| `bun dev:email`   | Email template preview (port 3002)               |
+| `bun ok`          | Type check + lint + test (run before committing) |
+| `bun ok:ci`       | Same without auto-fixes (CI)                     |
+| `bun db:generate` | Generate database migrations                     |
+| `bun db:migrate`  | Apply migrations                                 |
+| `bun db:studio`   | Open Drizzle Studio                              |
+
+## Environment Variables
+
+### Required (Production)
 
 | Variable                | Description                           |
 | ----------------------- | ------------------------------------- |
@@ -45,27 +84,40 @@ See the [TanStack Start Railway hosting guide](https://tanstack.com/start/latest
 | `BETTER_AUTH_SECRET`    | Auth encryption secret (min 32 chars) |
 | `RAILWAY_PUBLIC_DOMAIN` | Auto-set by Railway                   |
 
-All other env vars are controlled by [feature flags](packages/shared/src/consts.ts) — enable a feature and its env vars become required.
+### Feature-Gated
 
-## Getting Started
+Enable a feature flag in `packages/shared/src/features.ts` and its env vars become required at startup:
 
-```sh
-bun install
-bun dev
-```
+| Feature       | Env Vars                                              |
+| ------------- | ----------------------------------------------------- |
+| `email`       | `RESEND_API_KEY`, `EMAIL_FROM`                        |
+| `googleOAuth` | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`            |
+| `posthog`     | `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST` |
 
-`bun dev` auto-runs `bun install` to ensure dependencies are up to date.
+## Testing
 
-## Commands
+- **Unit & integration tests** via `bun:test` with PGlite — tests run against a real PostgreSQL engine, not mocks
+- **Test utilities** for creating authenticated users and calling oRPC procedures
+- **E2E tests** via Playwright
 
-- `bun dev` — Start all apps in dev mode (auto-installs deps)
-- `bun dev:email` — Start email template preview (port 3002)
-- `bun build` — Build all apps
-- `bun ok` — Run all checks (type check + lint + tests)
-- `bun ok:ci` — Same as `bun ok` but without auto-fixes (for CI)
-- `bun db:generate` — Generate database migrations
-- `bun db:migrate` — Apply database migrations
-- `bun db:studio` — Open Drizzle Studio
+## Tech Stack
+
+| Layer           | Technology                                                                             |
+| --------------- | -------------------------------------------------------------------------------------- |
+| Framework       | [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router + Nitro)          |
+| Language        | TypeScript 5.9 (type-checked via [tsgo](https://github.com/microsoft/typescript-go))   |
+| API             | [oRPC](https://orpc.dev/) + [TanStack Query](https://tanstack.com/query)               |
+| Database        | [Drizzle ORM](https://orm.drizzle.team/) + PGlite / PostgreSQL                         |
+| Auth            | [Better Auth](https://better-auth.com/) (email/password, passkeys, admin)              |
+| UI              | [shadcn v4](https://ui.shadcn.com/) + Tailwind CSS 4 + [Base UI](https://base-ui.com/) |
+| Email           | [React Email](https://react.email/) + [Resend](https://resend.com/)                    |
+| i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)  |
+| Logging         | [Pino](https://getpino.io/) + oRPC plugin                                              |
+| Linting         | [Ultracite](https://github.com/haydenbleasel/ultracite) (Oxlint + Oxfmt)               |
+| Package Manager | [Bun](https://bun.sh/)                                                                 |
+| Monorepo        | [Turborepo](https://turborepo.dev/)                                                    |
+| Deployment      | [Railway](https://railway.com/)                                                        |
+| CI/CD           | GitHub Actions                                                                         |
 
 <details>
 <summary>Claude Code Skills</summary>

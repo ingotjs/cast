@@ -1,255 +1,343 @@
-# Start
+# OmegaStart
 
-> **Keyword Usage:** When writing or updating CLAUDE.md or other instructional files, use **MUST** and **NEVER** keywords to enforce critical requirements. These keywords signal mandatory behavior that AI agents MUST follow without exception.
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
 >
-> **Keep docs in sync — THIS IS CRITICAL:** CLAUDE.md and README.md MUST ALWAYS be updated when making ANY change to: project structure, new packages/dependencies, new features, config changes, scripts, commands, hosting setup, env vars, or anything a developer or user would want to know. README.md is the public face of this project — it MUST showcase what makes this project great. CLAUDE.md is the internal guide — it MUST reflect the current state of the codebase. **Failing to update these files is unacceptable.** If in doubt, update them.
+> **Keep docs in sync — THIS IS CRITICAL:** CLAUDE.md and README.md MUST ALWAYS be updated when making ANY change to: project structure, packages, features, config, scripts, commands, hosting, env vars, or anything a developer would want to know. **Failing to update these files is unacceptable.** If in doubt, update them.
 >
-> **Prefer CLAUDE.md over memory:** Always save instructions and feedback in this file instead of the local memory system (`~/.claude/projects/.../memory/`). CLAUDE.md is committed to the repo and persists across machines. NEVER use the memory system.
+> **README.md tone — THIS IS A PUBLIC REPO:** This is the best starter out there and the README MUST reflect that energy. Hype users, highlight what's exceptional, sell the DX. No boring corporate tone.
+>
+> **Prefer CLAUDE.md over memory:** Save instructions and feedback here, not in `~/.claude/projects/.../memory/`. CLAUDE.md is committed to the repo and persists across machines. NEVER use the memory system.
 
-Turborepo monorepo using bun as the package manager.
+Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turborepo.dev/docs/core-concepts/internal-packages#just-in-time-packages) — internal packages export raw TypeScript (no build step).
 
-## Structure
+---
 
-- `apps/web` — TanStack Start app (Vite + TanStack Router + Nitro, deployed on Railway). Includes admin dashboard at `/admin` (role-guarded).
-- `packages/server` — Server-side logic (`@packages/server`) — oRPC router, procedures, Drizzle + PGlite/PostgreSQL, Better Auth (with admin + passkey plugins)
-- `packages/shared` — Shared utilities (`@packages/shared`) — feature flags, consts, error handling (client + server)
-- `packages/email` — Email templates (`@packages/email`) — react-email + Resend
-- `packages/ui` — Shared UI component library (`@packages/ui`) — shadcn v4 + Tailwind CSS + Base UI
-- `packages/config` — Shared TS config (`@packages/config`)
+## Quick Reference
 
-## Internal Packages
+### Commands
 
-We use **Just-in-Time Packages** — internal packages export raw TypeScript source (no build step). The consuming app transpiles them directly.
+| Command           | Description                                          |
+| :---------------- | :--------------------------------------------------- |
+| `bun dev`         | Start all apps in dev mode (auto-installs deps)      |
+| `bun dev:email`   | Email template preview (port 3002)                   |
+| `bun ok`          | Type check + lint + tests — **run after every task** |
+| `bun ok:ci`       | Same without auto-fixes (CI)                         |
+| `bun db:generate` | Generate migrations (**user MUST run manually**)     |
+| `bun db:migrate`  | Apply migrations (**user MUST run manually**)        |
+| `bun db:studio`   | Open Drizzle Studio                                  |
 
-Reference: https://turborepo.dev/docs/core-concepts/internal-packages#just-in-time-packages
+### Quality Verification
 
-## Type Checking
+- **ALWAYS run `bun ok` after finishing any task** — a task is NOT complete until it passes
+- **`bun ok` MUST run from the project root** — NEVER from subdirectories
+- **NEVER run `tsc`, `tsgo`, `bun ts`, `bun lint`, or `bun build` directly** — always use `bun ok`
 
-We use [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) for type checking via `@typescript/native-preview`. The regular `typescript` package is still installed for tooling compatibility.
+---
 
-## Linting & Formatting
+## Architecture
 
-We use [Ultracite](https://github.com/haydenbleasel/ultracite), a zero-config preset that enforces strict code quality through Oxlint + Oxfmt. Config files: `.oxlintrc.json` and `.oxfmtrc.jsonc`.
+### Monorepo Structure
 
-**Key oxlint overrides (`.oxlintrc.json`):**
+| Package           | Alias              | Description                                                             |
+| :---------------- | :----------------- | :---------------------------------------------------------------------- |
+| `apps/web`        | —                  | TanStack Start app (Vite + Router + Nitro). Admin dashboard at `/admin` |
+| `packages/server` | `@packages/server` | oRPC router, Drizzle + PGlite/PostgreSQL, Better Auth, Pino logging     |
+| `packages/shared` | `@packages/shared` | Feature flags, constants, error handling                                |
+| `packages/email`  | `@packages/email`  | React Email templates + Resend                                          |
+| `packages/ui`     | `@packages/ui`     | shadcn v4 + Tailwind CSS + Base UI                                      |
+| `packages/config` | `@packages/config` | Shared TypeScript configs                                               |
 
-- `eslint/sort-keys`: off
-- `node/no-process-env`: error (only `**/env.ts` exempt via override)
-- `promise/prefer-await-to-callbacks`: off
-- `react-perf/jsx-no-new-function-as-prop`: off (React Compiler handles memoization)
-- `typescript/consistent-type-definitions`: error, "type" (NEVER use `interface` — except for module augmentation like TanStack Router's `Register`)
+### Type Checking
+
+[typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) via `@typescript/native-preview`. Regular `typescript` still installed for tooling compatibility.
+
+### Linting & Formatting
+
+[Ultracite](https://github.com/haydenbleasel/ultracite) — zero-config Oxlint + Oxfmt. Config: `.oxlintrc.json` + `.oxfmtrc.jsonc`.
+
+<details>
+<summary><strong>Key oxlint overrides</strong></summary>
+
+| Rule                                     | Value           | Note                                               |
+| :--------------------------------------- | :-------------- | :------------------------------------------------- |
+| `eslint/sort-keys`                       | off             |                                                    |
+| `node/no-process-env`                    | error           | Only `**/env.ts` exempt                            |
+| `promise/prefer-await-to-callbacks`      | off             |                                                    |
+| `react-perf/jsx-no-new-function-as-prop` | off             | React Compiler handles memoization                 |
+| `typescript/consistent-type-definitions` | error, `"type"` | NEVER use `interface` (except module augmentation) |
 
 **Ignored paths:** `.agents`, `.claude`, `**/routeTree.gen.ts`, `**/*.md`
 
-## Environment Variables
+</details>
 
-**NEVER use `process.env` or `import.meta.env` directly.** Enforced by `node/no-process-env` oxlint rule. Use the typed env objects instead:
+---
 
-- **Server env:** `import { serverEnv, serverFeatures } from "@packages/server/env"` — infrastructure vars (`URL`, `NODE_ENV`, `DATABASE_URL`, `BETTER_AUTH_SECRET`) + feature-gated env groups (`serverEnv.email?.RESEND_API_KEY`)
-- **Client env:** `import { clientEnv, clientFeatures } from "@/lib/env"` — feature-gated env groups (`clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY`)
+## Stack
 
-The only files allowed to access `process.env` are the env definition files themselves (`**/env.ts`).
+### Environment Variables
 
-## Feature Flags
+**NEVER use `process.env` or `import.meta.env` directly.** Enforced by oxlint. Only `**/env.ts` files may access them.
 
-Feature flags live in `packages/shared/src/features.ts`. Each feature defines: `enabled: { dev, prod }`, `scope: "server" | "client" | "shared"`. Features are **pure enabled/disabled signals** — they do NOT contain env var names.
+| Context | Import                                                             | Example                                      |
+| :------ | :----------------------------------------------------------------- | :------------------------------------------- |
+| Server  | `import { serverEnv, serverFeatures } from "@packages/server/env"` | `serverEnv.email?.RESEND_API_KEY`            |
+| Client  | `import { clientEnv, clientFeatures } from "@/lib/env"`            | `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY` |
 
-**How it works:** `createFeatures({ scope, isDev })` returns an object where each feature is `{} | undefined`:
+### Feature Flags
 
-- Enabled → `{}` (truthy empty object)
-- Disabled → `undefined`
+Defined in `packages/shared/src/features.ts`. Each feature has `enabled: { dev, prod }`. Features are **pure enabled/disabled signals** (`true | undefined`) — no env var names, no scopes.
 
-**Env vars** are defined in their respective env files, nested under feature-gated groups:
+`createFeatures()` returns `true | undefined` per feature. Env vars are defined separately in their respective env files, nested under feature-gated groups.
 
-- Server envs in `packages/server/src/env.ts` → `serverEnv.email?.RESEND_API_KEY`
-- Client envs in `apps/web/src/lib/env.ts` → `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY`
-- If a feature is enabled but its env var is missing → **throws at startup**
+| Feature       | Dev | Prod |
+| :------------ | :-: | :--: |
+| `posthog`     | off |  on  |
+| `googleOAuth` | off | off  |
+| `email`       | off | off  |
+| `password`    | on  |  on  |
+| `passkey`     | on  |  on  |
+| `magicLink`   | off | off  |
 
-This separation ensures env keys never leak from server to client via shared code.
-
-**Scopes:**
-
-- `"server"` → sees server + shared features
-- `"client"` → sees client + shared features
-- Server features DON'T include client features and vice versa — **compile-time safety**
-
-**Usage — optional chain from feature flag to env:**
+**Usage:**
 
 ```ts
 serverEnv.email?.RESEND_API_KEY; // string if email enabled, undefined if not
-!!serverFeatures.password; // boolean check for features without envs
+features.password; // true | undefined
 clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 ```
 
-**Current features:**
+<details>
+<summary><strong>Adding a new feature flag</strong></summary>
 
-| Feature       | Scope  | Dev | Prod |
-| ------------- | ------ | --- | ---- |
-| `posthog`     | client | off | on   |
-| `googleOAuth` | server | off | off  |
-| `email`       | server | off | off  |
-| `password`    | shared | on  | on   |
-| `passkey`     | shared | on  | on   |
-| `magicLink`   | shared | off | off  |
-
-**Adding a new feature flag:**
-
-1. Add the definition to `featureDefinitions` in `packages/shared/src/features.ts`
-2. Set `scope` to `"server"`, `"client"`, or `"shared"`
-3. Set `enabled: { dev, prod }`
-4. If the feature has env vars, add a feature-gated group in the appropriate env file:
+1. Add definition to `featureDefinitions` in `packages/shared/src/features.ts`
+2. Set `scope` and `enabled: { dev, prod }`
+3. If the feature has env vars, add a feature-gated group in the appropriate env file:
    ```ts
-   // In server env.ts or client env.ts
    myFeature: serverFeatures.myFeature
      ? { MY_ENV_KEY: requireEnv("MY_ENV_KEY") }
      : undefined,
    ```
-5. Access via `serverEnv.myFeature?.MY_ENV_KEY` or `clientEnv.myFeature?.MY_ENV_KEY`
+4. Access via `serverEnv.myFeature?.MY_ENV_KEY` or `clientEnv.myFeature?.MY_ENV_KEY`
 
-## Authentication
+</details>
 
-- [Better Auth](https://better-auth.com/) with email/password + passkey + admin plugins (conditionally enabled via feature flags)
-- Auth config at `packages/server/src/auth.ts`
-- Custom auth UI at `apps/web/src/components/auth/` — sign-in, sign-up, forgot-password, reset-password forms using react-hook-form + Zod
-- Account settings at `apps/web/src/components/settings/` — profile, change password, sessions, passkeys, delete account
-- Auth client at `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`, `authClient`
-- Auth API route at `apps/web/src/routes/api/auth.$.ts`
-- Auth routes at `/auth/$path` (sign-in, sign-up, forgot-password, reset-password)
-- Account route at `/account` (auth-protected — redirects to sign-in if unauthenticated)
-- Admin role guard on `/admin` routes via `beforeLoad` (checks `user.role === "admin"`)
-- Session cookie caching (5 min), 30-day expiry with daily refresh
-- `trustedOrigins` configured for CSRF protection
+### Authentication
+
+[Better Auth](https://better-auth.com/) with email/password + passkey + admin plugins (conditionally enabled via feature flags).
+
+| What             | Where                                                                                                            |
+| :--------------- | :--------------------------------------------------------------------------------------------------------------- |
+| Auth config      | `packages/server/src/auth.ts`                                                                                    |
+| Auth client      | `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`, `authClient` |
+| Auth API route   | `apps/web/src/routes/api/auth.$.ts`                                                                              |
+| Auth forms       | `apps/web/src/components/auth/` — sign-in, sign-up, forgot/reset password (react-hook-form + Zod)                |
+| Account settings | `apps/web/src/components/settings/` — profile, password, sessions, passkeys, delete                              |
+| Password schema  | `apps/web/src/lib/schemas.ts` — shared across sign-up, reset-password, change-password                           |
+
+- Auth routes at `/auth/$path`, account at `/account` (redirects to sign-in if unauthenticated)
+- Admin role guard on `/admin` via `beforeLoad` (`user.role === "admin"`)
+- Session: cookie caching (5 min), 30-day expiry, daily refresh, `trustedOrigins` for CSRF
 - `BETTER_AUTH_SECRET` required in prod, auto-generated static fallback in dev
-- `user.additionalFields.role` configured so `role` is included in user type
 - Sonner `<Toaster />` in root layout for auth notifications
-- Shared password schema at `apps/web/src/lib/schemas.ts` — reused across sign-up, reset-password, and change-password forms
-- `apps/web/src/lib/env.ts` exports `clientFeatures` from the features system
+- User `locale` field stored in DB (default `"en"`, updatable via `input: true` in additionalFields)
+- `user.deleteUser` enabled — users can delete their own account with password confirmation
+- Email verification enabled (`sendOnSignUp: true`, `autoSignInAfterVerification: true`)
 
-## API (oRPC)
+### Transactional Emails
 
-- [oRPC](https://orpc.dev/) with TanStack Query integration — no contract-first, define procedures inline
-- Three procedure levels: `publicProcedure`, `protectedProcedure` (auth required), `adminProcedure` (admin role required)
-- Base procedures at `packages/server/src/orpc/base.ts`
-- Router at `packages/server/src/orpc/router.ts`, API route at `apps/web/src/routes/api/rpc.$.ts`
-- Client with SSR support at `apps/web/src/lib/orpc.ts` (uses `createIsomorphicFn` — server calls bypass HTTP, client uses `RPCLink`)
-- Admin procedures under `router.admin.users.*` (list, ban, unban, setRole, remove)
-- Usage in components: `import { orpc } from "@/lib/orpc"` then `useQuery(orpc.health.queryOptions())`
+All transactional emails are in `packages/email/`. Emails are fully i18n via Paraglide — text is NEVER hardcoded. Emails are sent in the user's preferred `locale` (stored in the users table).
 
-## Database
+| Email              | Trigger                                                 | Template                        |
+| :----------------- | :------------------------------------------------------ | :------------------------------ |
+| Email verification | On signup (`emailVerification.sendOnSignUp`)            | `emails/email-verification.tsx` |
+| Password reset     | Forgot password (`sendResetPassword`)                   | `emails/reset-password.tsx`     |
+| Password changed   | After change-password (`hooks.after`)                   | `emails/password-changed.tsx`   |
+| Account deleted    | After user deletion (`deleteUser.afterDelete`)          | `emails/account-deleted.tsx`    |
+| Welcome            | After user creation (`databaseHooks.user.create.after`) | `emails/welcome.tsx`            |
+| Magic link         | Magic link auth (disabled)                              | `emails/magic-link.tsx`         |
 
-- [Drizzle ORM](https://orm.drizzle.team/) with auto-switching PGlite (local dev) / PostgreSQL (production)
+**Architecture:**
+
+- `packages/email/emails/email-layout.tsx` — Shared layout (Html, Head, Preview, Tailwind, Body, footer)
+- `packages/email/locale.ts` — `loc()` helper to bridge string locale → Paraglide's narrow locale literal types
+- `packages/email/templates.ts` — Render functions (`renderXxxEmail`) + localized subject helpers (`getEmailSubject.xxx`)
+- `packages/email/send.ts` — `createEmailSender` factory (Resend API)
+- `packages/server/src/auth.ts` — All email triggers configured here (hooks, databaseHooks, emailVerification, deleteUser)
+
+**Email i18n pattern:** All email text uses `m.email_xxx({...}, loc(locale))` where `loc()` casts the string locale to Paraglide's type.
+
+**Welcome email config:** `consts.auth.welcomeEmail` (boolean) in `packages/shared/src/consts.ts` — set to `false` to disable.
+
+**Adding a new email template:**
+
+1. Add message keys to `packages/email/messages/en.json` (pattern: `email_{template}_{element}`)
+2. Create template in `packages/email/emails/` using `EmailLayout` + `loc()` + `m.email_xxx()`
+3. Add render function to `packages/email/templates.ts`
+4. Add subject to `getEmailSubject` in `packages/email/templates.ts`
+5. Wire trigger in `packages/server/src/auth.ts`
+6. Add tests to `packages/server/src/__tests__/email-notifications.test.ts`
+
+### API (oRPC)
+
+[oRPC](https://orpc.dev/) with TanStack Query — define procedures inline, no contract-first.
+
+| Procedure Level      | Access              |
+| :------------------- | :------------------ |
+| `publicProcedure`    | Anyone              |
+| `protectedProcedure` | Authenticated users |
+| `adminProcedure`     | Admin role required |
+
+| What                   | Where                                                                        |
+| :--------------------- | :--------------------------------------------------------------------------- |
+| Base procedures        | `packages/server/src/orpc/base.ts`                                           |
+| Router                 | `packages/server/src/orpc/router.ts`                                         |
+| API route              | `apps/web/src/routes/api/rpc.$.ts`                                           |
+| Client (SSR + browser) | `apps/web/src/lib/orpc.ts` — server calls bypass HTTP, client uses `RPCLink` |
+
+Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
+
+**Usage:** `import { orpc } from "@/lib/orpc"` then `useQuery(orpc.health.queryOptions())`
+
+### Database
+
+[Drizzle ORM](https://orm.drizzle.team/) — auto-switches PGlite (dev) / PostgreSQL (prod).
+
+| What        | Where                                                             |
+| :---------- | :---------------------------------------------------------------- |
+| DB client   | `packages/server/src/db/index.ts`                                 |
+| Schema      | `packages/server/src/db/schema.ts` — Better Auth tables + indexes |
+| UUID helper | `packages/server/src/db/utils.ts` — `uuidPrimaryKey`              |
+| Migrations  | `packages/server/drizzle/` — auto-applied on Railway deploy       |
+| Local data  | `.pglite/` (gitignored)                                           |
+
 - `DATABASE_URL` optional in dev (uses PGlite), required in prod
-- Schema at `packages/server/src/db/schema.ts` — Better Auth tables (users, sessions, accounts, verifications, passkeys) with indexes
-- Local database stored in `.pglite/` (gitignored)
-- Migrations in `packages/server/drizzle/` — auto-applied on Railway deploy via `preDeployCommand` in `railway.json`
-- NEVER run `bun db:generate` or `bun db:migrate` via Claude Code — requires interactive input. Prompt the user to run manually.
+- NEVER run `bun db:generate` or `bun db:migrate` via Claude Code — requires interactive input
 
-## Analytics
+### SEO & Open Graph
 
-- [PostHog](https://posthog.com/) via `@posthog/react` — `PostHogProvider` wraps the app (conditional on `VITE_PUBLIC_POSTHOG_KEY`)
-- Admin analytics page at `/admin/analytics`
+- Dynamic favicon at `/api/icon?theme=light|dark` — renders via `@vercel/og`, adapts to dark/light mode
+- Dynamic OG image at `/api/og?title=...&description=...` — branded 1200x630 image
+- OG metadata configured in root route head
+- i18n messages for OG title/description (`og_title`, `og_description`)
+- Both image routes cache for 1 hour
 
-## Internationalization (i18n)
+### Logging
 
-We use [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n. **All user-facing text (frontend and backend) MUST be internationalized** — never hardcode user-facing strings.
+[Pino](https://getpino.io/) structured logging — JSON in prod (Railway-native), pretty-printed in dev.
 
-**i18n projects (separate concerns):**
+| What                 | Where                                                                         |
+| :------------------- | :---------------------------------------------------------------------------- |
+| Logger instance      | `packages/server/src/logger.ts`                                               |
+| oRPC plugin          | `@orpc/experimental-pino` `LoggingHandlerPlugin` — auto-logs with request IDs |
+| Access in procedures | `getLogger(context)` from `@packages/server/orpc/base`                        |
 
-- `apps/web/messages/` — frontend UI text
-- `packages/server/messages/` — backend text (error messages, API responses)
-- `packages/email/messages/` — email template text
+### Analytics
 
-**Languages:** Currently only English (`en`). When adding a new string for English, you MUST also add translations for all other languages listed in the `locales` array of each `project.inlang/settings.json`.
+[PostHog](https://posthog.com/) via `@posthog/react` — conditional on `clientEnv.posthog`. Admin analytics at `/admin/analytics`.
 
-**Translations:** Do NOT use machine translation. Write translations manually with full project context — understand where and how the text is used before translating.
+### Internationalization (i18n)
 
-**Usage:** Import from the generated `paraglide/messages` in each package.
+[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n across the entire stack. **All user-facing text MUST be internationalized** — NEVER hardcode strings.
 
-**Server-side i18n:** Paraglide's `overwriteGetLocale()` handles per-request locale on the server. Reference: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/strategy#server-side
+i18n covers frontend UI, backend API responses, Zod validation errors, and email templates — every layer is locale-aware from day one.
 
-**CRITICAL: ALL user-facing strings MUST use paraglide.** This includes:
+**Three separate Paraglide projects (separation of concerns):**
 
-- UI labels, titles, descriptions, button text, placeholder text
-- Form validation error messages (Zod schemas)
-- Toast messages (success, error)
-- Auth form text (sign in, sign up, forgot password, etc.)
+| Project  | Path                        | Covers                                                                |
+| :------- | :-------------------------- | :-------------------------------------------------------------------- |
+| Frontend | `apps/web/messages/`        | UI labels, buttons, placeholders, toasts, auth forms, settings, admin |
+| Backend  | `packages/server/messages/` | oRPC errors, API responses, validation errors, auth server messages   |
+| Email    | `packages/email/messages/`  | Subject lines, body copy, CTAs, transactional email content           |
 
-**How to add a new user-facing string (step by step):**
+Each has its own `project.inlang/settings.json` and generates its own `paraglide/messages`. Server strings never leak to client bundle.
 
-1. **Add the message** to the appropriate `messages/en.json` file:
-   - Frontend text → `apps/web/messages/en.json`
-   - Backend text → `packages/server/messages/en.json`
-   - Email text → `packages/email/messages/en.json`
-2. **Import the message function** from the generated paraglide output:
-   ```ts
-   import * as m from "@/paraglide/messages";
-   ```
-3. **Use the message function** in your code:
+**Languages:** Currently English (`en`). When adding strings, MUST also translate for all languages in each `project.inlang/settings.json` `locales` array. Do NOT use machine translation from paraglide.
+
+**Server-side i18n:** `overwriteGetLocale()` handles per-request locale. Reference: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/strategy#server-side
+
+**CRITICAL — ZERO TOLERANCE for non-i18n strings:** ALL user-facing strings MUST use Paraglide. This includes UI text, Zod validation errors (frontend + backend), toast messages, auth forms, oRPC errors, email templates (subjects, body, buttons, disclaimers). There MUST be NEVER any hardcoded user-facing string anywhere in this codebase. Every text the user sees — whether in the browser, in an email, or in an API error — MUST come from a Paraglide message function.
+
+<details>
+<summary><strong>How to add a new i18n string</strong></summary>
+
+1. Add to the appropriate `messages/en.json`:
+   - Frontend → `apps/web/messages/en.json`
+   - Backend → `packages/server/messages/en.json`
+   - Email → `packages/email/messages/en.json`
+2. Import: `import * as m from "@/paraglide/messages"`
+3. Use:
    ```tsx
-   // In JSX:
-   <Label>{m.email_label()}</Label>;
-   // In Zod schemas:
-   z.string().min(1, m.email_required());
-   // In toast:
-   toast.success(m.profile_updated());
+   <Label>{m.email_label()}</Label>; // JSX
+   z.string().min(1, m.email_required()); // Zod (frontend)
+   z.string({ error: () => m.field_required() }); // Zod (backend)
+   toast.success(m.profile_updated()); // Toast
    ```
-4. **If other languages exist** in the `locales` array of `project.inlang/settings.json`, add translations to their message files too.
+4. Add translations for all other languages if they exist.
 
-**Zod validation errors:**
+</details>
 
-- **Frontend:** Use paraglide message functions directly in Zod error messages (e.g., `z.string().min(8, m.password_too_short())`). For schemas defined at module level, message functions are called at validation time, not import time, so they resolve to the current locale.
-- **Backend:** Use paraglide message functions in Zod custom error messages (e.g., `z.string({ error: () => m.field_required() })`). These resolve per-request via paraglide's server runtime.
+<details>
+<summary><strong>Zod i18n details (full-stack)</strong></summary>
 
-## Dependency Management
+Every validation message the user sees is locale-aware:
 
-- All dependency versions MUST be pinned (no `^` or `~`). Enforced by [syncpack](https://syncpack.dev/) and `bunfig.toml` (`install.exact = true`).
-- New packages won't install if published less than 3 days ago (`install.minimumReleaseAge` in `bunfig.toml`).
-- [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) is installed for supply chain security scanning (free tier). It checks for known vulnerabilities on `bun install`.
+- **Frontend:** Message functions called at validation time (not import time), so module-level schemas resolve to current locale.
+- **Backend:** Message functions in Zod `error` callbacks resolve per-request via Paraglide's server runtime.
 
-## Hosting
+</details>
 
-Deployed on [Railway](https://railway.com/) via `railway.json`:
+<details>
+<summary><strong>Email i18n</strong></summary>
 
-- **Build:** Railpack
-- **Pre-deploy:** `bun db:migrate` (auto-applies pending migrations)
-- **Start:** `bun run --cwd apps/web start` (Nitro server)
-- **Health check:** `/api/auth/ok`
+Email templates use their own Paraglide project (`packages/email/messages/`). All email text — subjects, headings, body, buttons — MUST use Paraglide. Emails can be sent in the recipient's preferred locale.
+
+</details>
+
+### Dependency Management
+
+- Versions MUST be pinned (no `^` / `~`) — enforced by [syncpack](https://syncpack.dev/) + `bunfig.toml`
+- New packages blocked if published < 3 days ago (`install.minimumReleaseAge`)
+- [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) checks for vulnerabilities on `bun install`
+
+### Hosting & Deployment
+
+[Railway](https://railway.com/) via `railway.json` — zero-config, fastest path to production.
+
+| Step         | Config                                     |
+| :----------- | :----------------------------------------- |
+| Build        | Railpack (auto-detects Bun monorepo)       |
+| Pre-deploy   | `bun db:migrate` (auto-applies migrations) |
+| Start        | `bun run --cwd apps/web start` (Nitro)     |
+| Health check | `/api/auth/ok`                             |
+| Restart      | On failure                                 |
 
 Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#railway--official-partner
 
-## Commands
+### CI/CD
 
-- `bun install` — Install dependencies
-- `bun dev` — Run all apps in dev mode (auto-runs `bun install` first)
-- `bun dev:email` — Run email template preview (port 3002)
-- `bun build` — Build all apps
-- `bun ok` — Run all checks (type check + lint + tests). Use this to validate changes.
-- `bun ok:ci` — Same as `bun ok` but without auto-fixes (for CI)
-- `bun db:generate` — Generate database migrations (user MUST run manually — requires interactive input)
-- `bun db:migrate` — Apply database migrations (user MUST run manually)
-- `bun db:studio` — Open Drizzle Studio
+GitHub Actions (`.github/workflows/ci.yml`) — runs `bun ok:ci` on push to `main` and PRs. Uses `oven-sh/setup-bun@v2`.
 
 ---
 
-## Testing
+## Development Rules
 
-- **Tests are REQUIRED.** MUST add tests when adding or modifying endpoints, server functions, utilities, or business logic.
-- **ALL oRPC endpoints MUST have extensive tests** covering: auth middleware (UNAUTHORIZED/FORBIDDEN), input validation, happy paths, and edge cases.
-- Test files colocated with source: `{name}.test.ts` as siblings or in `__tests__/` directory.
-- Use `bun:test` for packages/server tests.
-- After completing any task, verify test coverage for changed files:
-  - Modified behavior — update affected tests
-  - New functionality — add tests for it
-  - Tests MUST catch regressions
-- NEVER ship backend changes without test coverage.
+### Testing
 
-**Test utilities** at `packages/server/src/__tests__/test-utils.ts`:
+- **Tests are REQUIRED** when adding/modifying endpoints, server functions, utilities, or business logic
+- **ALL oRPC endpoints MUST have extensive tests** — auth middleware, input validation, happy paths, edge cases
+- NEVER ship backend changes without test coverage
+- Test files colocated: `{name}.test.ts` or `__tests__/` directory
+- Runner: `bun:test`
 
-- `createTestUser({ email, name, password, role? })` — Creates user via Better Auth HTTP handler, returns `{ userId, headers }` with session cookies. For admin users, updates role in DB then re-signs in for fresh session.
-- `cleanupTestUser(userId)` — Deletes user and cascaded data.
-- `uniqueEmail(prefix)` — Generates unique email for test isolation.
+**Test utilities** (`packages/server/src/__tests__/test-utils.ts`):
 
-**oRPC test pattern** using `createRouterClient` from `@orpc/server`:
+| Utility                                            | Purpose                                                      |
+| :------------------------------------------------- | :----------------------------------------------------------- |
+| `createTestUser({ email, name, password, role? })` | Creates user via auth handler, returns `{ userId, headers }` |
+| `cleanupTestUser(userId)`                          | Deletes user + cascaded data                                 |
+| `uniqueEmail(prefix)`                              | Generates unique email for test isolation                    |
+
+**oRPC test pattern:**
 
 ```ts
 import { createRouterClient } from "@orpc/server";
@@ -258,160 +346,143 @@ import { router } from "../router";
 const client = createRouterClient(router, {
   context: { headers: adminHeaders },
 });
-
 const result = await client.admin.users.list({ limit: 10 });
 ```
 
-## Quality Verification
+### General Rules
 
-- **ALWAYS run `bun ok` after finishing any task or when facing issues**
-- A task is NOT complete until `bun ok` passes fully
-- **`bun ok` MUST ALWAYS be run from the project root directory** — NEVER from subdirectories
-- **ALWAYS use `bun ok`** for type checking and linting — NEVER use `bun ts`, `bun lint`, or `tsc` directly
-- **NEVER run `tsc` or `tsgo` directly** — always use `bun ok`
-- **NEVER run `bun build`** — use `bun ok` to validate types and linting
+- **NEVER remove features, UI, or existing code unless explicitly asked.** Broken? FIX IT — don't delete it.
+- **MUST ask at decision points.** Considering removing/replacing/restructuring code? STOP and ask.
+- **NEVER use placeholder values when refactoring.** No `0`, `null`, `""` — compute every field properly.
+- MUST reference code as `file_path:line_number`
+- NEVER run dev servers or call API endpoints — they're already running in watch mode
+- NEVER suggest restarting servers
+- NEVER undo changes unless explicitly instructed
+- **Do it the way you're told.** NEVER substitute with workarounds.
+- NEVER use `setTimeout`, `sleep`, or `timeout` on bash commands
+- NEVER run background tasks
 
-## General Rules
+### Git Workflow
 
-- **NEVER remove features, UI elements, content, or existing code unless explicitly asked.** If something is broken, FIX IT — NEVER delete or disable it. This includes email templates, components, utilities, and any code that already exists. When facing a build/type error, solve the root cause instead of removing the code that triggers it.
-- **MUST ask the user at decision points.** When you reach a fork where you're considering removing, replacing, or significantly restructuring existing code to work around an issue, STOP and ask the user. NEVER silently delete working code to solve a build problem.
-- **NEVER use placeholder/dummy values when refactoring.** Every field MUST be properly computed. Hardcoding `0`, `null`, `""` is forbidden. If a field existed before, the new implementation MUST compute it correctly.
-- When referring to code (files, functions, lines), MUST ALWAYS provide the reference in `file_path:line_number` format.
-- NEVER try to run development servers — they should already be running and are not accessible to you. NEVER try to call API endpoints.
-- **NEVER suggest restarting any server.** All services run in watch mode and automatically pick up code changes.
-- NEVER undo changes or revert to previous code unless explicitly instructed.
-- **If told to do something in a specific way, MUST do it that way.** NEVER substitute with workarounds or alternative approaches.
-- When in doubt, ask for clarifications.
-- NEVER use `setTimeout` or similar for delaying code execution. Use proper async/await patterns or event-driven approaches.
-- NEVER use `sleep` commands — they are unnecessary and wasteful.
-- NEVER add `timeout` to bash commands.
-- NEVER run background tasks. Run everything directly.
+- **NEVER commit or push unless explicitly instructed.** Show changes, wait for instruction.
+- `"commit"` = commit EVERYTHING + push. `git add -A && git commit -m "..." && git push`
+- `"commit staged only"` = commit only staged files + `--no-verify` + push
+- **Review changes:** `git diff HEAD --stat` for summary, `git diff HEAD -- '*.ts' '*.tsx' '*.json' ':!bun.lock'` for code. NEVER read unfiltered diff.
+- New branches: `git fetch origin && git checkout -b <name> origin/main` (always from remote)
+- First push: `git push -u origin <branch-name>`
+- GitHub ops: ALWAYS use `gh` CLI
+- **When committing: MUST update CLAUDE.md AND README.md**
 
-## Git Workflow
-
-- **NEVER commit or push code unless explicitly instructed.** Do not commit as part of a workflow (e.g., after fixing PR comments, after completing a task, after `bun ok`). Show what changed and wait for explicit instruction.
-- When told to "commit", **MUST commit EVERYTHING** — all unstaged, staged, modified, and untracked files. Also push to the remote. **NEVER skip files or question what should be committed.** The instruction is absolute.
-- When told to "commit staged only", commit ONLY what's already staged. Use `git commit --no-verify` to skip the pre-commit hook (which auto-stages formatting changes). Then push.
-- Use a single chained command for committing: `git add -A && git commit -m "..." && git push`. No separate calls.
-- **When reviewing changes for a commit message**, use `git diff HEAD --stat` for a quick summary. If you need to see actual code changes, filter out noise: `git diff HEAD -- '*.ts' '*.tsx' '*.json' ':!bun.lock'`. NEVER read the full unfiltered `git diff` — it's huge (especially `bun.lock`) and wastes time with chunked reads.
-- When creating a new branch, MUST ALWAYS base it on `origin/main` (remote), not local `main`. Use `git fetch origin && git checkout -b <branch-name> origin/main`.
-- When creating a branch, MUST immediately set tracking on first push with `git push -u origin <branch-name>`.
-- MUST ALWAYS use `gh` CLI for GitHub operations (viewing PRs, checking CI status, etc.) — NEVER access GitHub URLs directly.
-- **CRITICAL: When committing, MUST update `CLAUDE.md` AND `README.md` to reflect ALL changes being committed.** Every new feature, config change, script change, or architectural decision MUST be documented. This is NOT optional — undocumented changes are unacceptable.
+---
 
 ## Code Standards
 
-Follow **Clean Code + SOLID + KISS + YAGNI**:
+**Clean Code + SOLID + KISS + YAGNI** — self-documenting, readable, minimal complexity.
 
-- **Clean Code**: Self-documenting, readable code with meaningful names and single responsibility
-- **SOLID**: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion
-- **KISS**: Simplest solution that solves the problem, avoid over-engineering
-- **YAGNI**: Don't add functionality until actually needed
+### TypeScript
 
-### TypeScript Conventions
+- **NEVER** `any`, `as any`, `interface`, or `catch (error: any)`
+- MUST reuse existing types and Zod schemas
+- Prefer optional chaining for callbacks: `onComplete?.(data)`
+- Object params over positional: `function foo({ name }: { name: string })`
 
-- **NEVER use `any` type** — Use `unknown` if type is truly unknown
-- **NEVER use `as any` assertions** — Find the proper type or use specific type assertions
-- **NEVER use `interface`** — Always use `type` instead
-- NEVER use `catch (error: any)` — leave it untyped so `unknown` is used by TS
-- MUST reuse existing types — NEVER create duplicate types
-- MUST prefer type-safe solutions. MUST use existing Zod schemas and types if they fit.
-- Prefer optional chaining for callbacks: `onComplete?.(data)` instead of `if (onComplete) onComplete(data)`
-- Add comments to properties of object types only if not self-explanatory (skip obvious ones like `className`)
+### Imports
 
-### Import Conventions
-
-- **NEVER use barrel files** — Barrel files (index.ts files that re-export everything) are forbidden
-- **MUST ALWAYS import directly from source files** — Import from the actual file where the code is defined
-- **NEVER use dynamic imports** — MUST use static `import` over `await import()`. Only use dynamic imports for genuine code splitting or conditional loading.
-
-### Function Parameters
-
-- Prefer object parameters over multiple direct parameters
-- Example: `function foo({ name, age }: { name: string; age: number })` instead of `function foo(name: string, age: number)`
+- **NEVER use barrel files** (index.ts re-exports)
+- **MUST import directly from source files**
+- **NEVER use dynamic imports** unless genuine code splitting
 
 ### Comments
 
-- NEVER add comments explaining what changes you just made
-- Only add comments for complex logic that isn't self-evident
-- **MUST ALWAYS add reference links** when implementing code from documentation or external sources
-  - Format: `// Reference: https://example.com/docs/feature`
+- NEVER add "what I changed" comments
+- Only comment complex, non-obvious logic
+- **MUST add reference links:** `// Reference: https://...`
 
-### Console Logging (Debug)
+### Debugging
 
-- MUST ALWAYS stringify objects: `console.log('DEBUG:', JSON.stringify(data, null, 2))`
-- MUST use a common keyword prefix (e.g., `DEBUG:`) for easy filtering and bulk copying
-- **MUST ALWAYS clean up debug code** once the root cause is found
+- NEVER assume the cause — add targeted debugging
+- Trace data flow backwards from the error
+- `console.log('DEBUG:', JSON.stringify(data, null, 2))` — MUST clean up after
+- MUST try solutions before suggesting them
 
-### React Conventions
+### React
 
-- **Server Components by default** — Use `"use client"` directive only when needed
-- **ALWAYS follow the Rules of Hooks** — Only call hooks at the top level, never inside loops/conditions/nested functions. Do not return early if there's a hook later.
+- Server Components by default — `"use client"` only when needed
+- **Rules of Hooks** — top level only, never conditional, no early return before hooks
 
-#### CSS Flexbox — `min-w-0` Pattern
+<details>
+<summary><strong>CSS Flexbox min-w-0 pattern</strong></summary>
 
-**Problem**: Flex items have `min-width: auto` by default, preventing them from shrinking below their content size. This breaks `truncate` on text elements.
-
-**Pattern for truncating text in flex layouts**:
+Flex items have `min-width: auto` by default, breaking `truncate`:
 
 ```tsx
 <div className="flex min-w-0">
-  <Icon className="flex-shrink-0" /> {/* Fixed elements: Prevent shrinking */}
-  <span className="min-w-0 flex-1 truncate">
-    {" "}
-    {/* Text: Shrink + truncate */}
-    Long text here...
-  </span>
-  <Button className="flex-shrink-0" /> {/* Fixed elements: Prevent shrinking */}
+  <Icon className="flex-shrink-0" />
+  <span className="min-w-0 flex-1 truncate">Long text...</span>
+  <Button className="flex-shrink-0" />
 </div>
 ```
 
-### Implementation Standards
+</details>
 
-- When asked to implement something, MUST implement it FULLY and completely
-- NEVER add placeholder comments like "to be implemented later"
-- If something cannot be completed, MUST explain why explicitly rather than leaving incomplete code
-- **NEVER create documentation files** unless explicitly requested — the only exception is updating CLAUDE.md when architecture changes
+### Frontend & UI
 
-### Debugging Mindset
+**Mobile-first — THIS IS NON-NEGOTIABLE.** Every screen, component, and layout MUST be designed mobile-first. Desktop is the enhancement, not the other way around. The app may eventually ship as a native app via Capacitor, so touch-friendly UX is mandatory.
 
-- **NEVER assume the cause** — MUST add targeted debugging to see what's actually happening
-- **MUST trace data flow backwards** — From error location, work backwards to see where data originates
-- **MUST question "obvious" fixes** — If data should exist, find out why it doesn't
-- **MUST try solutions before suggesting them** — Attempt fixes until things fully work
-- **MUST ALWAYS clean up debug code** once the root cause is found
+**Core principles:**
 
-### Security
+- **Mobile-first responsive:** MUST start with the mobile layout (`sm:`, `md:`, `lg:` breakpoints upward). NEVER design for desktop and then try to squeeze it into mobile.
+- **Touch targets:** Interactive elements MUST be at least 44×44px tap area. Use adequate padding on buttons, links, and form controls.
+- **i18n-safe layouts:** Since we use Paraglide, text can be significantly longer or shorter depending on locale. UI MUST accommodate variable text lengths:
+  - NEVER use fixed widths on text containers — use `min-w-0`, `flex-1`, `w-full`
+  - Prefer wrapping (`flex-wrap`) over truncation for important content
+  - Use `truncate` only for secondary/non-critical text (e.g. email addresses in lists)
+  - Buttons MUST grow with their label — NEVER fixed-width buttons with text
+  - Test mentally: "Would this break if the label were 2× longer?"
+- **Clean, small components:** Prefer composition of small shadcn primitives over custom CSS. Use Tailwind utilities directly — NEVER create CSS files. Keep component files short and focused.
+- **Spacing & layout:** Use consistent spacing via Tailwind's scale (`gap-2`, `p-4`, `space-y-3`). Use `container` + `max-w-*` for content width. Stack vertically on mobile, go horizontal on larger screens (`flex-col sm:flex-row`).
+- **Typography:** Use Tailwind's responsive text sizes (`text-sm md:text-base`). Ensure readable line lengths (`max-w-prose` for long-form text).
+- **Forms:** Full-width inputs on mobile. Stack labels above inputs (not beside). Use shadcn form components consistently.
 
-- Code MUST ALWAYS be safe. NEVER allow users to change other users' data when they shouldn't.
+### Implementation
 
-## Key File Locations
+- MUST implement FULLY — NEVER leave "to be implemented" placeholders
+- NEVER create documentation files unless explicitly requested
+- Code MUST be safe — NEVER allow unauthorized data access
 
-Quick reference for the most important files:
+---
 
-- `packages/shared/src/consts.ts` — App constants (appName, auth config)
-- `packages/shared/src/features.ts` — Feature flag definitions + `createFeatures`
-- `packages/server/src/env.ts` — Server env vars (t3-env)
-- `packages/server/src/auth.ts` — Better Auth configuration
-- `packages/server/src/db/index.ts` — Database client (PGlite/PostgreSQL auto-switch)
-- `packages/server/src/db/schema.ts` — Drizzle schema (Better Auth tables + indexes)
-- `packages/server/src/db/utils.ts` — `uuidPrimaryKey` helper for custom tables
-- `packages/server/src/orpc/base.ts` — oRPC procedure definitions (public/protected/admin)
-- `packages/server/src/orpc/router.ts` — oRPC router
-- `apps/web/src/lib/env.ts` — Client env vars (t3-env, VITE\_ prefix)
-- `apps/web/src/lib/orpc.ts` — oRPC client (SSR + client)
-- `apps/web/src/lib/auth-client.ts` — Better Auth React client
-- `apps/web/src/lib/env.ts` — Client features (`clientFeatures` via `createFeatures`)
-- `apps/web/src/lib/schemas.ts` — Shared Zod schemas (password validation)
-- `apps/web/src/lib/zod-form-resolver.ts` — Zod v4 resolver for react-hook-form
-- `apps/web/src/lib/posthog.ts` — PostHog config
-- `apps/web/src/components/auth/` — Auth forms (sign-in, sign-up, forgot/reset password)
-- `apps/web/src/components/settings/` — Account settings cards (profile, password, sessions, passkeys, delete)
-- `apps/web/src/routes/account.tsx` — Account settings page (auth-protected)
-- `apps/web/src/routes/admin/route.tsx` — Admin layout + role guard
-- `apps/web/vite.config.ts` — Vite config (paraglide, tailwind, tanstack, nitro, react compiler)
-- `.oxlintrc.json` — Oxlint config with custom rules
-- `.oxfmtrc.jsonc` — Oxfmt config (formatting)
-- `.syncpackrc` — Syncpack config (version pinning)
-- `railway.json` — Railway deployment config
-- `bunfig.toml` — Bun config (exact versions, minimum release age)
+## Key Files
+
+| File                                     | Purpose                                                            |
+| :--------------------------------------- | :----------------------------------------------------------------- |
+| `packages/shared/src/consts.ts`          | App constants (appName, defaultLocale, auth config, welcomeEmail)  |
+| `packages/shared/src/features.ts`        | Feature flag definitions + `createFeatures`                        |
+| `packages/server/src/env.ts`             | Server env vars + feature-gated groups                             |
+| `packages/server/src/auth.ts`            | Better Auth config + all email triggers                            |
+| `packages/server/src/logger.ts`          | Pino logger instance                                               |
+| `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                |
+| `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                           |
+| `packages/server/src/db/utils.ts`        | `uuidPrimaryKey` helper                                            |
+| `packages/server/src/orpc/base.ts`       | Procedure definitions (public/protected/admin)                     |
+| `packages/server/src/orpc/router.ts`     | oRPC router                                                        |
+| `apps/web/src/lib/env.ts`                | Client features + env groups                                       |
+| `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                        |
+| `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                           |
+| `apps/web/src/lib/schemas.ts`            | Shared Zod schemas                                                 |
+| `apps/web/src/lib/zod-form-resolver.ts`  | Zod v4 resolver for react-hook-form                                |
+| `apps/web/src/routes/api/icon.tsx`       | Dynamic favicon (dark mode)                                        |
+| `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                   |
+| `apps/web/src/components/auth/`          | Auth forms                                                         |
+| `apps/web/src/components/settings/`      | Account settings cards                                             |
+| `apps/web/vite.config.ts`                | Vite config (paraglide, tailwind, tanstack, nitro, react compiler) |
+| `.oxlintrc.json`                         | Oxlint config                                                      |
+| `.oxfmtrc.jsonc`                         | Oxfmt config                                                       |
+| `.syncpackrc`                            | Syncpack config                                                    |
+| `railway.json`                           | Railway deployment                                                 |
+| `.github/workflows/ci.yml`               | CI pipeline                                                        |
+| `packages/email/templates.ts`            | Email render functions + localized subject helpers                 |
+| `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                    |
+| `packages/email/emails/email-layout.tsx` | Shared email layout component                                      |
+| `packages/email/messages/en.json`        | Email i18n strings                                                 |
+| `bunfig.toml`                            | Bun config (exact versions, min release age)                       |

@@ -1,3 +1,5 @@
 {
-  "$schema": "https://inlang.com/schema/inlang-message-format"
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "og_title": "OmegaStart",
+  "og_description": "The modern full-stack starter"
 }

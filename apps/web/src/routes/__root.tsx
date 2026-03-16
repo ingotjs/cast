@@ -64,9 +64,26 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "TanStack Start Starter" },
+      { title: "OmegaStart" },
+      { property: "og:title", content: "OmegaStart" },
+      { property: "og:description", content: "The modern full-stack starter" },
+      { property: "og:image", content: "/api/og" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [
+      {
+        rel: "icon",
+        href: "/api/icon?theme=light",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        rel: "icon",
+        href: "/api/icon?theme=dark",
+        media: "(prefers-color-scheme: dark)",
+      },
+      { rel: "stylesheet", href: appCss },
+    ],
   }),
   shellComponent: RootDocument,
 });
