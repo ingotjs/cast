@@ -1,4 +1,3 @@
-import { consts } from "@packages/shared/consts";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { ChangePasswordCard } from "../components/settings/change-password-card";
@@ -7,10 +6,7 @@ import { PasskeysCard } from "../components/settings/passkeys-card";
 import { SessionsCard } from "../components/settings/sessions-card";
 import { UpdateProfileCard } from "../components/settings/update-profile-card";
 import { authClient } from "../lib/auth-client";
-import { isFeatureActive } from "../lib/feature-flags";
-
-const passwordEnabled = isFeatureActive(consts.features.password.enabled);
-const passkeyEnabled = isFeatureActive(consts.features.passkey.enabled);
+import { features } from "../lib/env";
 
 const AccountPage = () => (
   <main className="container mx-auto max-w-2xl px-4 py-12 md:py-20">
@@ -21,9 +17,9 @@ const AccountPage = () => (
 
     <div className="mt-8 space-y-6">
       <UpdateProfileCard />
-      {passwordEnabled && <ChangePasswordCard />}
+      {!!features.password && <ChangePasswordCard />}
       <SessionsCard />
-      {passkeyEnabled && <PasskeysCard />}
+      {!!features.passkey && <PasskeysCard />}
       <DeleteAccountCard />
     </div>
   </main>

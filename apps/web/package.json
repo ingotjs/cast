@@ -19,7 +19,6 @@
     "@packages/shared": "*",
     "@packages/ui": "*",
     "@posthog/react": "1.8.2",
-    "@t3-oss/env-core": "0.13.10",
     "@tailwindcss/vite": "4.1.18",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-query": "5.90.21",

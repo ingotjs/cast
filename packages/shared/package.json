@@ -5,16 +5,16 @@
   "type": "module",
   "exports": {
     "./consts": "./src/consts.ts",
+    "./features": "./src/features.ts",
     "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {
+    "test": "bun test",
     "ts": "tsgo --noEmit"
-  },
-  "dependencies": {
-    "zod": "4.3.6"
   },
   "devDependencies": {
     "@packages/config": "*",
+    "@types/bun": "1.3.10",
     "@types/node": "22.15.3",
     "typescript": "5.9.3"
   }

@@ -45,23 +45,66 @@ We use [Ultracite](https://github.com/haydenbleasel/ultracite), a zero-config pr
 
 **NEVER use `process.env` or `import.meta.env` directly.** Enforced by `node/no-process-env` oxlint rule. Use the typed env objects instead:
 
-- **Server env:** `import { serverEnv } from "@packages/server/env"` — for server-only vars (`DATABASE_URL`, `URL`, `NODE_ENV`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, etc.)
-- **Client env:** `import { env } from "@/lib/env"` — for `VITE_` prefixed client vars (`VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`)
+- **Server env:** `import { serverEnv, serverFeatures } from "@packages/server/env"` — infrastructure vars (`URL`, `NODE_ENV`, `DATABASE_URL`, `BETTER_AUTH_SECRET`) + feature-gated env groups (`serverEnv.email?.RESEND_API_KEY`)
+- **Client env:** `import { clientEnv, clientFeatures } from "@/lib/env"` — feature-gated env groups (`clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY`)
 
 The only files allowed to access `process.env` are the env definition files themselves (`**/env.ts`).
 
 ## Feature Flags
 
-Feature flags live in `packages/shared/src/consts.ts`. Each feature has an `enabled: { dev: boolean, prod: boolean }` object that controls:
+Feature flags live in `packages/shared/src/features.ts`. Each feature defines: `enabled: { dev, prod }`, `scope: "server" | "client" | "shared"`. Features are **pure enabled/disabled signals** — they do NOT contain env var names.
 
-- Whether the feature is active in each environment
-- Whether related env vars are required or optional (via `requireIfEnabled()`)
+**How it works:** `createFeatures({ scope, isDev })` returns an object where each feature is `{} | undefined`:
 
-Current features: `posthog`, `googleOAuth`, `email`, `password`, `passkey`, `magicLink`.
+- Enabled → `{}` (truthy empty object)
+- Disabled → `undefined`
 
-- `password` — Email & password authentication (controls `emailAndPassword.enabled` in Better Auth and visibility of change-password UI)
-- `passkey` — WebAuthn passkey authentication (controls passkey plugin in Better Auth and visibility of passkeys UI)
-- `magicLink` — Magic link authentication (reserved for future use)
+**Env vars** are defined in their respective env files, nested under feature-gated groups:
+
+- Server envs in `packages/server/src/env.ts` → `serverEnv.email?.RESEND_API_KEY`
+- Client envs in `apps/web/src/lib/env.ts` → `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY`
+- If a feature is enabled but its env var is missing → **throws at startup**
+
+This separation ensures env keys never leak from server to client via shared code.
+
+**Scopes:**
+
+- `"server"` → sees server + shared features
+- `"client"` → sees client + shared features
+- Server features DON'T include client features and vice versa — **compile-time safety**
+
+**Usage — optional chain from feature flag to env:**
+
+```ts
+serverEnv.email?.RESEND_API_KEY; // string if email enabled, undefined if not
+!!serverFeatures.password; // boolean check for features without envs
+clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
+```
+
+**Current features:**
+
+| Feature       | Scope  | Dev | Prod |
+| ------------- | ------ | --- | ---- |
+| `posthog`     | client | off | on   |
+| `googleOAuth` | server | off | off  |
+| `email`       | server | off | off  |
+| `password`    | shared | on  | on   |
+| `passkey`     | shared | on  | on   |
+| `magicLink`   | shared | off | off  |
+
+**Adding a new feature flag:**
+
+1. Add the definition to `featureDefinitions` in `packages/shared/src/features.ts`
+2. Set `scope` to `"server"`, `"client"`, or `"shared"`
+3. Set `enabled: { dev, prod }`
+4. If the feature has env vars, add a feature-gated group in the appropriate env file:
+   ```ts
+   // In server env.ts or client env.ts
+   myFeature: serverFeatures.myFeature
+     ? { MY_ENV_KEY: requireEnv("MY_ENV_KEY") }
+     : undefined,
+   ```
+5. Access via `serverEnv.myFeature?.MY_ENV_KEY` or `clientEnv.myFeature?.MY_ENV_KEY`
 
 ## Authentication
 
@@ -80,7 +123,7 @@ Current features: `posthog`, `googleOAuth`, `email`, `password`, `passkey`, `mag
 - `user.additionalFields.role` configured so `role` is included in user type
 - Sonner `<Toaster />` in root layout for auth notifications
 - Shared password schema at `apps/web/src/lib/schemas.ts` — reused across sign-up, reset-password, and change-password forms
-- Client feature flag helper at `apps/web/src/lib/feature-flags.ts` — uses `import.meta.env.DEV` to resolve flags
+- `apps/web/src/lib/env.ts` exports `clientFeatures` from the features system
 
 ## API (oRPC)
 
@@ -95,7 +138,7 @@ Current features: `posthog`, `googleOAuth`, `email`, `password`, `passkey`, `mag
 ## Database
 
 - [Drizzle ORM](https://orm.drizzle.team/) with auto-switching PGlite (local dev) / PostgreSQL (production)
-- `DATABASE_URL` optional in dev (uses PGlite), required in prod (enforced via `requireIfEnabled`)
+- `DATABASE_URL` optional in dev (uses PGlite), required in prod
 - Schema at `packages/server/src/db/schema.ts` — Better Auth tables (users, sessions, accounts, verifications, passkeys) with indexes
 - Local database stored in `.pglite/` (gitignored)
 - Migrations in `packages/server/drizzle/` — auto-applied on Railway deploy via `preDeployCommand` in `railway.json`
@@ -346,7 +389,8 @@ Follow **Clean Code + SOLID + KISS + YAGNI**:
 
 Quick reference for the most important files:
 
-- `packages/shared/src/consts.ts` — Feature flags and app constants
+- `packages/shared/src/consts.ts` — App constants (appName, auth config)
+- `packages/shared/src/features.ts` — Feature flag definitions + `createFeatures`
 - `packages/server/src/env.ts` — Server env vars (t3-env)
 - `packages/server/src/auth.ts` — Better Auth configuration
 - `packages/server/src/db/index.ts` — Database client (PGlite/PostgreSQL auto-switch)
@@ -357,7 +401,7 @@ Quick reference for the most important files:
 - `apps/web/src/lib/env.ts` — Client env vars (t3-env, VITE\_ prefix)
 - `apps/web/src/lib/orpc.ts` — oRPC client (SSR + client)
 - `apps/web/src/lib/auth-client.ts` — Better Auth React client
-- `apps/web/src/lib/feature-flags.ts` — Client-side feature flag helper
+- `apps/web/src/lib/env.ts` — Client features (`clientFeatures` via `createFeatures`)
 - `apps/web/src/lib/schemas.ts` — Shared Zod schemas (password validation)
 - `apps/web/src/lib/zod-form-resolver.ts` — Zod v4 resolver for react-hook-form
 - `apps/web/src/lib/posthog.ts` — PostHog config

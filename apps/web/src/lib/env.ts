@@ -1,21 +1,36 @@
-import { consts, requireIfEnabled } from "@packages/shared/consts";
-import { createEnv } from "@t3-oss/env-core";
+import { createFeatures } from "@packages/shared/features";
 import { z } from "zod";
 
-// Reference: https://env.t3.gg/docs/core
-export const env = createEnv({
-  clientPrefix: "VITE_",
-  client: {
-    VITE_PUBLIC_POSTHOG_KEY: requireIfEnabled(
-      consts.features.posthog.enabled,
-      z.string().min(1)
-    ),
-    VITE_PUBLIC_POSTHOG_HOST: requireIfEnabled(
-      consts.features.posthog.enabled,
-      z.url()
-    ),
-  },
-  runtimeEnv: import.meta.env,
-  emptyStringAsUndefined: true,
-  skipValidation: Boolean(import.meta.env.SKIP_ENV_VALIDATION),
-});
+// oxlint-disable-next-line node/no-process-env -- env module reads import.meta.env
+const env = import.meta.env as Record<string, string | undefined>;
+
+/** Parse an env var with a Zod schema. Throws with a descriptive message on failure. */
+const parseEnv = <T>(key: string, schema: z.ZodType<T>): T => {
+  const result = schema.safeParse(env[key]);
+  if (!result.success) {
+    throw new Error(
+      `Invalid env var "${key}": ${result.error.issues[0]?.message ?? "validation failed"}`
+    );
+  }
+  return result.data;
+};
+
+/** Feature flags — each is `{} | undefined` */
+export const features = createFeatures();
+
+/**
+ * Client environment variables.
+ * Feature-gated envs are nested under their feature name.
+ * If the feature is enabled, its envs are validated with Zod (throws if invalid).
+ */
+export const clientEnv = {
+  posthog: features.posthog
+    ? {
+        VITE_PUBLIC_POSTHOG_KEY: parseEnv(
+          "VITE_PUBLIC_POSTHOG_KEY",
+          z.string().min(1)
+        ),
+        VITE_PUBLIC_POSTHOG_HOST: parseEnv("VITE_PUBLIC_POSTHOG_HOST", z.url()),
+      }
+    : undefined,
+};

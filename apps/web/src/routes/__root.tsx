@@ -7,7 +7,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { Footer } from "../components/footer";
 import { Header } from "../components/header";
 import { Providers } from "../components/providers";
-import { posthogConfig } from "../lib/posthog";
+import { clientEnv } from "../lib/env";
 
 import appCss from "../styles.css?url";
 
@@ -39,11 +39,11 @@ const RootDocument = ({ children }: { children: React.ReactNode }) => (
     </head>
     <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
       <Providers>
-        {posthogConfig.key ? (
+        {clientEnv.posthog ? (
           <PostHogProvider
-            apiKey={posthogConfig.key}
+            apiKey={clientEnv.posthog.VITE_PUBLIC_POSTHOG_KEY}
             options={{
-              api_host: posthogConfig.host,
+              api_host: clientEnv.posthog.VITE_PUBLIC_POSTHOG_HOST,
               defaults: "2026-01-30",
             }}
           >
