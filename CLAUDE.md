@@ -24,7 +24,7 @@ We use [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) for 
 
 ## Linting & Formatting
 
-We use [Biome](https://biomejs.dev/) for linting and formatting (replaces ESLint + Prettier). Config is in `biome.json` at the repo root.
+We use [Ultracite](https://github.com/haydenbleasel/ultracite), a zero-config preset that enforces strict code quality through Oxlint + Oxfmt. Config files: `.oxlintrc.json` and `.oxfmtrc.jsonc`.
 
 ## Dependency Management
 

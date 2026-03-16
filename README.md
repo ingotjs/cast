@@ -13,7 +13,7 @@ Turborepo monorepo using [Bun](https://bun.sh/) as the package manager.
 ### Utilities
 
 - [TypeScript](https://www.typescriptlang.org/) for static type checking (via [tsgo](https://github.com/microsoft/typescript-go))
-- [Biome](https://biomejs.dev/) for code linting and formatting
+- [Ultracite](https://github.com/haydenbleasel/ultracite) for code linting and formatting (Oxlint + Oxfmt)
 - [syncpack](https://syncpack.dev/) for enforcing pinned dependency versions
 - [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) for supply chain security scanning (free tier — checks for known vulnerabilities on `bun install`)
 
