@@ -8,7 +8,10 @@
   ],
   "scripts": {
     "build": "turbo --output-logs=errors-only build",
-    "dev": "turbo dev",
+    "dev": "bun install --silent && turbo dev",
+    "db:studio": "bun run --cwd packages/server db:studio",
+    "db:generate": "bun run --cwd packages/server db:generate",
+    "db:migrate": "bun run --cwd packages/server db:migrate",
     "dev:email": "turbo dev --filter @packages/email",
     "ok": "syncpack fix --log-levels error && bun ts && ultracite fix && turbo --output-logs=errors-only test",
     "ok:ci": "syncpack lint --log-levels error && bun ts && ultracite check && turbo --output-logs=errors-only test",

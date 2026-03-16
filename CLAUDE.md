@@ -2,7 +2,7 @@
 
 > **Keyword Usage:** When writing or updating CLAUDE.md or other instructional files, use **MUST** and **NEVER** keywords to enforce critical requirements. These keywords signal mandatory behavior that AI agents MUST follow without exception.
 >
-> **Keep docs in sync:** If any information in this file is wrong or outdated, or if important new information should be captured, update this file. Also keep `README.md` up to date — this is a public project.
+> **Keep docs in sync — THIS IS CRITICAL:** CLAUDE.md and README.md MUST ALWAYS be updated when making ANY change to: project structure, new packages/dependencies, new features, config changes, scripts, commands, hosting setup, env vars, or anything a developer or user would want to know. README.md is the public face of this project — it MUST showcase what makes this project great. CLAUDE.md is the internal guide — it MUST reflect the current state of the codebase. **Failing to update these files is unacceptable.** If in doubt, update them.
 >
 > **Prefer CLAUDE.md over memory:** Always save instructions and feedback in this file instead of the local memory system (`~/.claude/projects/.../memory/`). CLAUDE.md is committed to the repo and persists across machines. NEVER use the memory system.
 
@@ -12,7 +12,7 @@ Turborepo monorepo using bun as the package manager.
 
 - `apps/web` — TanStack Start app (Vite + TanStack Router + Nitro, deployed on Railway). Includes admin dashboard at `/admin` (role-guarded).
 - `packages/server` — Server-side logic (`@packages/server`) — oRPC router, procedures, Drizzle + PGlite/PostgreSQL, Better Auth (with admin + passkey plugins)
-- `packages/shared` — Shared utilities (`@packages/shared`) — error handling, common utils (client + server)
+- `packages/shared` — Shared utilities (`@packages/shared`) — feature flags, consts, error handling (client + server)
 - `packages/email` — Email templates (`@packages/email`) — react-email + Resend
 - `packages/ui` — Shared UI component library (`@packages/ui`) — shadcn v4 + Tailwind CSS + Base UI
 - `packages/typescript-config` — Shared TS config (`@packages/typescript-config`)
@@ -31,14 +31,73 @@ We use [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) for 
 
 We use [Ultracite](https://github.com/haydenbleasel/ultracite), a zero-config preset that enforces strict code quality through Oxlint + Oxfmt. Config files: `.oxlintrc.json` and `.oxfmtrc.jsonc`.
 
+**Key oxlint overrides (`.oxlintrc.json`):**
+
+- `eslint/sort-keys`: off
+- `node/no-process-env`: error (only `**/env.ts` exempt via override)
+- `promise/prefer-await-to-callbacks`: off
+- `react-perf/jsx-no-new-function-as-prop`: off (React Compiler handles memoization)
+- `typescript/consistent-type-definitions`: error, "type" (NEVER use `interface` — except for module augmentation like TanStack Router's `Register`)
+
+**Ignored paths:** `.agents`, `.claude`, `**/routeTree.gen.ts`, `**/*.md`
+
 ## Environment Variables
 
 **NEVER use `process.env` or `import.meta.env` directly.** Enforced by `node/no-process-env` oxlint rule. Use the typed env objects instead:
 
-- **Server env:** `import { serverEnv } from "@packages/server/env"` — for server-only vars (`DATABASE_URL`, `URL`, `NODE_ENV`)
-- **Client env:** `import { env } from "@/lib/env"` — for `VITE_` prefixed client vars
+- **Server env:** `import { serverEnv } from "@packages/server/env"` — for server-only vars (`DATABASE_URL`, `URL`, `NODE_ENV`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, etc.)
+- **Client env:** `import { env } from "@/lib/env"` — for `VITE_` prefixed client vars (`VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`)
 
 The only files allowed to access `process.env` are the env definition files themselves (`**/env.ts`).
+
+## Feature Flags
+
+Feature flags live in `packages/shared/src/consts.ts`. Each feature has an `enabled: { dev: boolean, prod: boolean }` object that controls:
+
+- Whether the feature is active in each environment
+- Whether related env vars are required or optional (via `requireIfEnabled()`)
+
+Current features: `posthog`, `googleOAuth`, `email`.
+
+## Authentication
+
+- [Better Auth](https://better-auth.com/) with email/password + passkey + admin plugins
+- Auth config at `packages/server/src/auth.ts`
+- Auth UI via [@daveyplate/better-auth-ui](https://better-auth-ui.com/) — pre-built sign-in/sign-up/forgot-password forms at `/auth/$path`
+- `AuthUIProvider` wraps the app in `apps/web/src/components/providers.tsx`
+- Auth client at `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`
+- Auth API route at `apps/web/src/routes/api/auth.$.ts`
+- Admin role guard on `/admin` routes via `beforeLoad` (checks `user.role === "admin"`)
+- Session cookie caching (5 min), 30-day expiry with daily refresh
+- `trustedOrigins` configured for CSRF protection
+- `BETTER_AUTH_SECRET` required in prod, auto-generated static fallback in dev
+- `user.additionalFields.role` configured so `role` is included in user type
+- Sonner `<Toaster />` in root layout for auth notifications
+- `apps/web/src/styles.css` imports `@packages/ui/globals.css` for shadcn CSS variables (required by auth UI)
+
+## API (oRPC)
+
+- [oRPC](https://orpc.dev/) with TanStack Query integration — no contract-first, define procedures inline
+- Three procedure levels: `publicProcedure`, `protectedProcedure` (auth required), `adminProcedure` (admin role required)
+- Base procedures at `packages/server/src/orpc/base.ts`
+- Router at `packages/server/src/orpc/router.ts`, API route at `apps/web/src/routes/api/rpc.$.ts`
+- Client with SSR support at `apps/web/src/lib/orpc.ts` (uses `createIsomorphicFn` — server calls bypass HTTP, client uses `RPCLink`)
+- Admin procedures under `router.admin.users.*` (list, ban, unban, setRole, remove)
+- Usage in components: `import { orpc } from "@/lib/orpc"` then `useQuery(orpc.health.queryOptions())`
+
+## Database
+
+- [Drizzle ORM](https://orm.drizzle.team/) with auto-switching PGlite (local dev) / PostgreSQL (production)
+- `DATABASE_URL` optional in dev (uses PGlite), required in prod (enforced via `requireIfEnabled`)
+- Schema at `packages/server/src/db/schema.ts` — Better Auth tables (users, sessions, accounts, verifications, passkeys) with indexes
+- Local database stored in `.pglite/` (gitignored)
+- Migrations in `packages/server/drizzle/` — auto-applied on Railway deploy via `preDeployCommand` in `railway.json`
+- NEVER run `bun db:generate` or `bun db:migrate` via Claude Code — requires interactive input. Prompt the user to run manually.
+
+## Analytics
+
+- [PostHog](https://posthog.com/) via `@posthog/react` — `PostHogProvider` wraps the app (conditional on `VITE_PUBLIC_POSTHOG_KEY`)
+- Admin analytics page at `/admin/analytics`
 
 ## Internationalization (i18n)
 
@@ -71,16 +130,26 @@ We use [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) 
 
 ## Hosting
 
-Deployed on [Railway](https://railway.com/). Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#railway--official-partner
+Deployed on [Railway](https://railway.com/) via `railway.json`:
+
+- **Build:** Railpack
+- **Pre-deploy:** `bun db:migrate` (auto-applies pending migrations)
+- **Start:** `bun run --cwd apps/web start` (Nitro server)
+- **Health check:** `/api/auth/ok`
+
+Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#railway--official-partner
 
 ## Commands
 
 - `bun install` — Install dependencies
-- `bun dev` — Run all apps in dev mode
+- `bun dev` — Run all apps in dev mode (auto-runs `bun install` first)
 - `bun dev:email` — Run email template preview (port 3002)
 - `bun build` — Build all apps
 - `bun ok` — Run all checks (type check + lint + tests). Use this to validate changes.
 - `bun ok:ci` — Same as `bun ok` but without auto-fixes (for CI)
+- `bun db:generate` — Generate database migrations (user MUST run manually — requires interactive input)
+- `bun db:migrate` — Apply database migrations (user MUST run manually)
+- `bun db:studio` — Open Drizzle Studio
 
 ---
 
@@ -129,7 +198,7 @@ Deployed on [Railway](https://railway.com/). Reference: https://tanstack.com/sta
 - When creating a new branch, MUST ALWAYS base it on `origin/main` (remote), not local `main`. Use `git fetch origin && git checkout -b <branch-name> origin/main`.
 - When creating a branch, MUST immediately set tracking on first push with `git push -u origin <branch-name>`.
 - MUST ALWAYS use `gh` CLI for GitHub operations (viewing PRs, checking CI status, etc.) — NEVER access GitHub URLs directly.
-- When committing, MUST update `CLAUDE.md` (and `README.md` if relevant) to reflect the changes being committed — keep docs in sync with the code.
+- **CRITICAL: When committing, MUST update `CLAUDE.md` AND `README.md` to reflect ALL changes being committed.** Every new feature, config change, script change, or architectural decision MUST be documented. This is NOT optional — undocumented changes are unacceptable.
 
 ## Code Standards
 
@@ -216,3 +285,28 @@ Follow **Clean Code + SOLID + KISS + YAGNI**:
 ### Security
 
 - Code MUST ALWAYS be safe. NEVER allow users to change other users' data when they shouldn't.
+
+## Key File Locations
+
+Quick reference for the most important files:
+
+- `packages/shared/src/consts.ts` — Feature flags and app constants
+- `packages/server/src/env.ts` — Server env vars (t3-env)
+- `packages/server/src/auth.ts` — Better Auth configuration
+- `packages/server/src/db/index.ts` — Database client (PGlite/PostgreSQL auto-switch)
+- `packages/server/src/db/schema.ts` — Drizzle schema (Better Auth tables + indexes)
+- `packages/server/src/db/utils.ts` — `uuidPrimaryKey` helper for custom tables
+- `packages/server/src/orpc/base.ts` — oRPC procedure definitions (public/protected/admin)
+- `packages/server/src/orpc/router.ts` — oRPC router
+- `apps/web/src/lib/env.ts` — Client env vars (t3-env, VITE\_ prefix)
+- `apps/web/src/lib/orpc.ts` — oRPC client (SSR + client)
+- `apps/web/src/lib/auth-client.ts` — Better Auth React client
+- `apps/web/src/lib/posthog.ts` — PostHog config
+- `apps/web/src/components/providers.tsx` — AuthUIProvider wrapper
+- `apps/web/src/routes/admin/route.tsx` — Admin layout + role guard
+- `apps/web/vite.config.ts` — Vite config (paraglide, tailwind, tanstack, nitro, react compiler)
+- `.oxlintrc.json` — Oxlint config with custom rules
+- `.oxfmtrc.jsonc` — Oxfmt config (formatting)
+- `.syncpackrc` — Syncpack config (version pinning)
+- `railway.json` — Railway deployment config
+- `bunfig.toml` — Bun config (exact versions, minimum release age)

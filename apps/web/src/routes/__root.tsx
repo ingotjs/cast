@@ -1,3 +1,4 @@
+import { Toaster } from "@packages/ui/components/sonner";
 import { PostHogProvider } from "@posthog/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
@@ -51,6 +52,7 @@ const RootDocument = ({ children }: { children: React.ReactNode }) => (
         ) : (
           <AppContent>{children}</AppContent>
         )}
+        <Toaster />
       </Providers>
       <Scripts />
     </body>

@@ -2,7 +2,11 @@ import { consts, requireIfEnabled } from "@packages/shared/consts";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
-const isLocalDev = !process.env.DATABASE_URL;
+/** Database required in prod only — dev uses PGlite */
+const database = { dev: false, prod: true } as const;
+
+/** Auth secret required in prod only — dev uses a static fallback */
+const authSecret = { dev: false, prod: true } as const;
 
 /**
  * Server-only env vars. Separated from the client env (apps/web/src/lib/env.ts)
@@ -16,12 +20,8 @@ export const serverEnv = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    /** Optional for local dev (uses PGlite), required for production */
-    DATABASE_URL: z.url().optional(),
-    /** Optional for local dev (uses dev secret with warning), required for production */
-    BETTER_AUTH_SECRET: isLocalDev
-      ? z.string().min(32).optional()
-      : z.string().min(32),
+    DATABASE_URL: requireIfEnabled(database, z.url()),
+    BETTER_AUTH_SECRET: requireIfEnabled(authSecret, z.string().min(32)),
     BETTER_AUTH_URL: z.url().optional(),
     GOOGLE_CLIENT_ID: requireIfEnabled(
       consts.features.googleOAuth.enabled,
@@ -44,7 +44,11 @@ export const serverEnv = createEnv({
         : "http://localhost:3000"),
     NODE_ENV: process.env.NODE_ENV,
     DATABASE_URL: process.env.DATABASE_URL,
-    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    BETTER_AUTH_SECRET:
+      process.env.BETTER_AUTH_SECRET ??
+      (process.env.NODE_ENV === "production"
+        ? undefined
+        : "dev-secret-at-least-32-characters-long"),
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
