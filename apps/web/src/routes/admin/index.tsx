@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-const MainDashboard = () => (
-  <div className="flex min-h-[calc(100vh-49px)]">
+const AdminDashboard = () => (
+  <div className="flex min-h-[calc(100vh-97px)]">
     <aside className="w-56 border-r border-border p-4">
       <nav className="flex flex-col gap-1">
         <span className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium">
@@ -16,6 +16,6 @@ const MainDashboard = () => (
   </div>
 );
 
-export const Route = createFileRoute("/")({
-  component: MainDashboard,
+export const Route = createFileRoute("/admin/")({
+  component: AdminDashboard,
 });

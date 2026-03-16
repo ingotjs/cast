@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@better-auth/passkey": "1.5.5",
+    "@daveyplate/better-auth-ui": "3.3.15",
     "@orpc/client": "1.13.7",
     "@orpc/server": "1.13.7",
     "@orpc/tanstack-query": "1.13.7",

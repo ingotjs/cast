@@ -3,7 +3,6 @@ import { createAuthClient } from "better-auth/react";
 
 // Reference: https://better-auth.com/docs/reference/client
 export const authClient = createAuthClient({
-  baseURL: "/",
   plugins: [passkeyClient()],
 });
 

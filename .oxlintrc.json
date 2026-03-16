@@ -19,6 +19,7 @@
     "eslint/sort-keys": "off",
     "node/no-process-env": "error",
     "promise/prefer-await-to-callbacks": "off",
+    "react-perf/jsx-no-new-function-as-prop": "off",
     "typescript/consistent-type-definitions": ["error", "type"]
   }
 }

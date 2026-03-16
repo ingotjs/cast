@@ -6,8 +6,7 @@ Turborepo monorepo using [Bun](https://bun.sh/) as the package manager.
 
 ### Apps and Packages
 
-- `web`: a [TanStack Start](https://tanstack.com/start) app (Vite + TanStack Router)
-- `admin`: admin dashboard (TanStack Start) — user management, [PostHog](https://posthog.com/) analytics
+- `web`: a [TanStack Start](https://tanstack.com/start) app (Vite + TanStack Router). Includes admin dashboard at `/admin` (role-guarded).
 - `@packages/server`: server-side logic — [oRPC](https://orpc.dev/), [Drizzle](https://orm.drizzle.team/) + PGlite/PostgreSQL, [Better Auth](https://better-auth.com/) with admin + passkey plugins
 - `@packages/shared`: shared utilities (client + server)
 - `@packages/email`: email templates ([react-email](https://react.email/) + [Resend](https://resend.com/))

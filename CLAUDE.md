@@ -10,8 +10,7 @@ Turborepo monorepo using bun as the package manager.
 
 ## Structure
 
-- `apps/web` — TanStack Start app (Vite + TanStack Router + Nitro, deployed on Railway)
-- `apps/admin` — Admin dashboard (TanStack Start, port 3001) — user management, analytics. Admin role required.
+- `apps/web` — TanStack Start app (Vite + TanStack Router + Nitro, deployed on Railway). Includes admin dashboard at `/admin` (role-guarded).
 - `packages/server` — Server-side logic (`@packages/server`) — oRPC router, procedures, Drizzle + PGlite/PostgreSQL, Better Auth (with admin + passkey plugins)
 - `packages/shared` — Shared utilities (`@packages/shared`) — error handling, common utils (client + server)
 - `packages/email` — Email templates (`@packages/email`) — react-email + Resend
