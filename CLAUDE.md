@@ -57,23 +57,30 @@ Feature flags live in `packages/shared/src/consts.ts`. Each feature has an `enab
 - Whether the feature is active in each environment
 - Whether related env vars are required or optional (via `requireIfEnabled()`)
 
-Current features: `posthog`, `googleOAuth`, `email`.
+Current features: `posthog`, `googleOAuth`, `email`, `password`, `passkey`, `magicLink`.
+
+- `password` — Email & password authentication (controls `emailAndPassword.enabled` in Better Auth and visibility of change-password UI)
+- `passkey` — WebAuthn passkey authentication (controls passkey plugin in Better Auth and visibility of passkeys UI)
+- `magicLink` — Magic link authentication (reserved for future use)
 
 ## Authentication
 
-- [Better Auth](https://better-auth.com/) with email/password + passkey + admin plugins
+- [Better Auth](https://better-auth.com/) with email/password + passkey + admin plugins (conditionally enabled via feature flags)
 - Auth config at `packages/server/src/auth.ts`
-- Auth UI via [@daveyplate/better-auth-ui](https://better-auth-ui.com/) — pre-built sign-in/sign-up/forgot-password forms at `/auth/$path`
-- `AuthUIProvider` wraps the app in `apps/web/src/components/providers.tsx`
-- Auth client at `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`
+- Custom auth UI at `apps/web/src/components/auth/` — sign-in, sign-up, forgot-password, reset-password forms using react-hook-form + Zod
+- Account settings at `apps/web/src/components/settings/` — profile, change password, sessions, passkeys, delete account
+- Auth client at `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`, `authClient`
 - Auth API route at `apps/web/src/routes/api/auth.$.ts`
+- Auth routes at `/auth/$path` (sign-in, sign-up, forgot-password, reset-password)
+- Account route at `/account` (auth-protected — redirects to sign-in if unauthenticated)
 - Admin role guard on `/admin` routes via `beforeLoad` (checks `user.role === "admin"`)
 - Session cookie caching (5 min), 30-day expiry with daily refresh
 - `trustedOrigins` configured for CSRF protection
 - `BETTER_AUTH_SECRET` required in prod, auto-generated static fallback in dev
 - `user.additionalFields.role` configured so `role` is included in user type
 - Sonner `<Toaster />` in root layout for auth notifications
-- `apps/web/src/styles.css` imports `@packages/ui/globals.css` for shadcn CSS variables (required by auth UI)
+- Shared password schema at `apps/web/src/lib/schemas.ts` — reused across sign-up, reset-password, and change-password forms
+- Client feature flag helper at `apps/web/src/lib/feature-flags.ts` — uses `import.meta.env.DEV` to resolve flags
 
 ## API (oRPC)
 
@@ -117,9 +124,37 @@ We use [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) 
 
 **Server-side i18n:** Paraglide's `overwriteGetLocale()` handles per-request locale on the server. Reference: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/strategy#server-side
 
+**CRITICAL: ALL user-facing strings MUST use paraglide.** This includes:
+
+- UI labels, titles, descriptions, button text, placeholder text
+- Form validation error messages (Zod schemas)
+- Toast messages (success, error)
+- Auth form text (sign in, sign up, forgot password, etc.)
+
+**How to add a new user-facing string (step by step):**
+
+1. **Add the message** to the appropriate `messages/en.json` file:
+   - Frontend text → `apps/web/messages/en.json`
+   - Backend text → `packages/server/messages/en.json`
+   - Email text → `packages/email/messages/en.json`
+2. **Import the message function** from the generated paraglide output:
+   ```ts
+   import * as m from "@/paraglide/messages";
+   ```
+3. **Use the message function** in your code:
+   ```tsx
+   // In JSX:
+   <Label>{m.email_label()}</Label>;
+   // In Zod schemas:
+   z.string().min(1, m.email_required());
+   // In toast:
+   toast.success(m.profile_updated());
+   ```
+4. **If other languages exist** in the `locales` array of `project.inlang/settings.json`, add translations to their message files too.
+
 **Zod validation errors:**
 
-- **Frontend:** Zod's built-in locale system (`z.config()`) — set on app init based on user's locale.
+- **Frontend:** Use paraglide message functions directly in Zod error messages (e.g., `z.string().min(8, m.password_too_short())`). For schemas defined at module level, message functions are called at validation time, not import time, so they resolve to the current locale.
 - **Backend:** Use paraglide message functions in Zod custom error messages (e.g., `z.string({ error: () => m.field_required() })`). These resolve per-request via paraglide's server runtime.
 
 ## Dependency Management
@@ -175,7 +210,8 @@ Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#
 
 ## General Rules
 
-- **NEVER remove features, UI elements, or content unless explicitly asked.** If something is broken, FIX IT — NEVER delete or disable it.
+- **NEVER remove features, UI elements, content, or existing code unless explicitly asked.** If something is broken, FIX IT — NEVER delete or disable it. This includes email templates, components, utilities, and any code that already exists. When facing a build/type error, solve the root cause instead of removing the code that triggers it.
+- **MUST ask the user at decision points.** When you reach a fork where you're considering removing, replacing, or significantly restructuring existing code to work around an issue, STOP and ask the user. NEVER silently delete working code to solve a build problem.
 - **NEVER use placeholder/dummy values when refactoring.** Every field MUST be properly computed. Hardcoding `0`, `null`, `""` is forbidden. If a field existed before, the new implementation MUST compute it correctly.
 - When referring to code (files, functions, lines), MUST ALWAYS provide the reference in `file_path:line_number` format.
 - NEVER try to run development servers — they should already be running and are not accessible to you. NEVER try to call API endpoints.
@@ -301,8 +337,13 @@ Quick reference for the most important files:
 - `apps/web/src/lib/env.ts` — Client env vars (t3-env, VITE\_ prefix)
 - `apps/web/src/lib/orpc.ts` — oRPC client (SSR + client)
 - `apps/web/src/lib/auth-client.ts` — Better Auth React client
+- `apps/web/src/lib/feature-flags.ts` — Client-side feature flag helper
+- `apps/web/src/lib/schemas.ts` — Shared Zod schemas (password validation)
+- `apps/web/src/lib/zod-form-resolver.ts` — Zod v4 resolver for react-hook-form
 - `apps/web/src/lib/posthog.ts` — PostHog config
-- `apps/web/src/components/providers.tsx` — AuthUIProvider wrapper
+- `apps/web/src/components/auth/` — Auth forms (sign-in, sign-up, forgot/reset password)
+- `apps/web/src/components/settings/` — Account settings cards (profile, password, sessions, passkeys, delete)
+- `apps/web/src/routes/account.tsx` — Account settings page (auth-protected)
 - `apps/web/src/routes/admin/route.tsx` — Admin layout + role guard
 - `apps/web/vite.config.ts` — Vite config (paraglide, tailwind, tanstack, nitro, react compiler)
 - `.oxlintrc.json` — Oxlint config with custom rules

@@ -35,6 +35,10 @@ export const serverEnv = createEnv({
       consts.features.email.enabled,
       z.string().min(1)
     ),
+    EMAIL_FROM: requireIfEnabled(
+      consts.features.email.enabled,
+      z.string().min(1)
+    ),
   },
   runtimeEnvStrict: {
     URL:
@@ -53,6 +57,7 @@ export const serverEnv = createEnv({
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     RESEND_API_KEY: process.env.RESEND_API_KEY,
+    EMAIL_FROM: process.env.EMAIL_FROM,
   },
   emptyStringAsUndefined: true,
   skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),

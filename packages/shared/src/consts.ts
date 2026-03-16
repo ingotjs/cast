@@ -30,6 +30,21 @@ export const consts = {
     email: {
       enabled: { dev: false, prod: false } satisfies FeatureFlag,
     },
+
+    /** Email & password authentication */
+    password: {
+      enabled: { dev: true, prod: true } satisfies FeatureFlag,
+    },
+
+    /** Passkey (WebAuthn) authentication */
+    passkey: {
+      enabled: { dev: true, prod: true } satisfies FeatureFlag,
+    },
+
+    /** Magic link authentication */
+    magicLink: {
+      enabled: { dev: false, prod: false } satisfies FeatureFlag,
+    },
   },
 
   auth: {

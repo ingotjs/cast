@@ -2,14 +2,19 @@
   "hooks": {
     "PostToolUse": [
       {
+        "matcher": "Write|Edit",
         "hooks": [
           {
-            "command": "bun fix",
-            "type": "command"
+            "type": "command",
+            "command": "bun ok"
           }
-        ],
-        "matcher": "Write|Edit"
+        ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "claude-md-management@claude-plugins-official": true,
+    "chrome-devtools-mcp@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true
   }
 }

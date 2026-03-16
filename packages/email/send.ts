@@ -35,5 +35,30 @@ export const createEmailSender = ({ apiKey, from }: EmailSenderConfig) => {
 
       return result;
     },
+
+    sendHtml: async ({
+      to,
+      subject,
+      html,
+    }: {
+      to: string | string[];
+      subject: string;
+      html: string;
+    }) => {
+      const result = await resend.emails.send({
+        from,
+        to: Array.isArray(to) ? to : [to],
+        subject,
+        html,
+      });
+
+      if (result.error) {
+        throw new Error(
+          `Failed to send email: ${JSON.stringify(result.error)}`
+        );
+      }
+
+      return result;
+    },
   };
 };
