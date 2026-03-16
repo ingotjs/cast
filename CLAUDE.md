@@ -133,13 +133,17 @@ Follow **Clean Code + SOLID + KISS + YAGNI**:
 **Problem**: Flex items have `min-width: auto` by default, preventing them from shrinking below their content size. This breaks `truncate` on text elements.
 
 **Pattern for truncating text in flex layouts**:
+
 ```tsx
-<div className="flex min-w-0">                    // Parent: Allow shrinking
-  <Icon className="flex-shrink-0" />              // Fixed elements: Prevent shrinking
-  <span className="min-w-0 flex-1 truncate">     // Text: Shrink + truncate
-    Long text here...
+<div className="flex min-w-0">
+  {" "}
+  // Parent: Allow shrinking
+  <Icon className="flex-shrink-0" /> // Fixed elements: Prevent shrinking
+  <span className="min-w-0 flex-1 truncate">
+    {" "}
+    // Text: Shrink + truncate Long text here...
   </span>
-  <Button className="flex-shrink-0" />           // Fixed elements: Prevent shrinking
+  <Button className="flex-shrink-0" /> // Fixed elements: Prevent shrinking
 </div>
 ```
 

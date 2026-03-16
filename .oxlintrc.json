@@ -8,6 +8,7 @@
     "./node_modules/ultracite/config/oxlint/vitest/.oxlintrc.json"
   ],
   "rules": {
-    "eslint/sort-keys": "off"
+    "eslint/sort-keys": "off",
+    "typescript/consistent-type-definitions": ["error", "type"]
   }
 }
