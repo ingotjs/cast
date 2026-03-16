@@ -22,5 +22,28 @@ const authMiddleware = base.middleware(async ({ context, next }) => {
   });
 });
 
+// Reference: https://better-auth.com/docs/plugins/admin
+const adminMiddleware = base.middleware(async ({ context, next }) => {
+  const sessionData = await auth.api.getSession({
+    headers: context.headers,
+  });
+
+  if (!sessionData?.session || !sessionData?.user) {
+    throw new ORPCError("UNAUTHORIZED");
+  }
+
+  if (sessionData.user.role !== "admin") {
+    throw new ORPCError("FORBIDDEN", { message: "Admin access required" });
+  }
+
+  return next({
+    context: {
+      session: sessionData.session,
+      user: sessionData.user,
+    },
+  });
+});
+
 export const publicProcedure = base;
 export const protectedProcedure = base.use(authMiddleware);
+export const adminProcedure = base.use(adminMiddleware);

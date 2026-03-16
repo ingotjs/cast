@@ -1,59 +1,38 @@
 {
-  "name": "web",
+  "name": "admin",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "bun --bun vite build",
-    "dev": "bun --bun vite dev --port 3000",
+    "dev": "bun --bun vite dev --port 3001",
     "preview": "bun --bun vite preview",
     "start": "bun run .output/server/index.mjs",
     "ts": "tsgo --noEmit"
   },
   "dependencies": {
-    "@better-auth/passkey": "1.5.5",
-    "@orpc/client": "1.13.7",
-    "@orpc/server": "1.13.7",
-    "@orpc/tanstack-query": "1.13.7",
     "@packages/server": "*",
-    "@packages/shared": "*",
     "@packages/ui": "*",
-    "@posthog/react": "1.8.2",
-    "@t3-oss/env-core": "0.13.10",
     "@tailwindcss/vite": "4.1.18",
-    "@tanstack/react-devtools": "latest",
-    "@tanstack/react-query": "5.90.21",
     "@tanstack/react-router": "latest",
-    "@tanstack/react-router-devtools": "latest",
-    "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/router-plugin": "1.132.0",
     "better-auth": "1.5.5",
     "lucide-react": "0.577.0",
     "nitro": "3.0.0",
-    "posthog-js": "1.360.2",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "tailwindcss": "4.1.18",
-    "zod": "4.3.6"
+    "tailwindcss": "4.1.18"
   },
   "devDependencies": {
-    "@inlang/paraglide-js": "2.15.0",
-    "@inlang/plugin-m-function-matcher": "2.2.2",
-    "@inlang/plugin-message-format": "4.4.0",
     "@tailwindcss/typography": "0.5.16",
-    "@tanstack/devtools-vite": "latest",
-    "@testing-library/dom": "10.4.1",
-    "@testing-library/react": "16.3.0",
     "@types/node": "22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "@vitejs/plugin-react": "5.1.4",
     "babel-plugin-react-compiler": "1.0.0",
-    "jsdom": "28.1.0",
     "typescript": "5.9.3",
     "vite": "7.3.1",
-    "vite-tsconfig-paths": "5.1.4",
-    "vitest": "3.0.5"
+    "vite-tsconfig-paths": "5.1.4"
   }
 }

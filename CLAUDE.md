@@ -11,7 +11,8 @@ Turborepo monorepo using bun as the package manager.
 ## Structure
 
 - `apps/web` — TanStack Start app (Vite + TanStack Router + Nitro, deployed on Railway)
-- `packages/server` — Server-side logic (`@packages/server`) — oRPC router, procedures, Drizzle + PGlite/PostgreSQL, Better Auth
+- `apps/admin` — Admin dashboard (TanStack Start, port 3001) — user management, analytics. Admin role required.
+- `packages/server` — Server-side logic (`@packages/server`) — oRPC router, procedures, Drizzle + PGlite/PostgreSQL, Better Auth (with admin + passkey plugins)
 - `packages/shared` — Shared utilities (`@packages/shared`) — error handling, common utils (client + server)
 - `packages/email` — Email templates (`@packages/email`) — react-email + Resend
 - `packages/ui` — Shared UI component library (`@packages/ui`) — shadcn v4 + Tailwind CSS + Base UI
@@ -83,6 +84,17 @@ Deployed on [Railway](https://railway.com/). Reference: https://tanstack.com/sta
 - `bun ok:ci` — Same as `bun ok` but without auto-fixes (for CI)
 
 ---
+
+## Testing
+
+- **Tests are REQUIRED.** MUST add tests when adding or modifying endpoints, server functions, utilities, or business logic.
+- Test files colocated with source: `{name}.test.ts` as siblings or in `__tests__/` directory.
+- Use `bun:test` for packages/server tests.
+- After completing any task, verify test coverage for changed files:
+  - Modified behavior — update affected tests
+  - New functionality — add tests for it
+  - Tests MUST catch regressions
+- NEVER ship backend changes without test coverage.
 
 ## Quality Verification
 

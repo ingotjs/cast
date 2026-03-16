@@ -27,7 +27,11 @@ describe("PGlite", () => {
         email_verified BOOLEAN NOT NULL DEFAULT FALSE,
         image TEXT,
         created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        role TEXT DEFAULT 'user',
+        banned BOOLEAN DEFAULT FALSE,
+        ban_reason TEXT,
+        ban_expires TIMESTAMP
       )
     `);
 

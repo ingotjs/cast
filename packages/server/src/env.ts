@@ -1,3 +1,4 @@
+import { consts, requireIfEnabled } from "@packages/shared/consts";
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
@@ -11,11 +12,6 @@ const isLocalDev = !process.env.DATABASE_URL;
  */
 export const serverEnv = createEnv({
   server: {
-    /**
-     * Project URL with protocol.
-     * Production: set URL or auto-derived from RAILWAY_PUBLIC_DOMAIN.
-     * Development: defaults to http://localhost:3000.
-     */
     URL: z.url(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -27,6 +23,18 @@ export const serverEnv = createEnv({
       ? z.string().min(32).optional()
       : z.string().min(32),
     BETTER_AUTH_URL: z.url().optional(),
+    GOOGLE_CLIENT_ID: requireIfEnabled(
+      consts.features.googleOAuth.enabled,
+      z.string().min(1)
+    ),
+    GOOGLE_CLIENT_SECRET: requireIfEnabled(
+      consts.features.googleOAuth.enabled,
+      z.string().min(1)
+    ),
+    RESEND_API_KEY: requireIfEnabled(
+      consts.features.email.enabled,
+      z.string().min(1)
+    ),
   },
   runtimeEnvStrict: {
     URL:
@@ -38,6 +46,9 @@ export const serverEnv = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+    GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
   },
   emptyStringAsUndefined: true,
   skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),

@@ -1,6 +1,7 @@
 import { passkey } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { admin } from "better-auth/plugins";
 
 import { db } from "./db";
 import { isDevelopment, serverEnv } from "./env";
@@ -21,7 +22,8 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
-  plugins: [passkey()],
+  // Reference: https://better-auth.com/docs/plugins/admin
+  plugins: [passkey(), admin()],
   // Reference: https://www.better-auth.com/docs/guides/optimizing-for-performance#caching
   session: {
     cookieCache: {

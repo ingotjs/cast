@@ -23,6 +23,7 @@
     "@better-auth/passkey": "1.5.5",
     "@electric-sql/pglite": "0.3.16",
     "@orpc/server": "1.13.7",
+    "@packages/shared": "*",
     "@simplewebauthn/server": "13.3.0",
     "@t3-oss/env-core": "0.13.10",
     "better-auth": "1.5.5",
