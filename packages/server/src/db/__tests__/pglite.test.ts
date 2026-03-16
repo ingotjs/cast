@@ -20,17 +20,19 @@ describe("PGlite", () => {
     const db = drizzle({ client, schema });
 
     await db.execute(sql`
-      CREATE TABLE IF NOT EXISTS users (
+      CREATE TABLE IF NOT EXISTS "users" (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         email TEXT NOT NULL UNIQUE,
-        "createdAt" TIMESTAMP NOT NULL DEFAULT NOW(),
-        "updatedAt" TIMESTAMP NOT NULL DEFAULT NOW()
+        email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+        image TEXT,
+        created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+        updated_at TIMESTAMP NOT NULL DEFAULT NOW()
       )
     `);
 
     await db.insert(schema.users).values({
-      id: "1",
+      id: "test-1",
       name: "Test User",
       email: "test@example.com",
     });

@@ -1,8 +1,7 @@
-import { os } from "@orpc/server";
-
+import { publicProcedure } from "./base";
 import { health } from "./procedures/health";
 
-export const router = os.router({
+export const router = publicProcedure.router({
   health,
 });
 

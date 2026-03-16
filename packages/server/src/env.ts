@@ -1,6 +1,8 @@
 import { createEnv } from "@t3-oss/env-core";
 import { z } from "zod";
 
+const isLocalDev = !process.env.DATABASE_URL;
+
 /**
  * Server-only env vars. Separated from the client env (apps/web/src/lib/env.ts)
  * so server env var names stay hidden from client bundles.
@@ -20,6 +22,11 @@ export const serverEnv = createEnv({
       .default("development"),
     /** Optional for local dev (uses PGlite), required for production */
     DATABASE_URL: z.url().optional(),
+    /** Optional for local dev (uses dev secret with warning), required for production */
+    BETTER_AUTH_SECRET: isLocalDev
+      ? z.string().min(32).optional()
+      : z.string().min(32),
+    BETTER_AUTH_URL: z.url().optional(),
   },
   runtimeEnvStrict: {
     URL:
@@ -29,6 +36,8 @@ export const serverEnv = createEnv({
         : "http://localhost:3000"),
     NODE_ENV: process.env.NODE_ENV,
     DATABASE_URL: process.env.DATABASE_URL,
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
+    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
   },
   emptyStringAsUndefined: true,
   skipValidation: Boolean(process.env.SKIP_ENV_VALIDATION),
