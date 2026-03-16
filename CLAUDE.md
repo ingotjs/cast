@@ -11,7 +11,9 @@ Turborepo monorepo using bun as the package manager.
 ## Structure
 
 - `apps/web` — TanStack Start app (Vite + TanStack Router + Nitro, deployed on Railway)
-- `packages/server` — Server-side logic (`@packages/server`) — oRPC router, procedures, db, auth
+- `packages/server` — Server-side logic (`@packages/server`) — oRPC router, procedures, Drizzle + PGlite/PostgreSQL, Better Auth
+- `packages/shared` — Shared utilities (`@packages/shared`) — error handling, common utils (client + server)
+- `packages/email` — Email templates (`@packages/email`) — react-email + Resend
 - `packages/ui` — Shared UI component library (`@packages/ui`) — shadcn v4 + Tailwind CSS + Base UI
 - `packages/typescript-config` — Shared TS config (`@packages/typescript-config`)
 
@@ -23,7 +25,7 @@ Reference: https://turborepo.dev/docs/core-concepts/internal-packages#just-in-ti
 
 ## Type Checking
 
-We use [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) for type checking via `@typescript/native-preview`. The regular `typescript` package is still installed for tooling compatibility (Next.js, etc).
+We use [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) for type checking via `@typescript/native-preview`. The regular `typescript` package is still installed for tooling compatibility.
 
 ## Linting & Formatting
 
@@ -74,9 +76,11 @@ Deployed on [Railway](https://railway.com/). Reference: https://tanstack.com/sta
 ## Commands
 
 - `bun install` — Install dependencies
-- `turbo dev` — Run all apps in dev mode
-- `turbo build` — Build all apps
-- `bun ok` — Run all checks (type check + lint). Use this to validate changes.
+- `bun dev` — Run all apps in dev mode
+- `bun dev:email` — Run email template preview (port 3002)
+- `bun build` — Build all apps
+- `bun ok` — Run all checks (type check + lint + tests). Use this to validate changes.
+- `bun ok:ci` — Same as `bun ok` but without auto-fixes (for CI)
 
 ---
 
@@ -108,6 +112,7 @@ Deployed on [Railway](https://railway.com/). Reference: https://tanstack.com/sta
 
 - **NEVER commit or push code unless explicitly instructed.** Do not commit as part of a workflow (e.g., after fixing PR comments, after completing a task, after `bun ok`). Show what changed and wait for explicit instruction.
 - When told to "commit", **MUST commit EVERYTHING** — all unstaged, staged, modified, and untracked files. Also push to the remote. **NEVER skip files or question what should be committed.** The instruction is absolute.
+- When told to "commit staged only", commit ONLY what's already staged. Use `git commit --no-verify` to skip the pre-commit hook (which auto-stages formatting changes). Then push.
 - Use a single chained command for committing: `git add -A && git commit -m "..." && git push`. No separate calls.
 - **When reviewing changes for a commit message**, use `git diff HEAD --stat` for a quick summary. If you need to see actual code changes, filter out noise: `git diff HEAD -- '*.ts' '*.tsx' '*.json' ':!bun.lock'`. NEVER read the full unfiltered `git diff` — it's huge (especially `bun.lock`) and wastes time with chunked reads.
 - When creating a new branch, MUST ALWAYS base it on `origin/main` (remote), not local `main`. Use `git fetch origin && git checkout -b <branch-name> origin/main`.
@@ -172,14 +177,13 @@ Follow **Clean Code + SOLID + KISS + YAGNI**:
 
 ```tsx
 <div className="flex min-w-0">
-  {" "}
-  // Parent: Allow shrinking
-  <Icon className="flex-shrink-0" /> // Fixed elements: Prevent shrinking
+  <Icon className="flex-shrink-0" /> {/* Fixed elements: Prevent shrinking */}
   <span className="min-w-0 flex-1 truncate">
     {" "}
-    // Text: Shrink + truncate Long text here...
+    {/* Text: Shrink + truncate */}
+    Long text here...
   </span>
-  <Button className="flex-shrink-0" /> // Fixed elements: Prevent shrinking
+  <Button className="flex-shrink-0" /> {/* Fixed elements: Prevent shrinking */}
 </div>
 ```
 
