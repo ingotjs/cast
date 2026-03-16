@@ -38,6 +38,29 @@ We use [Ultracite](https://github.com/haydenbleasel/ultracite), a zero-config pr
 
 The only files allowed to access `process.env` are the env definition files themselves (`**/env.ts`).
 
+## Internationalization (i18n)
+
+We use [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n. **All user-facing text (frontend and backend) MUST be internationalized** — never hardcode user-facing strings.
+
+**i18n projects (separate concerns):**
+
+- `apps/web/messages/` — frontend UI text
+- `packages/server/messages/` — backend text (error messages, API responses)
+- `packages/email/messages/` — email template text
+
+**Languages:** Currently only English (`en`). When adding a new string for English, you MUST also add translations for all other languages listed in the `locales` array of each `project.inlang/settings.json`.
+
+**Translations:** Do NOT use machine translation. Write translations manually with full project context — understand where and how the text is used before translating.
+
+**Usage:** Import from the generated `paraglide/messages` in each package.
+
+**Server-side i18n:** Paraglide's `overwriteGetLocale()` handles per-request locale on the server. Reference: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/strategy#server-side
+
+**Zod validation errors:**
+
+- **Frontend:** Zod's built-in locale system (`z.config()`) — set on app init based on user's locale.
+- **Backend:** Use paraglide message functions in Zod custom error messages (e.g., `z.string({ error: () => m.field_required() })`). These resolve per-request via paraglide's server runtime.
+
 ## Dependency Management
 
 - All dependency versions MUST be pinned (no `^` or `~`). Enforced by [syncpack](https://syncpack.dev/) and `bunfig.toml` (`install.exact = true`).

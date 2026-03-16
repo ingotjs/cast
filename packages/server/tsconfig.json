@@ -6,7 +6,8 @@
     "types": ["bun-types"],
     "paths": {
       "@packages/server/*": ["./src/*"]
-    }
+    },
+    "allowJs": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "**/__tests__"]

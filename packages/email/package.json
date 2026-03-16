@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "email dev --port 3002",
-    "build": "email build",
+    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && email build",
     "export": "email export"
   },
   "dependencies": {
@@ -20,6 +20,9 @@
     "resend": "6.9.3"
   },
   "devDependencies": {
+    "@inlang/paraglide-js": "2.15.0",
+    "@inlang/plugin-m-function-matcher": "2.2.2",
+    "@inlang/plugin-message-format": "4.4.0",
     "@packages/typescript-config": "*",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
