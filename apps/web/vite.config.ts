@@ -16,6 +16,9 @@ const phRegion = process.env.VITE_PUBLIC_POSTHOG_HOST?.includes("eu")
   : "us";
 
 const config = defineConfig({
+  build: {
+    sourcemap: true,
+  },
   plugins: [
     // Reference: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/strategy
     paraglideVitePlugin({

@@ -14,3 +14,22 @@ jobs:
       - uses: oven-sh/setup-bun@v2
       - run: bun install --frozen-lockfile
       - run: bun ok:ci
+
+  # Upload source maps to PostHog for error tracking stack traces
+  # Reference: https://posthog.com/docs/error-tracking/upload-source-maps/github-actions
+  sourcemaps:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: bun install --frozen-lockfile
+      - run: bun build
+      - name: Upload source maps to PostHog
+        uses: PostHog/upload-source-maps@v2
+        with:
+          directory: apps/web/.output
+          project-id: ${{ secrets.POSTHOG_PROJECT_ID }}
+          api-key: ${{ secrets.POSTHOG_CLI_API_KEY }}
+          # host: https://eu.posthog.com  # Uncomment for EU Cloud

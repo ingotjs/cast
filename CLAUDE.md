@@ -420,6 +420,8 @@ Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#
 
 GitHub Actions (`.github/workflows/ci.yml`) — runs `bun ok:ci` on push to `main` and PRs. Uses `oven-sh/setup-bun@v2`.
 
+On push to `main`, also uploads source maps to PostHog (`PostHog/upload-source-maps@v2`) for error tracking stack traces. Requires `POSTHOG_PROJECT_ID` and `POSTHOG_CLI_API_KEY` GitHub secrets. The `sourcemap: true` Vite build config generates the maps.
+
 ---
 
 ## Development Rules
