@@ -60,6 +60,13 @@ export const serverEnv = {
         ),
       }
     : undefined,
+
+  posthog: features.posthog
+    ? {
+        POSTHOG_API_KEY: parseEnv("VITE_PUBLIC_POSTHOG_KEY", z.string().min(1)),
+        POSTHOG_HOST: parseEnv("VITE_PUBLIC_POSTHOG_HOST", z.url()),
+      }
+    : undefined,
 };
 
 export const isDevelopment = serverEnv.NODE_ENV === "development";

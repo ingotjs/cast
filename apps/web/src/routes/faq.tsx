@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { seoMeta } from "../lib/seo";
 import * as m from "../paraglide/messages";
 
 const getFaqs = () => [
@@ -38,10 +39,10 @@ export const Route = createFileRoute("/faq")({
     const faqs = getFaqs();
     return {
       meta: [
-        { title: m.meta_faq_title() },
-        { name: "description", content: m.meta_faq_description() },
-        { property: "og:title", content: m.meta_faq_title() },
-        { property: "og:description", content: m.meta_faq_description() },
+        ...seoMeta({
+          title: m.meta_faq_title(),
+          description: m.meta_faq_description(),
+        }),
       ],
       scripts: [
         {

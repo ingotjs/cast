@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 
 import { ThemeToggle } from "./theme-toggle";
+import { UserMenu } from "./user-menu";
 
 export const Header = () => (
   <header className="sticky top-0 z-50 border-[var(--line)] border-b bg-[var(--header-bg)] px-4 backdrop-blur-lg">
@@ -46,6 +47,7 @@ export const Header = () => (
         </a>
 
         <ThemeToggle />
+        <UserMenu />
       </div>
 
       <div className="order-3 flex w-full flex-wrap items-center gap-x-4 gap-y-1 pb-1 font-semibold text-sm sm:order-2 sm:w-auto sm:flex-nowrap sm:pb-0">

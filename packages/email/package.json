@@ -10,7 +10,7 @@
   },
   "scripts": {
     "dev": "email dev --port 3002",
-    "buildd": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && email build",
+    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && email build",
     "export": "email export"
   },
   "dependencies": {

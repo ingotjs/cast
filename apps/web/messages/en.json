@@ -28,5 +28,8 @@
   "faq_a_deploy": "Railway is the recommended deployment target — connect your repo, set DATABASE_URL and BETTER_AUTH_SECRET environment variables, and deploy. Migrations run automatically. The deployment is pre-configured in railway.json.",
   "footer_faq": "FAQ",
   "footer_privacy": "Privacy",
-  "footer_terms": "Terms"
+  "footer_terms": "Terms",
+  "user_menu_account": "Account",
+  "user_menu_signout": "Sign out",
+  "user_menu_signin": "Sign in"
 }

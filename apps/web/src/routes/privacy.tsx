@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { seoMeta } from "../lib/seo";
 import * as m from "../paraglide/messages";
 
 const PrivacyPage = () => (
@@ -87,10 +88,10 @@ const PrivacyPage = () => (
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: m.meta_privacy_title() },
-      { name: "description", content: m.meta_privacy_description() },
-      { property: "og:title", content: m.meta_privacy_title() },
-      { property: "og:description", content: m.meta_privacy_description() },
+      ...seoMeta({
+        title: m.meta_privacy_title(),
+        description: m.meta_privacy_description(),
+      }),
     ],
   }),
   component: PrivacyPage,

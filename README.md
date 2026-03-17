@@ -26,7 +26,7 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 - **Logging** — [Pino](https://getpino.io/) structured logging with oRPC integration. JSON in prod (Railway-native), pretty-printed in dev. Every request gets a unique ID.
 - **SEO** — Dynamic favicon with dark mode support, OG image generation via `@vercel/og`, proper meta tags.
 - **Admin** — Role-guarded dashboard with user management (ban, roles, sessions).
-- **Analytics** — [PostHog](https://posthog.com/) integration (feature-flagged).
+- **Analytics & Error Tracking** — [PostHog](https://posthog.com/) on both client and server. Auto-captures uncaught exceptions, React rendering errors, and unhandled promise rejections. Feature-flagged.
 
 ### Deploy in 60 Seconds
 

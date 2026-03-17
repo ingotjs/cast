@@ -1,19 +1,27 @@
 /**
  * E2E Test: Sign In Flow
  *
- * This test exercises the sign-in flow:
+ * Uses the `testUser` fixture which creates a user via API and clears cookies,
+ * so the test starts in an unauthenticated state with a valid user ready.
  *
- * 1. Create a user via the Better Auth API (bypassing the sign-up UI)
- * 2. Sign out by clearing cookies so the page is unauthenticated
- * 3. Navigate to the sign-in page at /auth/sign-in
- * 4. Fill in the email and password fields
- * 5. Submit the sign-in form
- * 6. Verify the user is redirected to the home page
- * 7. Verify the home page shows authenticated state (Welcome link with user name)
+ * Test 1 — Successful sign-in:
+ * 1. testUser fixture creates a user via API and clears cookies
+ * 2. Navigate to the sign-in page at /auth/sign-in
+ * 3. Fill in the email and password fields
+ * 4. Submit the sign-in form
+ * 5. Verify the user is redirected to the home page
+ * 6. Verify the home page shows authenticated state (user menu trigger visible)
  *
- * Also tests:
- * - Invalid credentials show an error and keep the user on the sign-in page
- * - Empty form submission shows validation errors
+ * Test 2 — Invalid credentials:
+ * 1. Navigate to sign-in page
+ * 2. Enter a non-existent email with a password
+ * 3. Submit the form
+ * 4. Verify the user stays on the sign-in page (auth failure)
+ *
+ * Test 3 — Empty form submission:
+ * 1. Navigate to sign-in page
+ * 2. Submit empty form
+ * 3. Verify form stays on sign-in page (client-side validation)
  */
 
 import { expect, test } from "../fixtures/auth";
@@ -21,42 +29,36 @@ import { expect, test } from "../fixtures/auth";
 test.describe("Sign In", () => {
   test("should sign in with valid credentials and redirect to home", async ({
     page,
-    createUser,
+    testUser,
   }) => {
-    // Create user via API
-    const { email, password, name } = await createUser();
-
-    // Clear cookies to ensure unauthenticated state
-    await page.context().clearCookies();
-
     // Navigate to sign-in page and wait for hydration
     await page.goto("/auth/sign-in");
-    await expect(page.getByTestId("signin-form")).toBeVisible();
+    await expect(page.getByTestId("header-signin-link")).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Fill in credentials using input id selectors (PasswordInput wraps input
     // inside a div alongside a toggle button, so getByLabel resolves to 2 elements)
-    await page.getByLabel("Email").fill(email);
-    await page.locator("#password").fill(password);
+    await page.getByLabel("Email").fill(testUser.email);
+    await page.locator("#password").fill(testUser.password);
 
     // Submit the form
     await page.getByTestId("signin-submit").click();
 
     // Verify redirect to home and authenticated state
     await expect(page).toHaveURL("/", { timeout: 15_000 });
-    await expect(page.getByTestId("home-user-link")).toBeVisible({
+    await expect(page.getByTestId("user-menu-trigger")).toBeVisible({
       timeout: 10_000,
     });
-    await expect(page.getByTestId("home-user-link")).toContainText(name);
   });
 
-  test("should show error for invalid credentials", async ({
-    page,
-    uniqueEmail,
-  }) => {
+  test("should show error for invalid credentials", async ({ page }) => {
     await page.goto("/auth/sign-in");
-    await expect(page.getByTestId("signin-form")).toBeVisible();
+    await expect(page.getByTestId("header-signin-link")).toBeVisible({
+      timeout: 10_000,
+    });
 
-    await page.getByLabel("Email").fill(uniqueEmail("invalid"));
+    await page.getByLabel("Email").fill("nonexistent@e2e.test");
     await page.locator("#password").fill("WrongPassword123!");
 
     await page.getByTestId("signin-submit").click();

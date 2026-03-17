@@ -243,15 +243,16 @@ Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
 **Per-page SEO pattern (MUST follow for all new public routes):**
 
 ```tsx
+import { seoMeta } from "../lib/seo";
 import * as m from "../paraglide/messages";
 
 export const Route = createFileRoute("/my-page")({
   head: () => ({
     meta: [
-      { title: m.meta_mypage_title() },
-      { name: "description", content: m.meta_mypage_description() },
-      { property: "og:title", content: m.meta_mypage_title() },
-      { property: "og:description", content: m.meta_mypage_description() },
+      ...seoMeta({
+        title: m.meta_mypage_title(),
+        description: m.meta_mypage_description(),
+      }),
     ],
   }),
   component: MyPage,
@@ -280,9 +281,22 @@ export const Route = createFileRoute("/my-page")({
 | oRPC plugin          | `@orpc/experimental-pino` `LoggingHandlerPlugin` — auto-logs with request IDs |
 | Access in procedures | `getLogger(context)` from `@packages/server/orpc/base`                        |
 
-### Analytics
+### Analytics & Error Tracking
 
-[PostHog](https://posthog.com/) via `@posthog/react` — conditional on `clientEnv.posthog`. Admin analytics at `/admin/analytics`.
+[PostHog](https://posthog.com/) — feature-flagged (`posthog` flag), conditional on env vars. Admin analytics at `/admin/analytics`.
+
+| What            | Where                                                                                            |
+| :-------------- | :----------------------------------------------------------------------------------------------- |
+| Client provider | `apps/web/src/routes/__root.tsx` — `PostHogProvider` + `PostHogErrorBoundary`                    |
+| Client env      | `apps/web/src/lib/env.ts` — `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`                |
+| Server client   | `packages/server/src/posthog.ts` — `posthog-node` with `enableExceptionAutocapture`              |
+| Server env      | `packages/server/src/env.ts` — reads same `VITE_PUBLIC_POSTHOG_*` vars as `POSTHOG_API_KEY/HOST` |
+
+**Error tracking (both client + server):**
+
+- **Client:** `capture_exceptions: true` in PostHog options auto-captures uncaught errors + unhandled promise rejections. `PostHogErrorBoundary` catches React rendering errors.
+- **Server:** `posthog-node` with `enableExceptionAutocapture: true` catches uncaught exceptions + unhandled promise rejections at the process level.
+- **Manual capture:** Client: `posthog.captureException(error)`. Server: `posthog?.captureException(error, distinctId)`.
 
 ### Internationalization (i18n)
 
@@ -405,12 +419,18 @@ const result = await client.admin.users.list({ limit: 10 });
 - Run: `cd apps/e2e && bunx playwright test` (dev server must be running or auto-starts)
 - **MUST use `data-testid` selectors** for buttons/forms — NEVER text-based selectors (i18n breaks them)
 - **MUST use `page.locator('#id')` for password fields** — `getByLabel` matches both input + toggle button
-- **Only ONE test per feature goes through the full UI** — others use `createUser` fixture (API-based) for speed
-- **Each test MUST use a unique email** via `uniqueEmail('prefix')` fixture
+- **NEVER call API endpoints directly in E2E tests** for user actions — only use the API for test setup (`testUser` fixture). All user actions (sign in, sign out, change password, delete account) MUST go through the UI like a real user would.
 - **Each test MUST have extensive JSDoc** at the file top explaining step-by-step what the test does
 - **MUST wait for `/account` page to settle** before interacting (session data loading causes re-renders)
 - Email verification: captured to `.email-captures/` as JSON, read via `getEmails` fixture
 - Auth guards use isomorphic `getSession()` from `apps/web/src/lib/auth-client.ts` (works during SSR + CSR)
+
+**Test fixtures** (`apps/e2e/tests/fixtures/auth.ts`):
+
+- `testUser` — auto-fixture that creates a unique user via API and clears cookies. Returns `{ email, password, name }`. Test starts unauthenticated.
+- `authenticatedPage` — auto-fixture that creates a user via API, then signs in through the UI. Returns `{ email, password, name }`. Test starts authenticated on the home page.
+- `getEmails(email)` — reads captured emails from `.email-captures/` for a given recipient.
+- `clearEmails()` — clears all captured emails.
 
 ### General Rules
 
@@ -524,6 +544,7 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `packages/server/src/env.ts`             | Server env vars + feature-gated groups                             |
 | `packages/server/src/auth.ts`            | Better Auth config + all email triggers                            |
 | `packages/server/src/logger.ts`          | Pino logger instance                                               |
+| `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                 |
 | `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                |
 | `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                           |
 | `packages/server/src/db/utils.ts`        | `uuidPrimaryKey` helper                                            |
@@ -533,6 +554,7 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                        |
 | `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                           |
 | `apps/web/src/lib/schemas.ts`            | Shared Zod schemas                                                 |
+| `apps/web/src/lib/seo.ts`                | `seoMeta()` — generates OG + Twitter + meta tags from title/desc   |
 | `apps/web/src/lib/zod-form-resolver.ts`  | Zod v4 resolver for react-hook-form                                |
 | `apps/web/src/routes/api/icon.tsx`       | Dynamic favicon (dark mode)                                        |
 | `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                   |

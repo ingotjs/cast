@@ -1,6 +1,7 @@
 import { consts } from "@packages/shared/consts";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { seoMeta } from "../lib/seo";
 import * as m from "../paraglide/messages";
 
 const TermsPage = () => (
@@ -73,10 +74,10 @@ const TermsPage = () => (
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: m.meta_terms_title() },
-      { name: "description", content: m.meta_terms_description() },
-      { property: "og:title", content: m.meta_terms_title() },
-      { property: "og:description", content: m.meta_terms_description() },
+      ...seoMeta({
+        title: m.meta_terms_title(),
+        description: m.meta_terms_description(),
+      }),
     ],
   }),
   component: TermsPage,

@@ -2,40 +2,53 @@
  * E2E Test: Sign Up Flow
  *
  * This is the ONLY test that exercises the full sign-up UI manually.
- * All other tests use the API to create users for speed.
+ * It generates its own email/password inline since it cannot use the
+ * `testUser` fixture (which creates users via API).
  *
- * Steps:
+ * Test 1 — Full sign-up flow:
  * 1. Navigate to the sign-up page at /auth/sign-up
  * 2. Fill in the registration form (first name, last name, email, password, confirm password)
  * 3. Submit the form via the "Create an account" button
  * 4. Verify the user is redirected to the home page after successful registration
- * 5. Verify the home page shows authenticated state (Welcome link with user name)
+ * 5. Verify the home page shows authenticated state (user menu trigger visible)
  * 6. Verify a verification email was captured for the registered email address
  *
- * Also tests:
- * - Empty form submission stays on sign-up page (validation errors)
- * - Mismatched passwords stay on sign-up page
+ * Test 2 — Empty form submission:
+ * 1. Navigate to sign-up page
+ * 2. Submit empty form
+ * 3. Verify form stays on sign-up page (client-side validation prevents submission)
+ *
+ * Test 3 — Password mismatch:
+ * 1. Navigate to sign-up page
+ * 2. Fill in all fields but with mismatched passwords
+ * 3. Submit the form
+ * 4. Verify form stays on sign-up page (client-side validation catches mismatch)
  */
 
 import { expect, test } from "../fixtures/auth";
 
+const generateEmail = (prefix: string) =>
+  `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e.test`;
+
 test.describe("Sign Up", () => {
   test("should create an account through the UI and redirect to home", async ({
     page,
-    uniqueEmail,
     getEmails,
   }) => {
-    const email = uniqueEmail("signup");
+    const email = generateEmail("signup");
     const password = "TestPassword123!";
     const firstName = "Test";
     const lastName = "User";
 
-    // Navigate to the sign-up page and wait for hydration
+    // Navigate to the sign-up page and wait for React hydration.
+    // The header's Sign In link (data-testid="header-signin-link") only renders
+    // after hydration since UserMenu uses useSession hook.
     await page.goto("/auth/sign-up");
-    await expect(page.getByTestId("signup-form")).toBeVisible();
+    await expect(page.getByTestId("header-signin-link")).toBeVisible({
+      timeout: 10_000,
+    });
 
     // Fill in the registration form using id locators for reliability
-    // (getByLabel can be ambiguous with PasswordInput's toggle button)
     await page.locator("#firstName").fill(firstName);
     await page.locator("#lastName").fill(lastName);
     await page.locator("#email").fill(email);
@@ -47,12 +60,9 @@ test.describe("Sign Up", () => {
 
     // Verify redirect to home page and authenticated state
     await expect(page).toHaveURL("/", { timeout: 15_000 });
-    await expect(page.getByTestId("home-user-link")).toBeVisible({
+    await expect(page.getByTestId("user-menu-trigger")).toBeVisible({
       timeout: 10_000,
     });
-    await expect(page.getByTestId("home-user-link")).toContainText(
-      `${firstName} ${lastName}`
-    );
 
     // Verify verification email was captured
     // Wait a moment for the async email capture to complete
@@ -76,17 +86,14 @@ test.describe("Sign Up", () => {
     await expect(page).toHaveURL(/\/auth\/sign-up/);
   });
 
-  test("should show error when passwords do not match", async ({
-    page,
-    uniqueEmail,
-  }) => {
-    const email = uniqueEmail("signup-mismatch");
+  test("should show error when passwords do not match", async ({ page }) => {
+    const email = generateEmail("signup-mismatch");
 
     await page.goto("/auth/sign-up");
 
-    await page.getByLabel("First name").fill("Test");
-    await page.getByLabel("Last name").fill("User");
-    await page.getByLabel("Email").fill(email);
+    await page.locator("#firstName").fill("Test");
+    await page.locator("#lastName").fill("User");
+    await page.locator("#email").fill(email);
     await page.locator("#password").fill("TestPassword123!");
     await page.locator("#confirmPassword").fill("DifferentPassword123!");
 

@@ -1,6 +1,6 @@
 import { consts } from "@packages/shared/consts";
 import { Toaster } from "@packages/ui/components/sonner";
-import { PostHogProvider } from "@posthog/react";
+import { PostHogErrorBoundary, PostHogProvider } from "@posthog/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
@@ -47,9 +47,12 @@ const RootDocument = ({ children }: { children: React.ReactNode }) => (
             options={{
               api_host: clientEnv.posthog.VITE_PUBLIC_POSTHOG_HOST,
               defaults: "2026-01-30",
+              capture_exceptions: true,
             }}
           >
-            <AppContent>{children}</AppContent>
+            <PostHogErrorBoundary>
+              <AppContent>{children}</AppContent>
+            </PostHogErrorBoundary>
           </PostHogProvider>
         ) : (
           <AppContent>{children}</AppContent>
@@ -72,7 +75,11 @@ export const Route = createRootRoute({
       { property: "og:description", content: m.og_description() },
       { property: "og:image", content: "/api/og" },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: consts.siteUrl },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: m.og_title() },
+      { name: "twitter:description", content: m.og_description() },
+      { name: "twitter:image", content: "/api/og" },
     ],
     links: [
       {

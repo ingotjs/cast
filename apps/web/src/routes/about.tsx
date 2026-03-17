@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { seoMeta } from "../lib/seo";
 import * as m from "../paraglide/messages";
 
 const About = () => (
@@ -21,10 +22,10 @@ const About = () => (
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: m.meta_about_title() },
-      { name: "description", content: m.meta_about_description() },
-      { property: "og:title", content: m.meta_about_title() },
-      { property: "og:description", content: m.meta_about_description() },
+      ...seoMeta({
+        title: m.meta_about_title(),
+        description: m.meta_about_description(),
+      }),
     ],
   }),
   component: About,

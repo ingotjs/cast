@@ -1,46 +1,36 @@
 /**
  * E2E Test: Change Password Flow
  *
- * Steps:
- * 1. Create a user via the Better Auth API
- * 2. Sign in through the UI (API sign-in cookies don't propagate to browser navigation)
- * 3. Navigate to the account settings page at /account
+ * Uses the `authenticatedPage` fixture which creates a user via API,
+ * signs in through the UI, and lands on the home page authenticated.
+ *
+ * Test 1 — Successful password change:
+ * 1. authenticatedPage fixture creates user and signs in through the UI
+ * 2. Navigate to the account settings page at /account
+ * 3. Wait for the page to settle (session data loading causes re-renders)
  * 4. Fill in the change-password form (current password, new password, confirm new password)
  * 5. Submit the form and verify success toast appears
  * 6. Verify a password-changed email was captured for the user
- * 7. Clear cookies, then verify the user can sign in with the new password via UI
+ * 7. Sign out via user menu dropdown
+ * 8. Sign in with the new password through the UI to verify it works
  *
- * Also tests:
- * - Incorrect current password is rejected (form stays, no success toast)
+ * Test 2 — Incorrect current password:
+ * 1. authenticatedPage fixture creates user and signs in through the UI
+ * 2. Navigate to /account
+ * 3. Enter wrong current password with valid new password
+ * 4. Submit the form
+ * 5. Verify no success toast appears (the change is rejected)
  */
 
-import type { Page } from "@playwright/test";
-
 import { expect, test } from "../fixtures/auth";
-
-/** Sign in through the UI — more reliable than API-based cookie setting */
-const signInViaUI = async (page: Page, email: string, password: string) => {
-  await page.goto("/auth/sign-in");
-  await expect(page.getByTestId("signin-form")).toBeVisible();
-  await page.getByLabel("Email").fill(email);
-  await page.locator("#password").fill(password);
-  await page.getByTestId("signin-submit").click();
-  await expect(page).toHaveURL("/", { timeout: 15_000 });
-};
 
 test.describe("Change Password", () => {
   test("should change password and allow sign-in with new password", async ({
     page,
-    createUser,
+    authenticatedPage,
     getEmails,
   }) => {
-    const oldPassword = "TestPassword123!";
     const newPassword = "NewPassword456!";
-
-    // Create user with known password, then sign in via UI
-    const { email } = await createUser({ password: oldPassword });
-    await page.context().clearCookies();
-    await signInViaUI(page, email, oldPassword);
 
     // Navigate to account settings
     await page.goto("/account");
@@ -56,7 +46,7 @@ test.describe("Change Password", () => {
     });
 
     // Fill in the change-password form
-    await page.locator("#currentPassword").fill(oldPassword);
+    await page.locator("#currentPassword").fill(authenticatedPage.password);
     await page.locator("#newPassword").fill(newPassword);
     await page.locator("#confirmPassword").fill(newPassword);
 
@@ -70,7 +60,7 @@ test.describe("Change Password", () => {
 
     // Verify password-changed email was captured
     await page.waitForTimeout(500);
-    const emails = getEmails(email);
+    const emails = getEmails(authenticatedPage.email);
     const passwordChangedEmail = emails.find(
       (e) =>
         e.subject.toLowerCase().includes("password") &&
@@ -78,19 +68,26 @@ test.describe("Change Password", () => {
     );
     expect(passwordChangedEmail).toBeTruthy();
 
-    // Clear cookies and verify sign-in with new password works
-    await page.context().clearCookies();
-    await signInViaUI(page, email, newPassword);
+    // Sign out via user menu
+    await page.getByTestId("user-menu-trigger").click();
+    await page.getByTestId("user-menu-signout").click();
+    await expect(page.getByTestId("header-signin-link")).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // Sign in with new password through the UI
+    await page.goto("/auth/sign-in");
+    await expect(page.getByTestId("signin-form")).toBeVisible();
+    await page.getByLabel("Email").fill(authenticatedPage.email);
+    await page.locator("#password").fill(newPassword);
+    await page.getByTestId("signin-submit").click();
+    await expect(page).toHaveURL("/", { timeout: 15_000 });
   });
 
   test("should reject incorrect current password", async ({
     page,
-    createUser,
+    authenticatedPage: _setup,
   }) => {
-    const { email, password } = await createUser();
-    await page.context().clearCookies();
-    await signInViaUI(page, email, password);
-
     await page.goto("/account");
     await expect(page.getByTestId("change-password-form")).toBeVisible({
       timeout: 10_000,
@@ -114,5 +111,7 @@ test.describe("Change Password", () => {
     ).not.toBeVisible({
       timeout: 5000,
     });
+
+    // _setup activates the authenticatedPage fixture (unused directly)
   });
 });
