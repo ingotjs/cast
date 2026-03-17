@@ -61,8 +61,11 @@ export const serverEnv = {
 
   posthog: env.VITE_PUBLIC_POSTHOG_KEY
     ? {
-        POSTHOG_API_KEY: parseEnv("VITE_PUBLIC_POSTHOG_KEY", z.string().min(1)),
-        POSTHOG_HOST: parseEnv("VITE_PUBLIC_POSTHOG_HOST", z.url()),
+        VITE_PUBLIC_POSTHOG_KEY: parseEnv(
+          "VITE_PUBLIC_POSTHOG_KEY",
+          z.string().min(1)
+        ),
+        VITE_PUBLIC_POSTHOG_HOST: parseEnv("VITE_PUBLIC_POSTHOG_HOST", z.url()),
       }
     : undefined,
 };

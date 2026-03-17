@@ -46,7 +46,8 @@ const RootDocument = ({ children }: { children: React.ReactNode }) => (
           <PostHogProvider
             apiKey={clientEnv.posthog.VITE_PUBLIC_POSTHOG_KEY}
             options={{
-              api_host: clientEnv.posthog.VITE_PUBLIC_POSTHOG_HOST,
+              api_host: "/api/ph",
+              ui_host: clientEnv.posthog.VITE_PUBLIC_POSTHOG_HOST,
               defaults: "2026-01-30",
               capture_exceptions: true,
             }}

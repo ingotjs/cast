@@ -8,6 +8,13 @@ import type { PluginOption } from "vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+// PostHog reverse proxy — derive region (us/eu) from VITE_PUBLIC_POSTHOG_HOST
+// Reference: https://posthog.com/docs/advanced/proxy
+// oxlint-disable-next-line node/no-process-env -- vite config reads env at build time
+const phRegion = process.env.VITE_PUBLIC_POSTHOG_HOST?.includes("eu")
+  ? "eu"
+  : "us";
+
 const config = defineConfig({
   plugins: [
     // Reference: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/strategy
@@ -20,7 +27,20 @@ const config = defineConfig({
     tsconfigPaths({ projects: ["./tsconfig.json"] }),
     tailwindcss(),
     tanstackStart(),
-    nitro({ config: { preset: "bun" } }),
+    // Reference: https://nitro.build/docs/routing#route-rules
+    nitro({
+      config: {
+        preset: "bun",
+        routeRules: {
+          "/api/ph/static/**": {
+            proxy: `https://${phRegion}-assets.i.posthog.com/static/**`,
+          },
+          "/api/ph/**": {
+            proxy: `https://${phRegion}.i.posthog.com/**`,
+          },
+        },
+      },
+    }),
     viteReact({
       babel: {
         plugins: [["babel-plugin-react-compiler"]],

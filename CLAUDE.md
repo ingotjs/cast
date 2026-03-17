@@ -277,25 +277,32 @@ export const Route = createFileRoute("/my-page")({
 
 ### Logging
 
-[Pino](https://getpino.io/) structured logging — JSON in prod (Railway-native), pretty-printed in dev.
+[Pino](https://getpino.io/) for local/stdout + [OpenTelemetry](https://opentelemetry.io/) export to [PostHog Logs](https://posthog.com/docs/logs) when PostHog is enabled.
 
 | What                 | Where                                                                         |
 | :------------------- | :---------------------------------------------------------------------------- |
 | Logger instance      | `packages/server/src/logger.ts`                                               |
 | oRPC plugin          | `@orpc/experimental-pino` `LoggingHandlerPlugin` — auto-logs with request IDs |
 | Access in procedures | `getLogger(context)` from `@packages/server/orpc/base`                        |
+| OTel → PostHog       | `packages/server/src/otel.ts` — `NodeSDK` + `OTLPLogExporter` to PostHog      |
+| OTel logger          | `import { otelLogger } from "@packages/server/otel"` — emit logs to PostHog   |
+
+Pino handles local dev (pretty-printed) and stdout (Railway). OpenTelemetry SDK exports server logs to PostHog Logs via OTLP — view them alongside analytics and session replays in one dashboard.
 
 ### Analytics, Error Tracking & Event Capture
 
-[PostHog](https://posthog.com/) — full-stack analytics, error tracking, and event capture. Feature-flagged (`posthog` flag). Admin analytics at `/admin/analytics`.
+[PostHog](https://posthog.com/) — full-stack analytics, error tracking, and event capture. Enabled by env var presence. Admin analytics at `/admin/analytics`.
 
-| What                | Where                                                                                            |
-| :------------------ | :----------------------------------------------------------------------------------------------- |
-| Client provider     | `apps/web/src/routes/__root.tsx` — `PostHogProvider` + `PostHogErrorBoundary`                    |
-| Client env          | `apps/web/src/lib/env.ts` — `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`                |
-| Server client       | `packages/server/src/posthog.ts` — `posthog-node` with `enableExceptionAutocapture`              |
-| Server env          | `packages/server/src/env.ts` — reads same `VITE_PUBLIC_POSTHOG_*` vars as `POSTHOG_API_KEY/HOST` |
-| Event tracking plan | `.posthog-events.json` — all tracked events with descriptions and source files                   |
+| What                | Where                                                                                     |
+| :------------------ | :---------------------------------------------------------------------------------------- |
+| Client provider     | `apps/web/src/routes/__root.tsx` — `PostHogProvider` + `PostHogErrorBoundary`             |
+| Client env          | `apps/web/src/lib/env.ts` — `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`         |
+| Server client       | `packages/server/src/posthog.ts` — `posthog-node` with `enableExceptionAutocapture`       |
+| Server env          | `packages/server/src/env.ts` — same `VITE_PUBLIC_POSTHOG_*` env vars as client            |
+| Reverse proxy       | `apps/web/vite.config.ts` — Nitro `routeRules` proxies `/api/ph/**` to `us.i.posthog.com` |
+| Event tracking plan | `.posthog-events.json` — all tracked events with descriptions and source files            |
+
+**Reverse proxy** ([reference](https://posthog.com/docs/advanced/proxy)): All client-side PostHog traffic flows through `/api/ph/` on your own domain via Nitro `routeRules`. This avoids ad blockers. Static assets route to `us-assets.i.posthog.com`, API calls to `us.i.posthog.com`. Client uses `api_host: "/api/ph"` + `ui_host` for toolbar/session replay. E2E tested in `apps/e2e/tests/proxy/`.
 
 **Error tracking (both client + server):**
 
@@ -443,7 +450,8 @@ const result = await client.admin.users.list({ limit: 10 });
 
 [Playwright](https://playwright.dev/) E2E tests in `apps/e2e/`. See `apps/e2e/FEATURES.md` for full coverage table. See `.agents/skills/e2e-testing/SKILL.md` for detailed guidance.
 
-- Run: `cd apps/e2e && bunx playwright test` (dev server must be running or auto-starts)
+- Run: `bun e2e` from project root, or `cd apps/e2e && bunx playwright test`
+- **Dev server auto-starts** — Playwright's `webServer` config in `playwright.config.ts` runs `bun dev` automatically and waits for `localhost:3000`. Reuses an existing server if already running.
 - **MUST use `data-testid` selectors** for buttons/forms — NEVER text-based selectors (i18n breaks them)
 - **MUST use `page.locator('#id')` for password fields** — `getByLabel` matches both input + toggle button
 - **NEVER call API endpoints directly in E2E tests** for user actions — only use the API for test setup (`testUser` fixture). All user actions (sign in, sign out, change password, delete account) MUST go through the UI like a real user would.
@@ -570,6 +578,7 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `packages/server/src/env.ts`             | Server env vars + feature-gated groups                                               |
 | `packages/server/src/auth.ts`            | Better Auth config + all email triggers                                              |
 | `packages/server/src/logger.ts`          | Pino logger instance                                                                 |
+| `packages/server/src/otel.ts`            | OpenTelemetry SDK — exports server logs to PostHog Logs                              |
 | `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                                   |
 | `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                                  |
 | `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                                             |

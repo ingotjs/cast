@@ -104,22 +104,23 @@ Services activate when their env vars are set. Leave them out and the service is
 
 ## Observability
 
-OmegaStart ships with a complete observability stack — logging, analytics, error tracking, and event capture — so you know exactly what's happening in your app from day one.
+OmegaStart ships with a complete observability stack — all centralized in [PostHog](https://posthog.com/). Analytics, error tracking, event capture, and server logs in one dashboard. Just set `VITE_PUBLIC_POSTHOG_KEY` and `VITE_PUBLIC_POSTHOG_HOST`.
 
-### Structured Logging — [Pino](https://getpino.io/)
+### Structured Logging — [Pino](https://getpino.io/) + [PostHog Logs](https://posthog.com/docs/logs)
 
-- JSON output in production (Railway-native, works with any log aggregator), pretty-printed in dev
+- [Pino](https://getpino.io/) for local dev (pretty-printed) and stdout (Railway/any log aggregator)
+- [OpenTelemetry](https://opentelemetry.io/) exports server logs to PostHog Logs when enabled — view them alongside analytics and session replays
 - oRPC integration via [`@orpc/experimental-pino`](https://orpc.dev/docs/integrations/pino) — every API request gets a unique ID and automatic request/response logging
-- Access via `getLogger(context)` in any oRPC procedure
 
 ### Analytics & Event Capture — [PostHog](https://posthog.com/)
 
-Feature-flagged (`posthog`). One flag, one API key — works on both client and server.
+One API key — works on both client and server. Enabled by env var presence.
 
 - **Product analytics** — Page views, user sessions, feature usage (client via `@posthog/react`)
 - **User identification** — `posthog.identify()` on sign-in/sign-up links events to users
-- **Custom events** — 11 tracked events across auth and account flows (sign-up, sign-in, sign-out, password changes, passkey management, account deletion). Full tracking plan in `.posthog-events.json`
+- **Custom events** — 11 tracked events across auth and account flows. Full tracking plan in `.posthog-events.json`
 - **Server-side events** — `user_created` and `user_deleted` fired from Better Auth database hooks via `posthog-node`
+- **Reverse proxy** — Client traffic routes through `/api/ph/` on your domain via [Nitro route rules](https://nitro.build/docs/routing#route-rules), avoiding ad blockers. Auto-detects US/EU region from `VITE_PUBLIC_POSTHOG_HOST`.
 
 ### Error Tracking — [PostHog](https://posthog.com/docs/error-tracking)
 

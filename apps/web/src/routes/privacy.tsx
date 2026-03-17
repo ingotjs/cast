@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import { clientEnv } from "../lib/env";
 import { seoMeta } from "../lib/seo";
 import { m } from "../paraglide/messages";
 
@@ -10,8 +11,8 @@ const PrivacyPage = () => (
       Last updated: March 16, 2026
     </p>
 
-    <div className="prose prose-neutral dark:prose-invert mt-8 max-w-none">
-      <h2>1. Information We Collect</h2>
+    <div className="prose prose-neutral dark:prose-invert mt-8 max-w-none [counter-reset:section] [&>h2]:before:[counter-increment:section] [&>h2]:before:content-[counter(section)_'._']">
+      <h2>Information We Collect</h2>
       <p>We collect information you provide directly to us, including:</p>
       <ul>
         <li>Name and email address when you create an account</li>
@@ -19,7 +20,7 @@ const PrivacyPage = () => (
         <li>Device and browser information</li>
       </ul>
 
-      <h2>2. How We Use Your Information</h2>
+      <h2>How We Use Your Information</h2>
       <p>We use the information we collect to:</p>
       <ul>
         <li>Provide, maintain, and improve the service</li>
@@ -30,7 +31,7 @@ const PrivacyPage = () => (
         </li>
       </ul>
 
-      <h2>3. Information Sharing</h2>
+      <h2>Information Sharing</h2>
       <p>
         We do not sell your personal information. We may share your information
         only in the following circumstances:
@@ -41,21 +42,21 @@ const PrivacyPage = () => (
         <li>To protect our rights, privacy, safety, or property</li>
       </ul>
 
-      <h2>4. Data Security</h2>
+      <h2>Data Security</h2>
       <p>
         We implement appropriate technical and organizational measures to
         protect your personal information against unauthorized access,
         alteration, disclosure, or destruction.
       </p>
 
-      <h2>5. Data Retention</h2>
+      <h2>Data Retention</h2>
       <p>
         We retain your personal information for as long as your account is
         active or as needed to provide services. You can request deletion of
         your account and associated data at any time.
       </p>
 
-      <h2>6. Your Rights</h2>
+      <h2>Your Rights</h2>
       <p>You have the right to:</p>
       <ul>
         <li>Access your personal information</li>
@@ -64,19 +65,40 @@ const PrivacyPage = () => (
         <li>Export your data</li>
       </ul>
 
-      <h2>7. Cookies</h2>
+      {clientEnv.posthog && (
+        <>
+          <h2>Analytics</h2>
+          <p>
+            We use PostHog for product analytics, error tracking, and to
+            understand how you interact with the service. PostHog may collect
+            usage data, device information, and performance metrics. You can opt
+            out of tracking by using a browser ad blocker.
+          </p>
+
+          <h2>International Data Transfers</h2>
+          <p>
+            Your information may be transferred to and processed in the United
+            States, where our analytics provider (PostHog) operates. These
+            transfers are protected by Standard Contractual Clauses (SCCs)
+            approved by the European Commission, ensuring your data receives an
+            adequate level of protection regardless of where it is processed.
+          </p>
+        </>
+      )}
+
+      <h2>Cookies</h2>
       <p>
         We use essential cookies to maintain your session and preferences. We
         may also use analytics cookies to understand how you use the service.
       </p>
 
-      <h2>8. Changes to This Policy</h2>
+      <h2>Changes to This Policy</h2>
       <p>
         We may update this privacy policy from time to time. We will notify you
         of significant changes by posting a notice on the service.
       </p>
 
-      <h2>9. Contact</h2>
+      <h2>Contact</h2>
       <p>
         If you have questions about this privacy policy, please contact us
         through the application.
