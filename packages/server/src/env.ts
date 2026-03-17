@@ -1,4 +1,3 @@
-import { createFeatures } from "@packages/shared/features";
 import { z } from "zod";
 
 // oxlint-disable-next-line node/no-process-env -- env module reads raw process.env
@@ -17,13 +16,12 @@ const parseEnv = <T>(key: string, schema: z.ZodType<T>): T => {
   return result.data;
 };
 
-/** Feature flags — each is `{} | undefined` */
-export const features = createFeatures();
-
 /**
  * Server environment variables.
- * Feature-gated envs are nested under their feature name.
- * If the feature is enabled, its envs are validated with Zod (throws if invalid).
+ *
+ * Service env groups are enabled by env var presence:
+ * - Set the primary env var → group is validated and active
+ * - Leave it unset → group is `undefined` (service disabled)
  */
 export const serverEnv = {
   URL:
@@ -43,15 +41,15 @@ export const serverEnv = {
       : parseEnv("BETTER_AUTH_SECRET", z.string().min(32))),
   BETTER_AUTH_URL: env.BETTER_AUTH_URL,
 
-  // Feature-gated env groups
-  email: features.email
+  // Service env groups — enabled by env var presence
+  email: env.RESEND_API_KEY
     ? {
         RESEND_API_KEY: parseEnv("RESEND_API_KEY", z.string().min(1)),
         EMAIL_FROM: parseEnv("EMAIL_FROM", z.string().email()),
       }
     : undefined,
 
-  googleOAuth: features.googleOAuth
+  googleOAuth: env.GOOGLE_CLIENT_ID
     ? {
         GOOGLE_CLIENT_ID: parseEnv("GOOGLE_CLIENT_ID", z.string().min(1)),
         GOOGLE_CLIENT_SECRET: parseEnv(
@@ -61,7 +59,7 @@ export const serverEnv = {
       }
     : undefined,
 
-  posthog: features.posthog
+  posthog: env.VITE_PUBLIC_POSTHOG_KEY
     ? {
         POSTHOG_API_KEY: parseEnv("VITE_PUBLIC_POSTHOG_KEY", z.string().min(1)),
         POSTHOG_HOST: parseEnv("VITE_PUBLIC_POSTHOG_HOST", z.url()),

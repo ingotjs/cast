@@ -22,7 +22,7 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 - **Database** — [Drizzle ORM](https://orm.drizzle.team/) with PGlite (dev) / PostgreSQL (prod) auto-switching. Migrations, studio, the works.
 - **Email** — [React Email](https://react.email/) templates + [Resend](https://resend.com/) delivery. Email verification, password reset, password changed notification, account deleted confirmation, and welcome emails — all i18n-ready and sent in the user's preferred locale.
 - **i18n** — [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) across the entire stack — frontend, backend, emails. Type-safe, locale-aware, zero runtime cost.
-- **Feature Flags** — `true | undefined` per feature. Enable a flag, its env vars are validated at startup. Disable it, the whole feature tree-shakes away.
+- **Service toggles** — External services (PostHog, Resend, Google OAuth) activate by env var presence. No code changes — set the env vars and the feature turns on.
 - **SEO & LLMO** — Per-page meta tags (OG + Twitter), JSON-LD structured data, `sitemap.xml`, `llms.txt`, `robots.txt`, dynamic favicon + OG image via `@vercel/og`. FAQ page with FAQPage schema for AI discoverability.
 - **Admin** — Role-guarded dashboard with user management (ban, roles, sessions).
 - **Observability** — Full-stack observability out of the box. See [Observability](#observability) for details.
@@ -44,18 +44,21 @@ GitHub Actions runs `bun ok:ci` on every push and PR — type checking, linting,
 ## Quick Start
 
 ```sh
+cp .env.example .env  # Create your env file, fill in values for enabled features
 bun install
 bun dev
 ```
 
 `bun dev` auto-installs deps and starts all apps. PGlite creates a local database with migrations applied automatically. Open `http://localhost:3000`.
 
+> **Note:** The `.env` file is only needed for feature-flagged services (PostHog, Resend, Google OAuth). The app runs without it — disabled features are simply skipped.
+
 ## Architecture
 
 ```
 apps/web          → TanStack Start (Vite + Router + Nitro)
 packages/server   → oRPC + Drizzle + Better Auth + Pino
-packages/shared   → Feature flags + constants
+packages/shared   → Constants + capability flags
 packages/email    → React Email + Resend
 packages/ui       → shadcn v4 + Tailwind CSS + Base UI
 packages/config   → Shared TypeScript configs
@@ -83,15 +86,15 @@ packages/config   → Shared TypeScript configs
 | `BETTER_AUTH_SECRET`    | Auth encryption secret (min 32 chars) |
 | `RAILWAY_PUBLIC_DOMAIN` | Auto-set by Railway                   |
 
-### Feature-Gated
+### Optional (Service Features)
 
-Enable a feature flag in `packages/shared/src/features.ts` and its env vars become required at startup:
+Services activate when their env vars are set. Leave them out and the service is simply off — no code changes needed.
 
-| Feature       | Env Vars                                              |
-| ------------- | ----------------------------------------------------- |
-| `email`       | `RESEND_API_KEY`, `EMAIL_FROM`                        |
-| `googleOAuth` | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`            |
-| `posthog`     | `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST` |
+| Service      | Env Vars                                              |
+| ------------ | ----------------------------------------------------- |
+| Email        | `RESEND_API_KEY`, `EMAIL_FROM`                        |
+| Google OAuth | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`            |
+| PostHog      | `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST` |
 
 ## Testing
 

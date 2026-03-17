@@ -1,4 +1,3 @@
-import { createFeatures } from "@packages/shared/features";
 import { z } from "zod";
 
 // oxlint-disable-next-line node/no-process-env -- env module reads import.meta.env
@@ -15,16 +14,12 @@ const parseEnv = <T>(key: string, schema: z.ZodType<T>): T => {
   return result.data;
 };
 
-/** Feature flags — each is `{} | undefined` */
-export const features = createFeatures();
-
 /**
  * Client environment variables.
- * Feature-gated envs are nested under their feature name.
- * If the feature is enabled, its envs are validated with Zod (throws if invalid).
+ * Service env groups are enabled by env var presence.
  */
 export const clientEnv = {
-  posthog: features.posthog
+  posthog: env.VITE_PUBLIC_POSTHOG_KEY
     ? {
         VITE_PUBLIC_POSTHOG_KEY: parseEnv(
           "VITE_PUBLIC_POSTHOG_KEY",

@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 
-import { features, isDevelopment, serverEnv } from "../env";
+import { consts } from "@packages/shared/consts";
+
+import { isDevelopment, serverEnv } from "../env";
 
 describe("server env", () => {
   test("URL has a default value in dev", () => {
@@ -23,31 +25,25 @@ describe("server env", () => {
   });
 });
 
-describe("feature-gated env groups", () => {
-  test("disabled features return undefined env groups", () => {
-    // email and googleOAuth are disabled in dev
-    if (!features.email) {
-      expect(serverEnv.email).toBeUndefined();
-    }
-    if (!features.googleOAuth) {
-      expect(serverEnv.googleOAuth).toBeUndefined();
-    }
+describe("service env groups (presence-based)", () => {
+  test("services without env vars return undefined", () => {
+    // These services require env vars that aren't set in test
+    expect(serverEnv.email).toBeUndefined();
+    expect(serverEnv.googleOAuth).toBeUndefined();
+    expect(serverEnv.posthog).toBeUndefined();
+  });
+});
+
+describe("capability flags (consts)", () => {
+  test("password is enabled", () => {
+    expect(consts.auth.password).toBe(true);
   });
 
-  test("features object has all expected keys", () => {
-    expect("email" in features).toBe(true);
-    expect("googleOAuth" in features).toBe(true);
-    expect("password" in features).toBe(true);
-    expect("passkey" in features).toBe(true);
-    expect("posthog" in features).toBe(true);
-    expect("magicLink" in features).toBe(true);
+  test("passkey is enabled", () => {
+    expect(consts.auth.passkey).toBe(true);
   });
 
-  test("password feature is enabled in dev", () => {
-    expect(features.password).toBe(true);
-  });
-
-  test("passkey feature is enabled in dev", () => {
-    expect(features.passkey).toBe(true);
+  test("magicLink is disabled", () => {
+    expect(consts.auth.magicLink).toBe(false);
   });
 });

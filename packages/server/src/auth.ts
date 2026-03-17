@@ -16,7 +16,7 @@ import { admin } from "better-auth/plugins";
 
 import { db } from "./db";
 import { captureEmail } from "./email-capture";
-import { features, serverEnv } from "./env";
+import { serverEnv } from "./env";
 import { posthog } from "./posthog";
 
 // Reference: https://better-auth.com/docs
@@ -59,7 +59,7 @@ export const auth = betterAuth({
   baseURL: serverEnv.BETTER_AUTH_URL ?? serverEnv.URL,
   trustedOrigins: [serverEnv.URL],
   emailAndPassword: {
-    enabled: !!features.password,
+    enabled: consts.auth.password,
     // Reference: https://better-auth.com/docs/authentication/email-password#forget-password
     sendResetPassword: async ({ user, url }) => {
       const locale = getUserLocale(user as unknown as Record<string, unknown>);
@@ -102,7 +102,7 @@ export const auth = betterAuth({
     },
   },
   // Reference: https://better-auth.com/docs/plugins/admin
-  plugins: [...(features.passkey ? [passkey()] : []), admin()],
+  plugins: [...(consts.auth.passkey ? [passkey()] : []), admin()],
   // Reference: https://better-auth.com/docs/concepts/session-management
   session: {
     // 30 days

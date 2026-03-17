@@ -43,7 +43,7 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 | :---------------- | :----------------- | :---------------------------------------------------------------------- |
 | `apps/web`        | —                  | TanStack Start app (Vite + Router + Nitro). Admin dashboard at `/admin` |
 | `packages/server` | `@packages/server` | oRPC router, Drizzle + PGlite/PostgreSQL, Better Auth, Pino logging     |
-| `packages/shared` | `@packages/shared` | Feature flags, constants, error handling                                |
+| `packages/shared` | `@packages/shared` | Constants, capability flags, error handling                             |
 | `packages/email`  | `@packages/email`  | React Email templates + Resend                                          |
 | `packages/ui`     | `@packages/ui`     | shadcn v4 + Tailwind CSS + Base UI                                      |
 | `apps/e2e`        | —                  | Playwright E2E tests (auth flows, email verification)                   |
@@ -80,52 +80,56 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 
 **NEVER use `process.env` or `import.meta.env` directly.** Enforced by oxlint. Only `**/env.ts` files may access them.
 
-| Context | Import                                                             | Example                                      |
-| :------ | :----------------------------------------------------------------- | :------------------------------------------- |
-| Server  | `import { serverEnv, serverFeatures } from "@packages/server/env"` | `serverEnv.email?.RESEND_API_KEY`            |
-| Client  | `import { clientEnv, clientFeatures } from "@/lib/env"`            | `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY` |
+| Context | Import                                             | Example                                      |
+| :------ | :------------------------------------------------- | :------------------------------------------- |
+| Server  | `import { serverEnv } from "@packages/server/env"` | `serverEnv.email?.RESEND_API_KEY`            |
+| Client  | `import { clientEnv } from "@/lib/env"`            | `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY` |
 
-### Feature Flags
+### Service Features & Capability Flags
 
-Defined in `packages/shared/src/features.ts`. Each feature has `enabled: { dev, prod }`. Features are **pure enabled/disabled signals** (`true | undefined`) — no env var names, no scopes.
+Two types of features, two obvious places:
 
-`createFeatures()` returns `true | undefined` per feature. Env vars are defined separately in their respective env files, nested under feature-gated groups.
+**Service features** — external services toggled by env var presence. Set the env vars → service is on. Leave them out → off. No code changes needed.
 
-| Feature       | Dev | Prod |
-| :------------ | :-: | :--: |
-| `posthog`     | off |  on  |
-| `googleOAuth` | off | off  |
-| `email`       | off | off  |
-| `password`    | on  |  on  |
-| `passkey`     | on  |  on  |
-| `magicLink`   | off | off  |
+| Service       | Primary env var           | Env group                                 |
+| :------------ | :------------------------ | :---------------------------------------- |
+| `posthog`     | `VITE_PUBLIC_POSTHOG_KEY` | `serverEnv.posthog` / `clientEnv.posthog` |
+| `email`       | `RESEND_API_KEY`          | `serverEnv.email`                         |
+| `googleOAuth` | `GOOGLE_CLIENT_ID`        | `serverEnv.googleOAuth`                   |
+
+**Capability flags** — product decisions in `consts.auth` (`packages/shared/src/consts.ts`). Always the same regardless of environment.
+
+| Capability  | Default | Access                  |
+| :---------- | :-----: | :---------------------- |
+| `password`  |  true   | `consts.auth.password`  |
+| `passkey`   |  true   | `consts.auth.passkey`   |
+| `magicLink` |  false  | `consts.auth.magicLink` |
 
 **Usage:**
 
 ```ts
-serverEnv.email?.RESEND_API_KEY; // string if email enabled, undefined if not
-features.password; // true | undefined
+serverEnv.email?.RESEND_API_KEY; // string if email env vars set, undefined if not
+consts.auth.password; // true | false (product decision)
 clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 ```
 
 <details>
-<summary><strong>Adding a new feature flag</strong></summary>
+<summary><strong>Adding a new service feature</strong></summary>
 
-1. Add definition to `featureDefinitions` in `packages/shared/src/features.ts`
-2. Set `scope` and `enabled: { dev, prod }`
-3. If the feature has env vars, add a feature-gated group in the appropriate env file:
+1. Add an env group in the appropriate env file (`packages/server/src/env.ts` and/or `apps/web/src/lib/env.ts`):
    ```ts
-   myFeature: serverFeatures.myFeature
-     ? { MY_ENV_KEY: requireEnv("MY_ENV_KEY") }
+   myService: env.MY_SERVICE_KEY
+     ? { MY_SERVICE_KEY: parseEnv("MY_SERVICE_KEY", z.string().min(1)) }
      : undefined,
    ```
-4. Access via `serverEnv.myFeature?.MY_ENV_KEY` or `clientEnv.myFeature?.MY_ENV_KEY`
+2. Access via `serverEnv.myService?.MY_SERVICE_KEY` or `clientEnv.myService?.MY_SERVICE_KEY`
+3. Add env vars to `.env.example`
 
 </details>
 
 ### Authentication
 
-[Better Auth](https://better-auth.com/) with email/password + passkey + admin plugins (conditionally enabled via feature flags).
+[Better Auth](https://better-auth.com/) with email/password + passkey + admin plugins (conditionally enabled via `consts.auth`).
 
 | What             | Where                                                                                                            |
 | :--------------- | :--------------------------------------------------------------------------------------------------------------- |
@@ -560,39 +564,38 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 
 ## Key Files
 
-| File                                     | Purpose                                                            |
-| :--------------------------------------- | :----------------------------------------------------------------- |
-| `packages/shared/src/consts.ts`          | App constants (appName, defaultLocale, auth config, welcomeEmail)  |
-| `packages/shared/src/features.ts`        | Feature flag definitions + `createFeatures`                        |
-| `packages/server/src/env.ts`             | Server env vars + feature-gated groups                             |
-| `packages/server/src/auth.ts`            | Better Auth config + all email triggers                            |
-| `packages/server/src/logger.ts`          | Pino logger instance                                               |
-| `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                 |
-| `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                |
-| `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                           |
-| `packages/server/src/db/utils.ts`        | `uuidPrimaryKey` helper                                            |
-| `packages/server/src/orpc/base.ts`       | Procedure definitions (public/protected/admin)                     |
-| `packages/server/src/orpc/router.ts`     | oRPC router                                                        |
-| `apps/web/src/lib/env.ts`                | Client features + env groups                                       |
-| `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                        |
-| `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                           |
-| `apps/web/src/lib/schemas.ts`            | Shared Zod schemas                                                 |
-| `apps/web/src/lib/seo.ts`                | `seoMeta()` — generates OG + Twitter + meta tags from title/desc   |
-| `apps/web/src/lib/zod-form-resolver.ts`  | Zod v4 resolver for react-hook-form                                |
-| `apps/web/src/routes/api/icon.tsx`       | Dynamic favicon (dark mode)                                        |
-| `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                   |
-| `apps/web/src/components/auth/`          | Auth forms                                                         |
-| `apps/web/src/components/settings/`      | Account settings cards                                             |
-| `apps/web/src/server.ts`                 | Server entry — paraglide middleware for per-request locale         |
-| `apps/web/src/router.tsx`                | TanStack Router config — rewrite with locale URL support           |
-| `apps/web/vite.config.ts`                | Vite config (paraglide, tailwind, tanstack, nitro, react compiler) |
-| `.oxlintrc.json`                         | Oxlint config                                                      |
-| `.oxfmtrc.jsonc`                         | Oxfmt config                                                       |
-| `.syncpackrc`                            | Syncpack config                                                    |
-| `railway.json`                           | Railway deployment                                                 |
-| `.github/workflows/ci.yml`               | CI pipeline                                                        |
-| `packages/email/templates.ts`            | Email render functions + localized subject helpers                 |
-| `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                    |
-| `packages/email/emails/email-layout.tsx` | Shared email layout component                                      |
-| `packages/email/messages/en.json`        | Email i18n strings                                                 |
-| `bunfig.toml`                            | Bun config (exact versions, min release age)                       |
+| File                                     | Purpose                                                                              |
+| :--------------------------------------- | :----------------------------------------------------------------------------------- |
+| `packages/shared/src/consts.ts`          | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink) |
+| `packages/server/src/env.ts`             | Server env vars + feature-gated groups                                               |
+| `packages/server/src/auth.ts`            | Better Auth config + all email triggers                                              |
+| `packages/server/src/logger.ts`          | Pino logger instance                                                                 |
+| `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                                   |
+| `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                                  |
+| `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                                             |
+| `packages/server/src/db/utils.ts`        | `uuidPrimaryKey` helper                                                              |
+| `packages/server/src/orpc/base.ts`       | Procedure definitions (public/protected/admin)                                       |
+| `packages/server/src/orpc/router.ts`     | oRPC router                                                                          |
+| `apps/web/src/lib/env.ts`                | Client features + env groups                                                         |
+| `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                                          |
+| `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                                             |
+| `apps/web/src/lib/schemas.ts`            | Shared Zod schemas                                                                   |
+| `apps/web/src/lib/seo.ts`                | `seoMeta()` — generates OG + Twitter + meta tags from title/desc                     |
+| `apps/web/src/lib/zod-form-resolver.ts`  | Zod v4 resolver for react-hook-form                                                  |
+| `apps/web/src/routes/api/icon.tsx`       | Dynamic favicon (dark mode)                                                          |
+| `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                                     |
+| `apps/web/src/components/auth/`          | Auth forms                                                                           |
+| `apps/web/src/components/settings/`      | Account settings cards                                                               |
+| `apps/web/src/server.ts`                 | Server entry — paraglide middleware for per-request locale                           |
+| `apps/web/src/router.tsx`                | TanStack Router config — rewrite with locale URL support                             |
+| `apps/web/vite.config.ts`                | Vite config (paraglide, tailwind, tanstack, nitro, react compiler)                   |
+| `.oxlintrc.json`                         | Oxlint config                                                                        |
+| `.oxfmtrc.jsonc`                         | Oxfmt config                                                                         |
+| `.syncpackrc`                            | Syncpack config                                                                      |
+| `railway.json`                           | Railway deployment                                                                   |
+| `.github/workflows/ci.yml`               | CI pipeline                                                                          |
+| `packages/email/templates.ts`            | Email render functions + localized subject helpers                                   |
+| `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                      |
+| `packages/email/emails/email-layout.tsx` | Shared email layout component                                                        |
+| `packages/email/messages/en.json`        | Email i18n strings                                                                   |
+| `bunfig.toml`                            | Bun config (exact versions, min release age)                                         |

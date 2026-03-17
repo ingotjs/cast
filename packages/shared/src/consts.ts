@@ -14,5 +14,11 @@ export const consts = {
     pathWhenLoggedIn: "/app",
     /** Send a welcome email after user registration */
     welcomeEmail: true,
+    /** Enable email & password authentication */
+    password: true,
+    /** Enable passkey (WebAuthn) authentication */
+    passkey: true,
+    /** Enable magic link authentication (requires email service env vars) */
+    magicLink: false,
   },
 } as const;

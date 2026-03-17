@@ -1,3 +1,4 @@
+import { consts } from "@packages/shared/consts";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { ChangePasswordCard } from "../components/settings/change-password-card";
@@ -6,7 +7,6 @@ import { PasskeysCard } from "../components/settings/passkeys-card";
 import { SessionsCard } from "../components/settings/sessions-card";
 import { UpdateProfileCard } from "../components/settings/update-profile-card";
 import { getSession } from "../lib/auth-client";
-import { features } from "../lib/env";
 
 const AccountPage = () => (
   <main className="container mx-auto max-w-2xl px-4 py-12 md:py-20">
@@ -17,9 +17,9 @@ const AccountPage = () => (
 
     <div className="mt-8 space-y-6">
       <UpdateProfileCard />
-      {!!features.password && <ChangePasswordCard />}
+      {consts.auth.password && <ChangePasswordCard />}
       <SessionsCard />
-      {!!features.passkey && <PasskeysCard />}
+      {consts.auth.passkey && <PasskeysCard />}
       <DeleteAccountCard />
     </div>
   </main>
