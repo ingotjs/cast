@@ -21,7 +21,7 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 - **API** — Type-safe RPC via [oRPC](https://orpc.dev/) with TanStack Query integration. Public, protected, and admin procedure levels.
 - **Database** — [Drizzle ORM](https://orm.drizzle.team/) with PGlite (dev) / PostgreSQL (prod) auto-switching. Migrations, studio, the works.
 - **Email** — [React Email](https://react.email/) templates + [Resend](https://resend.com/) delivery. Email verification, password reset, password changed notification, account deleted confirmation, and welcome emails — all i18n-ready and sent in the user's preferred locale.
-- **i18n** — [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) across the entire stack — frontend, backend, emails. Type-safe, locale-aware, zero runtime cost.
+- **i18n** — [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) across the entire stack — frontend, backend, emails, and auth errors. Type-safe, locale-aware, zero runtime cost. See [Internationalization](#internationalization-i18n) for the full story.
 - **Service toggles** — External services (PostHog, Resend, Google OAuth) activate by env var presence. No code changes — set the env vars and the feature turns on.
 - **SEO & LLMO** — Per-page meta tags (OG + Twitter), JSON-LD structured data, `sitemap.xml`, `llms.txt`, `robots.txt`, dynamic favicon + OG image via `@vercel/og`. FAQ page with FAQPage schema for AI discoverability.
 - **Admin** — Role-guarded dashboard with user management (ban, roles, sessions).
@@ -130,6 +130,47 @@ Automatic on both client and server — no extra setup required.
 - **Client:** `capture_exceptions: true` auto-captures uncaught errors and unhandled promise rejections. `PostHogErrorBoundary` catches React rendering errors.
 - **Server:** `posthog-node` with `enableExceptionAutocapture: true` catches process-level crashes.
 - **Manual capture:** `posthog.captureException(error)` (client) or `posthog?.captureException(error, distinctId)` (server) for custom error handling.
+
+## Internationalization (i18n)
+
+OmegaStart is **i18n-ready from day one** — every user-facing string flows through [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs), from UI labels to auth errors to transactional emails. Adding a new language is a JSON file, not a refactor.
+
+### Architecture
+
+Three separate Paraglide projects keep bundles lean and concerns separated:
+
+| Project  | Path                        | Covers                                                          |
+| -------- | --------------------------- | --------------------------------------------------------------- |
+| Frontend | `apps/web/messages/`        | UI labels, buttons, forms, toasts, meta tags, validation errors |
+| Backend  | `packages/server/messages/` | Auth error messages, API responses, validation errors           |
+| Email    | `packages/email/messages/`  | Subject lines, body copy, CTAs, transactional email content     |
+
+Each project generates its own type-safe message functions. Server strings never leak into the client bundle.
+
+### What's Covered
+
+- **UI text** — All labels, buttons, placeholders, and toasts use Paraglide (`m.key()`)
+- **Auth errors** — Every [Better Auth error code](https://better-auth.com/docs/reference/errors) is translated via the [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n). Error messages are managed in Paraglide and automatically mapped to Better Auth's i18n system. Locale detection uses the user's stored preference (DB) with `Accept-Language` header as fallback.
+- **Zod validation** — Frontend and backend validation errors resolve per-locale via Paraglide message functions
+- **Transactional emails** — All email templates (verification, password reset, welcome, etc.) render in the recipient's preferred locale
+- **Meta tags & SEO** — Page titles, descriptions, and OG tags are i18n-aware
+
+### Adding a New Language
+
+1. Add the locale to each `project.inlang/settings.json` `locales` array
+2. Create `messages/{locale}.json` in each Paraglide project with translated strings
+3. Run `bun run build` in each package (or `bun ok` from root) to compile
+4. Auth error translations flow through automatically — no code changes needed
+
+### How Auth Error i18n Works
+
+The [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) is configured in `packages/server/src/auth.ts`. A translations builder (`packages/server/src/auth-i18n.ts`) dynamically maps all `auth_*` Paraglide message keys to Better Auth error codes at startup. When new locales are added, translations are automatically included.
+
+```
+Paraglide messages (en.json)  →  buildAuthTranslations()  →  Better Auth i18n plugin
+  auth_USER_NOT_FOUND              { en: { USER_NOT_FOUND:       Detects locale from
+  auth_INVALID_PASSWORD              "User not found", ... } }   session → Accept-Language
+```
 
 ## Tech Stack
 

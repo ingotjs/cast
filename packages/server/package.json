@@ -23,6 +23,7 @@
     "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide"
   },
   "dependencies": {
+    "@better-auth/i18n": "1.5.5",
     "@better-auth/passkey": "1.5.5",
     "@electric-sql/pglite": "0.3.16",
     "@neondatabase/serverless": "1.0.2",

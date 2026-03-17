@@ -1,3 +1,4 @@
+import { i18n } from "@better-auth/i18n";
 import { passkey } from "@better-auth/passkey";
 import { createEmailSender } from "@packages/email/send";
 import {
@@ -15,6 +16,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { admin, magicLink } from "better-auth/plugins";
 
+import { buildAuthTranslations } from "./auth-i18n";
 import { db } from "./db";
 import { captureEmail } from "./email-capture";
 import { serverEnv } from "./env";
@@ -116,7 +118,14 @@ export const auth = betterAuth({
   },
   // Reference: https://better-auth.com/docs/plugins/admin
   // Reference: https://better-auth.com/docs/plugins/magic-link
+  // Reference: https://better-auth.com/docs/plugins/i18n
   plugins: [
+    i18n({
+      translations: buildAuthTranslations(),
+      defaultLocale: consts.defaultLocale,
+      detection: ["session", "header"],
+      userLocaleField: "locale",
+    }),
     ...(consts.auth.passkey ? [passkey()] : []),
     ...(serverEnv.email
       ? [

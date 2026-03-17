@@ -135,16 +135,18 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 
 ### Authentication
 
-[Better Auth](https://better-auth.com/) with email/password + passkey + Google OAuth + magic link + admin plugins.
+[Better Auth](https://better-auth.com/) with email/password + passkey + Google OAuth + magic link + admin + i18n plugins.
 
-| What             | Where                                                                                                            |
-| :--------------- | :--------------------------------------------------------------------------------------------------------------- |
-| Auth config      | `packages/server/src/auth.ts`                                                                                    |
-| Auth client      | `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`, `authClient` |
-| Auth API route   | `apps/web/src/routes/api/auth.$.ts`                                                                              |
-| Auth forms       | `apps/web/src/components/auth/` — sign-in, sign-up, forgot/reset password, social OAuth, magic link              |
-| Account settings | `apps/web/src/components/settings/` — profile, password, sessions, passkeys, delete                              |
-| Password schema  | `apps/web/src/lib/schemas.ts` — shared across sign-up, reset-password, change-password                           |
+| What              | Where                                                                                                            |
+| :---------------- | :--------------------------------------------------------------------------------------------------------------- |
+| Auth config       | `packages/server/src/auth.ts`                                                                                    |
+| Auth i18n builder | `packages/server/src/auth-i18n.ts` — builds translations dict from Paraglide messages                            |
+| Auth client       | `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`, `authClient` |
+| Auth API route    | `apps/web/src/routes/api/auth.$.ts`                                                                              |
+| Auth forms        | `apps/web/src/components/auth/` — sign-in, sign-up, forgot/reset password, social OAuth, magic link              |
+| Account settings  | `apps/web/src/components/settings/` — profile, password, sessions, passkeys, delete                              |
+| Password schema   | `apps/web/src/lib/schemas.ts` — shared across sign-up, reset-password, change-password                           |
+| Auth error msgs   | `packages/server/messages/en.json` — all Better Auth error codes as Paraglide messages                           |
 
 - Auth routes at `/auth/$path`, account at `/account` (redirects to sign-in if unauthenticated)
 - Admin role guard on `/admin` via `beforeLoad` (`user.role === "admin"`)
@@ -154,6 +156,7 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 - User `locale` field stored in DB (default `"en"`, updatable via `input: true` in additionalFields)
 - `user.deleteUser` enabled — users can delete their own account with password confirmation
 - Email verification enabled (`sendOnSignUp: true`, `autoSignInAfterVerification: true`)
+- **Auth error i18n** — [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) translates all [error codes](https://better-auth.com/docs/reference/errors) via Paraglide. Detection: session locale → Accept-Language header. See `packages/server/src/auth-i18n.ts` for the translations builder.
 
 ### Transactional Emails
 
@@ -334,15 +337,15 @@ posthog?.capture({ distinctId: userId, event: "event_name", properties: { ... } 
 
 [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n across the entire stack. **All user-facing text MUST be internationalized** — NEVER hardcode strings.
 
-i18n covers frontend UI, backend API responses, Zod validation errors, and email templates — every layer is locale-aware from day one.
+i18n covers frontend UI, backend API responses, Zod validation errors, auth error messages, and email templates — every layer is locale-aware from day one.
 
 **Three separate Paraglide projects (separation of concerns):**
 
-| Project  | Path                        | Covers                                                                |
-| :------- | :-------------------------- | :-------------------------------------------------------------------- |
-| Frontend | `apps/web/messages/`        | UI labels, buttons, placeholders, toasts, auth forms, settings, admin |
-| Backend  | `packages/server/messages/` | oRPC errors, API responses, validation errors, auth server messages   |
-| Email    | `packages/email/messages/`  | Subject lines, body copy, CTAs, transactional email content           |
+| Project  | Path                        | Covers                                                                        |
+| :------- | :-------------------------- | :---------------------------------------------------------------------------- |
+| Frontend | `apps/web/messages/`        | UI labels, buttons, placeholders, toasts, auth forms, settings, admin         |
+| Backend  | `packages/server/messages/` | Auth error messages (`auth_*`), oRPC errors, API responses, validation errors |
+| Email    | `packages/email/messages/`  | Subject lines, body copy, CTAs, transactional email content                   |
 
 Each has its own `project.inlang/settings.json` and generates its own `paraglide/messages`. Server strings never leak to client bundle.
 
@@ -383,6 +386,21 @@ Every validation message the user sees is locale-aware:
 
 - **Frontend:** Message functions called at validation time (not import time), so module-level schemas resolve to current locale.
 - **Backend:** Message functions in Zod `error` callbacks resolve per-request via Paraglide's server runtime.
+
+</details>
+
+<details>
+<summary><strong>Auth error i18n (Better Auth i18n plugin)</strong></summary>
+
+All [Better Auth error codes](https://better-auth.com/docs/reference/errors) are translated via the [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n), integrated with Paraglide:
+
+- Error messages stored in `packages/server/messages/en.json` with `auth_` prefix (e.g., `auth_USER_NOT_FOUND`)
+- `packages/server/src/auth-i18n.ts` — `buildAuthTranslations()` dynamically iterates all `auth_*` Paraglide messages and maps them to Better Auth error codes
+- Plugin configured in `packages/server/src/auth.ts` with detection: `session` → `header` (user's stored locale, then Accept-Language)
+- Covers base, passkey, and admin error codes (73 total)
+- Adding a new locale: just add translations to `packages/server/messages/{locale}.json` — no code changes needed
+
+**Key pattern:** Paraglide key `auth_USER_NOT_FOUND` → Better Auth error code `USER_NOT_FOUND`. The `auth_` prefix is stripped at runtime by the builder.
 
 </details>
 
@@ -581,7 +599,8 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | :--------------------------------------- | :----------------------------------------------------------------------------------- |
 | `packages/shared/src/consts.ts`          | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink) |
 | `packages/server/src/env.ts`             | Server env vars + feature-gated groups                                               |
-| `packages/server/src/auth.ts`            | Better Auth config + all email triggers                                              |
+| `packages/server/src/auth.ts`            | Better Auth config + i18n plugin + all email triggers                                |
+| `packages/server/src/auth-i18n.ts`       | `buildAuthTranslations()` — Paraglide → Better Auth error code mapping               |
 | `packages/server/src/logger.ts`          | Structured console logger (Workers-compatible)                                       |
 | `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                                   |
 | `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                                  |
@@ -610,5 +629,6 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `packages/email/templates.ts`            | Email render functions + localized subject helpers                                   |
 | `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                      |
 | `packages/email/emails/email-layout.tsx` | Shared email layout component                                                        |
+| `packages/server/messages/en.json`       | Server i18n strings (auth error messages with `auth_` prefix)                        |
 | `packages/email/messages/en.json`        | Email i18n strings                                                                   |
 | `bunfig.toml`                            | Bun config (exact versions, min release age)                                         |
