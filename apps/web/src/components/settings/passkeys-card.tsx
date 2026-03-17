@@ -1,4 +1,5 @@
 import { Button } from "@packages/ui/components/button";
+import { usePostHog } from "@posthog/react";
 import { Fingerprint, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ const formatDate = (date?: Date | null) => {
 };
 
 export const PasskeysCard = () => {
+  const posthog = usePostHog();
   const [passkeys, setPasskeys] = useState<PasskeyItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
@@ -51,6 +53,7 @@ export const PasskeysCard = () => {
       return;
     }
 
+    posthog?.capture("passkey_added");
     toast.success("Passkey added");
     setAdding(false);
     fetchPasskeys();
@@ -66,6 +69,7 @@ export const PasskeysCard = () => {
       return;
     }
 
+    posthog?.capture("passkey_deleted");
     toast.success("Passkey deleted");
     setPasskeys((prev) => prev.filter((p) => p.id !== id));
     setDeletingId(null);

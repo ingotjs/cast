@@ -1,6 +1,7 @@
 import { Button } from "@packages/ui/components/button";
 import { Input } from "@packages/ui/components/input";
 import { Label } from "@packages/ui/components/label";
+import { usePostHog } from "@posthog/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -9,6 +10,7 @@ import { authClient } from "../../lib/auth-client";
 import { SettingsCard } from "./settings-card";
 
 export const DeleteAccountCard = () => {
+  const posthog = usePostHog();
   const [showConfirm, setShowConfirm] = useState(false);
   const {
     register,
@@ -26,6 +28,8 @@ export const DeleteAccountCard = () => {
       return;
     }
 
+    posthog?.capture("account_deleted");
+    posthog?.reset();
     toast.success("Account deleted");
     window.location.href = "/";
   };

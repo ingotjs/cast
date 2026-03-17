@@ -1,6 +1,7 @@
 import { Button } from "@packages/ui/components/button";
 import { Input } from "@packages/ui/components/input";
 import { Label } from "@packages/ui/components/label";
+import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { useState } from "react";
@@ -20,6 +21,7 @@ type FormValues = z.infer<typeof schema>;
 
 export const ForgotPassword = () => {
   const [sent, setSent] = useState(false);
+  const posthog = usePostHog();
   const {
     register,
     handleSubmit,
@@ -39,6 +41,7 @@ export const ForgotPassword = () => {
       return;
     }
 
+    posthog?.capture("password_reset_requested");
     setSent(true);
     toast.success("Check your email for a reset link");
   };

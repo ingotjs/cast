@@ -10,12 +10,13 @@
   },
   "scripts": {
     "dev": "email dev --port 3002",
-    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide && email build",
+    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
+    "build:email": "email build",
     "export": "email export"
   },
   "dependencies": {
     "@react-email/components": "1.0.9",
-    "@react-email/tailwind": "2.0.1",
+    "@react-email/tailwind": "2.0.5",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "resend": "6.9.3"
@@ -26,8 +27,8 @@
     "@inlang/plugin-message-format": "4.4.0",
     "@packages/config": "*",
     "@react-email/preview-server": "5.2.9",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.2",
+    "@types/react": "19.2.13",
+    "@types/react-dom": "19.2.3",
     "react-email": "5.2.9",
     "typescript": "5.9.3"
   }

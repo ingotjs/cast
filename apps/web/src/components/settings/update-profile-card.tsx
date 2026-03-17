@@ -1,6 +1,7 @@
 import { Button } from "@packages/ui/components/button";
 import { Input } from "@packages/ui/components/input";
 import { Label } from "@packages/ui/components/label";
+import { usePostHog } from "@posthog/react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -17,6 +18,7 @@ type FormValues = z.infer<typeof schema>;
 
 export const UpdateProfileCard = () => {
   const { data: session } = useSession();
+  const posthog = usePostHog();
   const {
     register,
     handleSubmit,
@@ -34,6 +36,7 @@ export const UpdateProfileCard = () => {
       return;
     }
 
+    posthog?.capture("profile_updated");
     toast.success("Profile updated");
   };
 

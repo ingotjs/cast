@@ -1,4 +1,5 @@
 import { Button } from "@packages/ui/components/button";
+import { usePostHog } from "@posthog/react";
 import { Monitor, Smartphone } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ const formatDate = (date: Date) =>
   });
 
 export const SessionsCard = () => {
+  const posthog = usePostHog();
   const [sessions, setSessions] = useState<SessionItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [revokingToken, setRevokingToken] = useState<string | null>(null);
@@ -50,6 +52,7 @@ export const SessionsCard = () => {
       return;
     }
 
+    posthog?.capture("session_revoked");
     toast.success("Session revoked");
     setSessions((prev) => prev.filter((s) => s.token !== token));
     setRevokingToken(null);

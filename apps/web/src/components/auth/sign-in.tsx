@@ -1,6 +1,7 @@
 import { Button } from "@packages/ui/components/button";
 import { Input } from "@packages/ui/components/input";
 import { Label } from "@packages/ui/components/label";
+import { usePostHog } from "@posthog/react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -20,6 +21,7 @@ type FormValues = z.infer<typeof schema>;
 
 export const SignIn = () => {
   const navigate = useNavigate();
+  const posthog = usePostHog();
   const {
     register,
     handleSubmit,
@@ -37,6 +39,12 @@ export const SignIn = () => {
     if (result.error) {
       toast.error(result.error.message ?? "Invalid email or password");
       return;
+    }
+
+    const user = result.data?.user;
+    if (user) {
+      posthog?.identify(user.id, { email: user.email, name: user.name });
+      posthog?.capture("user_signed_in", { email: user.email });
     }
 
     navigate({ to: "/" });

@@ -1,6 +1,7 @@
 import { Button } from "@packages/ui/components/button";
 import { Label } from "@packages/ui/components/label";
 import { cn } from "@packages/ui/lib/utils";
+import { usePostHog } from "@posthog/react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft, Check, X } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -27,6 +28,7 @@ type FormValues = z.infer<typeof schema>;
 
 export const ResetPassword = ({ token }: { token?: string }) => {
   const navigate = useNavigate();
+  const posthog = usePostHog();
   const {
     register,
     handleSubmit,
@@ -55,6 +57,7 @@ export const ResetPassword = ({ token }: { token?: string }) => {
       return;
     }
 
+    posthog?.capture("password_reset_completed");
     toast.success("Password reset successfully");
     navigate({ to: "/auth/$path", params: { path: "sign-in" } });
   };

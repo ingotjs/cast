@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@packages/ui/components/dropdown-menu";
+import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
 
 import { signOut, useSession } from "@/lib/auth-client";
@@ -28,6 +29,7 @@ const getInitials = (name: string) => {
 
 export const UserMenu = () => {
   const { data: session } = useSession();
+  const posthog = usePostHog();
 
   if (!session?.user) {
     return (
@@ -81,6 +83,8 @@ export const UserMenu = () => {
               type="button"
               className="w-full text-left"
               onClick={() => {
+                posthog?.capture("user_signed_out");
+                posthog?.reset();
                 signOut({
                   fetchOptions: {
                     onSuccess: () => {

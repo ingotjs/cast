@@ -1,6 +1,7 @@
 import { Button } from "@packages/ui/components/button";
 import { Label } from "@packages/ui/components/label";
 import { cn } from "@packages/ui/lib/utils";
+import { usePostHog } from "@posthog/react";
 import { Check, X } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ const schema = z
 type FormValues = z.infer<typeof schema>;
 
 export const ChangePasswordCard = () => {
+  const posthog = usePostHog();
   const {
     register,
     handleSubmit,
@@ -55,6 +57,7 @@ export const ChangePasswordCard = () => {
       return;
     }
 
+    posthog?.capture("password_changed");
     toast.success("Password changed successfully");
     reset();
   };

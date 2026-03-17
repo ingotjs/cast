@@ -1,0 +1,57 @@
+[
+  {
+    "event": "user_signed_up",
+    "description": "Fires when a user successfully creates a new account via email/password sign-up form.",
+    "file": "apps/web/src/components/auth/sign-up.tsx"
+  },
+  {
+    "event": "user_signed_in",
+    "description": "Fires when a user successfully signs in with email and password. Also used to identify the user.",
+    "file": "apps/web/src/components/auth/sign-in.tsx"
+  },
+  {
+    "event": "user_signed_out",
+    "description": "Fires when a user clicks the sign out button from the user dropdown menu.",
+    "file": "apps/web/src/components/user-menu.tsx"
+  },
+  {
+    "event": "password_reset_requested",
+    "description": "Fires when a user successfully submits a forgot-password form requesting a reset link.",
+    "file": "apps/web/src/components/auth/forgot-password.tsx"
+  },
+  {
+    "event": "password_reset_completed",
+    "description": "Fires when a user successfully resets their password via the reset-password form.",
+    "file": "apps/web/src/components/auth/reset-password.tsx"
+  },
+  {
+    "event": "password_changed",
+    "description": "Fires when a user successfully changes their account password from account settings.",
+    "file": "apps/web/src/components/settings/change-password-card.tsx"
+  },
+  {
+    "event": "profile_updated",
+    "description": "Fires when a user successfully updates their display name from account settings.",
+    "file": "apps/web/src/components/settings/update-profile-card.tsx"
+  },
+  {
+    "event": "passkey_added",
+    "description": "Fires when a user successfully adds a new passkey from account settings.",
+    "file": "apps/web/src/components/settings/passkeys-card.tsx"
+  },
+  {
+    "event": "passkey_deleted",
+    "description": "Fires when a user successfully deletes a passkey from account settings.",
+    "file": "apps/web/src/components/settings/passkeys-card.tsx"
+  },
+  {
+    "event": "session_revoked",
+    "description": "Fires when a user revokes an active session from the account sessions settings.",
+    "file": "apps/web/src/components/settings/sessions-card.tsx"
+  },
+  {
+    "event": "account_deleted",
+    "description": "Fires when a user successfully deletes their account. Critical churn event.",
+    "file": "apps/web/src/components/settings/delete-account-card.tsx"
+  }
+]

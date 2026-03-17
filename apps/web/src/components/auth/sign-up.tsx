@@ -2,6 +2,7 @@ import { Button } from "@packages/ui/components/button";
 import { Input } from "@packages/ui/components/input";
 import { Label } from "@packages/ui/components/label";
 import { cn } from "@packages/ui/lib/utils";
+import { usePostHog } from "@posthog/react";
 import { useNavigate } from "@tanstack/react-router";
 import { Check, X } from "lucide-react";
 import { useForm } from "react-hook-form";
@@ -31,6 +32,7 @@ type FormValues = z.infer<typeof schema>;
 
 export const SignUp = () => {
   const navigate = useNavigate();
+  const posthog = usePostHog();
   const {
     register,
     handleSubmit,
@@ -59,6 +61,15 @@ export const SignUp = () => {
     if (result.error) {
       toast.error(result.error.message ?? "Failed to create account");
       return;
+    }
+
+    const user = result.data?.user;
+    if (user) {
+      posthog?.identify(user.id, { email: user.email, name: user.name });
+      posthog?.capture("user_signed_up", {
+        email: user.email,
+        name: user.name,
+      });
     }
 
     navigate({ to: "/" });
