@@ -28,7 +28,6 @@
     "@tanstack/react-router-ssr-query": "latest",
     "@tanstack/react-start": "latest",
     "@tanstack/router-plugin": "1.132.0",
-    "@vercel/og": "0.11.1",
     "better-auth": "1.5.5",
     "lucide-react": "0.577.0",
     "posthog-js": "1.360.2",
@@ -37,6 +36,7 @@
     "react-hook-form": "7.71.2",
     "sonner": "2.0.7",
     "tailwindcss": "4.1.18",
+    "workers-og": "0.0.27",
     "zod": "4.3.6"
   },
   "devDependencies": {

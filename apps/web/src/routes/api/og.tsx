@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ImageResponse } from "@vercel/og";
+import { ImageResponse } from "workers-og";
 
-// Reference: https://vercel.com/docs/functions/og-image-generation
+// Reference: https://github.com/kvnang/workers-og
 
 const OG_WIDTH = 1200;
 const OG_HEIGHT = 630;

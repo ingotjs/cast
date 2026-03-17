@@ -37,8 +37,9 @@ const createDb = (): Database => {
 export const db = createDb();
 
 // Auto-apply migrations for PGlite (local dev) — in production, migrations
-// are applied via CI (`bun db:migrate` with DATABASE_URL pointing to Neon)
-if (isPglite) {
+// are applied via CI (`bun db:migrate` with DATABASE_URL pointing to Neon).
+// Guard: import.meta.dirname is undefined in Cloudflare Workers runtime.
+if (isPglite && import.meta.dirname) {
   const migrationsFolder = resolve(import.meta.dirname, "../../drizzle");
   await migrate(db as ReturnType<typeof drizzlePglite<typeof schema>>, {
     migrationsFolder,
