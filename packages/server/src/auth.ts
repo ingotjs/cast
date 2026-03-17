@@ -17,6 +17,7 @@ import { admin } from "better-auth/plugins";
 import { db } from "./db";
 import { captureEmail } from "./email-capture";
 import { features, serverEnv } from "./env";
+import { posthog } from "./posthog";
 
 // Reference: https://better-auth.com/docs
 // Reference: https://better-auth.com/docs/reference/security
@@ -134,6 +135,12 @@ export const auth = betterAuth({
     deleteUser: {
       enabled: true,
       afterDelete: async (user) => {
+        posthog?.capture({
+          distinctId: user.id,
+          event: "user_deleted",
+          properties: { email: user.email },
+        });
+
         const locale = getUserLocale(user as Record<string, unknown>);
         const html = await renderAccountDeletedEmail({
           appName: consts.appName,
@@ -156,6 +163,12 @@ export const auth = betterAuth({
     user: {
       create: {
         after: async (user) => {
+          posthog?.capture({
+            distinctId: user.id,
+            event: "user_created",
+            properties: { email: user.email },
+          });
+
           if (!consts.auth.welcomeEmail) {
             return;
           }

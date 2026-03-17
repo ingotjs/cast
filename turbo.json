@@ -5,12 +5,16 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**"]
+      "outputs": ["dist/**"],
+      "outputLogs": "errors-only"
     },
     "ts": {
-      "dependsOn": ["^ts"]
+      "dependsOn": ["^ts"],
+      "outputLogs": "errors-only"
     },
-    "test": {},
+    "test": {
+      "outputLogs": "errors-only"
+    },
     "dev": {
       "cache": false,
       "persistent": true

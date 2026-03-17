@@ -281,22 +281,40 @@ export const Route = createFileRoute("/my-page")({
 | oRPC plugin          | `@orpc/experimental-pino` `LoggingHandlerPlugin` — auto-logs with request IDs |
 | Access in procedures | `getLogger(context)` from `@packages/server/orpc/base`                        |
 
-### Analytics & Error Tracking
+### Analytics, Error Tracking & Event Capture
 
-[PostHog](https://posthog.com/) — feature-flagged (`posthog` flag), conditional on env vars. Admin analytics at `/admin/analytics`.
+[PostHog](https://posthog.com/) — full-stack analytics, error tracking, and event capture. Feature-flagged (`posthog` flag). Admin analytics at `/admin/analytics`.
 
-| What            | Where                                                                                            |
-| :-------------- | :----------------------------------------------------------------------------------------------- |
-| Client provider | `apps/web/src/routes/__root.tsx` — `PostHogProvider` + `PostHogErrorBoundary`                    |
-| Client env      | `apps/web/src/lib/env.ts` — `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`                |
-| Server client   | `packages/server/src/posthog.ts` — `posthog-node` with `enableExceptionAutocapture`              |
-| Server env      | `packages/server/src/env.ts` — reads same `VITE_PUBLIC_POSTHOG_*` vars as `POSTHOG_API_KEY/HOST` |
+| What                | Where                                                                                            |
+| :------------------ | :----------------------------------------------------------------------------------------------- |
+| Client provider     | `apps/web/src/routes/__root.tsx` — `PostHogProvider` + `PostHogErrorBoundary`                    |
+| Client env          | `apps/web/src/lib/env.ts` — `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`                |
+| Server client       | `packages/server/src/posthog.ts` — `posthog-node` with `enableExceptionAutocapture`              |
+| Server env          | `packages/server/src/env.ts` — reads same `VITE_PUBLIC_POSTHOG_*` vars as `POSTHOG_API_KEY/HOST` |
+| Event tracking plan | `.posthog-events.json` — all tracked events with descriptions and source files                   |
 
 **Error tracking (both client + server):**
 
-- **Client:** `capture_exceptions: true` in PostHog options auto-captures uncaught errors + unhandled promise rejections. `PostHogErrorBoundary` catches React rendering errors.
-- **Server:** `posthog-node` with `enableExceptionAutocapture: true` catches uncaught exceptions + unhandled promise rejections at the process level.
+- **Client:** `capture_exceptions: true` auto-captures uncaught errors + unhandled promise rejections. `PostHogErrorBoundary` catches React rendering errors.
+- **Server:** `enableExceptionAutocapture: true` catches uncaught exceptions + unhandled promise rejections at the process level. Client initialized via import in `auth.ts`.
 - **Manual capture:** Client: `posthog.captureException(error)`. Server: `posthog?.captureException(error, distinctId)`.
+
+**Event capture:**
+
+- **Client-side** (via `usePostHog()` hook): `user_signed_in`, `user_signed_up`, `user_signed_out`, `password_reset_requested`, `password_reset_completed`, `password_changed`, `profile_updated`, `passkey_added`, `passkey_deleted`, `session_revoked`, `account_deleted`
+- **Server-side** (via `posthog?.capture()`): `user_created`, `user_deleted` — fired in Better Auth database hooks (`packages/server/src/auth.ts`)
+- **User identification:** `posthog.identify(userId, { email, name })` called on sign-in and sign-up
+
+**Usage pattern:**
+
+```tsx
+// Client: import { usePostHog } from "@posthog/react"
+const posthog = usePostHog();
+posthog?.capture("event_name", { property: "value" });
+
+// Server: import { posthog } from "./posthog"
+posthog?.capture({ distinctId: userId, event: "event_name", properties: { ... } });
+```
 
 ### Internationalization (i18n)
 

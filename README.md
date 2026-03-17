@@ -23,10 +23,9 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 - **Email** — [React Email](https://react.email/) templates + [Resend](https://resend.com/) delivery. Email verification, password reset, password changed notification, account deleted confirmation, and welcome emails — all i18n-ready and sent in the user's preferred locale.
 - **i18n** — [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) across the entire stack — frontend, backend, emails. Type-safe, locale-aware, zero runtime cost.
 - **Feature Flags** — `true | undefined` per feature. Enable a flag, its env vars are validated at startup. Disable it, the whole feature tree-shakes away.
-- **Logging** — [Pino](https://getpino.io/) structured logging with oRPC integration. JSON in prod (Railway-native), pretty-printed in dev. Every request gets a unique ID.
-- **SEO** — Dynamic favicon with dark mode support, OG image generation via `@vercel/og`, proper meta tags.
+- **SEO & LLMO** — Per-page meta tags (OG + Twitter), JSON-LD structured data, `sitemap.xml`, `llms.txt`, `robots.txt`, dynamic favicon + OG image via `@vercel/og`. FAQ page with FAQPage schema for AI discoverability.
 - **Admin** — Role-guarded dashboard with user management (ban, roles, sessions).
-- **Analytics & Error Tracking** — [PostHog](https://posthog.com/) on both client and server. Auto-captures uncaught exceptions, React rendering errors, and unhandled promise rejections. Feature-flagged.
+- **Observability** — Full-stack observability out of the box. See [Observability](#observability) for details.
 
 ### Deploy in 60 Seconds
 
@@ -100,6 +99,33 @@ Enable a feature flag in `packages/shared/src/features.ts` and its env vars beco
 - **Test utilities** for creating authenticated users and calling oRPC procedures
 - **E2E tests** via [Playwright](https://playwright.dev/) — full auth flow coverage (sign-up, sign-in, sign-out, change password, delete account) with email capture verification. Run `cd apps/e2e && bunx playwright test`
 
+## Observability
+
+OmegaStart ships with a complete observability stack — logging, analytics, error tracking, and event capture — so you know exactly what's happening in your app from day one.
+
+### Structured Logging — [Pino](https://getpino.io/)
+
+- JSON output in production (Railway-native, works with any log aggregator), pretty-printed in dev
+- oRPC integration via [`@orpc/experimental-pino`](https://orpc.dev/docs/integrations/pino) — every API request gets a unique ID and automatic request/response logging
+- Access via `getLogger(context)` in any oRPC procedure
+
+### Analytics & Event Capture — [PostHog](https://posthog.com/)
+
+Feature-flagged (`posthog`). One flag, one API key — works on both client and server.
+
+- **Product analytics** — Page views, user sessions, feature usage (client via `@posthog/react`)
+- **User identification** — `posthog.identify()` on sign-in/sign-up links events to users
+- **Custom events** — 11 tracked events across auth and account flows (sign-up, sign-in, sign-out, password changes, passkey management, account deletion). Full tracking plan in `.posthog-events.json`
+- **Server-side events** — `user_created` and `user_deleted` fired from Better Auth database hooks via `posthog-node`
+
+### Error Tracking — [PostHog](https://posthog.com/docs/error-tracking)
+
+Automatic on both client and server — no extra setup required.
+
+- **Client:** `capture_exceptions: true` auto-captures uncaught errors and unhandled promise rejections. `PostHogErrorBoundary` catches React rendering errors.
+- **Server:** `posthog-node` with `enableExceptionAutocapture: true` catches process-level crashes.
+- **Manual capture:** `posthog.captureException(error)` (client) or `posthog?.captureException(error, distinctId)` (server) for custom error handling.
+
 ## Tech Stack
 
 | Layer           | Technology                                                                             |
@@ -113,6 +139,7 @@ Enable a feature flag in `packages/shared/src/features.ts` and its env vars beco
 | Email           | [React Email](https://react.email/) + [Resend](https://resend.com/)                    |
 | i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)  |
 | Logging         | [Pino](https://getpino.io/) + oRPC plugin                                              |
+| Analytics       | [PostHog](https://posthog.com/) (client + server, error tracking)                      |
 | Linting         | [Ultracite](https://github.com/haydenbleasel/ultracite) (Oxlint + Oxfmt)               |
 | Package Manager | [Bun](https://bun.sh/)                                                                 |
 | Monorepo        | [Turborepo](https://turborepo.dev/)                                                    |
