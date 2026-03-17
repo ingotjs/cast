@@ -99,11 +99,17 @@ Two types of features, two obvious places:
 
 **Capability flags** — product decisions in `consts.auth` (`packages/shared/src/consts.ts`). Always the same regardless of environment.
 
-| Capability  | Default | Access                  |
-| :---------- | :-----: | :---------------------- |
-| `password`  |  true   | `consts.auth.password`  |
-| `passkey`   |  true   | `consts.auth.passkey`   |
-| `magicLink` |  false  | `consts.auth.magicLink` |
+| Capability | Default | Access                 |
+| :--------- | :-----: | :--------------------- |
+| `password` |  true   | `consts.auth.password` |
+| `passkey`  |  true   | `consts.auth.passkey`  |
+
+**UI-toggle env vars** — show/hide auth UI elements per environment:
+
+| Env var                    | Effect                                                             |
+| :------------------------- | :----------------------------------------------------------------- |
+| `VITE_PUBLIC_GOOGLE_OAUTH` | Show Google sign-in button (requires server Google OAuth env vars) |
+| `VITE_PUBLIC_MAGIC_LINK`   | Show magic link sign-in option (requires email env vars)           |
 
 **Usage:**
 
@@ -129,14 +135,14 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 
 ### Authentication
 
-[Better Auth](https://better-auth.com/) with email/password + passkey + admin plugins (conditionally enabled via `consts.auth`).
+[Better Auth](https://better-auth.com/) with email/password + passkey + Google OAuth + magic link + admin plugins.
 
 | What             | Where                                                                                                            |
 | :--------------- | :--------------------------------------------------------------------------------------------------------------- |
 | Auth config      | `packages/server/src/auth.ts`                                                                                    |
 | Auth client      | `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`, `authClient` |
 | Auth API route   | `apps/web/src/routes/api/auth.$.ts`                                                                              |
-| Auth forms       | `apps/web/src/components/auth/` — sign-in, sign-up, forgot/reset password (react-hook-form + Zod)                |
+| Auth forms       | `apps/web/src/components/auth/` — sign-in, sign-up, forgot/reset password, social OAuth, magic link              |
 | Account settings | `apps/web/src/components/settings/` — profile, password, sessions, passkeys, delete                              |
 | Password schema  | `apps/web/src/lib/schemas.ts` — shared across sign-up, reset-password, change-password                           |
 

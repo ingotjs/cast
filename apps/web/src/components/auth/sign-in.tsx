@@ -10,7 +10,9 @@ import { z } from "zod";
 import { signIn } from "../../lib/auth-client";
 import { zodFormResolver } from "../../lib/zod-form-resolver";
 import { AuthCard } from "./auth-card";
+import { MagicLinkAuth } from "./magic-link-auth";
 import { PasswordInput } from "./password-input";
+import { SocialAuth } from "./social-auth";
 
 const schema = z.object({
   email: z.string().min(1, "Email is required").email("Invalid email"),
@@ -57,6 +59,7 @@ export const SignIn = () => {
       showTabs
       showLegal
     >
+      <SocialAuth />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-4"
@@ -109,6 +112,7 @@ export const SignIn = () => {
           Sign in
         </Button>
       </form>
+      <MagicLinkAuth />
     </AuthCard>
   );
 };

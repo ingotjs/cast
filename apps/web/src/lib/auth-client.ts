@@ -2,11 +2,12 @@ import { passkeyClient } from "@better-auth/passkey/client";
 import { auth } from "@packages/server/auth";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
+import { magicLinkClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
 
 // Reference: https://better-auth.com/docs/reference/client
 export const authClient = createAuthClient({
-  plugins: [passkeyClient()],
+  plugins: [passkeyClient(), magicLinkClient()],
 });
 
 export const { signIn, signUp, signOut, useSession, passkey } = authClient;

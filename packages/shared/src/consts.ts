@@ -1,7 +1,4 @@
-/**
- * App constants (non-feature-flag).
- * Feature flags are in features.ts.
- */
+/** App constants — product decisions that don't change per environment. */
 
 export const consts = {
   appName: "OmegaStart",
@@ -18,7 +15,5 @@ export const consts = {
     password: true,
     /** Enable passkey (WebAuthn) authentication */
     passkey: true,
-    /** Enable magic link authentication (requires email service env vars) */
-    magicLink: false,
   },
 } as const;

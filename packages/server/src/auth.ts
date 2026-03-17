@@ -4,6 +4,7 @@ import {
   getEmailSubject,
   renderAccountDeletedEmail,
   renderEmailVerificationEmail,
+  renderMagicLinkEmail,
   renderPasswordChangedEmail,
   renderResetPasswordEmail,
   renderWelcomeEmail,
@@ -12,7 +13,7 @@ import { consts } from "@packages/shared/consts";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
-import { admin } from "better-auth/plugins";
+import { admin, magicLink } from "better-auth/plugins";
 
 import { db } from "./db";
 import { captureEmail } from "./email-capture";
@@ -58,6 +59,15 @@ export const auth = betterAuth({
   secret: serverEnv.BETTER_AUTH_SECRET,
   baseURL: serverEnv.BETTER_AUTH_URL ?? serverEnv.URL,
   trustedOrigins: [serverEnv.URL],
+  // Reference: https://better-auth.com/docs/authentication/social
+  socialProviders: serverEnv.googleOAuth
+    ? {
+        google: {
+          clientId: serverEnv.googleOAuth.GOOGLE_CLIENT_ID,
+          clientSecret: serverEnv.googleOAuth.GOOGLE_CLIENT_SECRET,
+        },
+      }
+    : {},
   emailAndPassword: {
     enabled: consts.auth.password,
     // Reference: https://better-auth.com/docs/authentication/email-password#forget-password
@@ -102,7 +112,32 @@ export const auth = betterAuth({
     },
   },
   // Reference: https://better-auth.com/docs/plugins/admin
-  plugins: [...(consts.auth.passkey ? [passkey()] : []), admin()],
+  // Reference: https://better-auth.com/docs/plugins/magic-link
+  plugins: [
+    ...(consts.auth.passkey ? [passkey()] : []),
+    ...(serverEnv.email
+      ? [
+          magicLink({
+            sendMagicLink: async ({ email, token, url }) => {
+              const html = await renderMagicLinkEmail({
+                token,
+                magicLink: url,
+                appName: consts.appName,
+                appUrl: serverEnv.URL,
+              });
+              sendEmailNotification({
+                to: email,
+                subject: getEmailSubject.magicLink({
+                  appName: consts.appName,
+                }),
+                html,
+              });
+            },
+          }),
+        ]
+      : []),
+    admin(),
+  ],
   // Reference: https://better-auth.com/docs/concepts/session-management
   session: {
     // 30 days

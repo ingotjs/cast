@@ -17,7 +17,7 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 
 ### Production-Ready from Day One
 
-- **Auth** — Email/password + passkeys (WebAuthn) via [Better Auth](https://better-auth.com/). Email verification on signup, custom sign-in/sign-up/forgot-password forms. Account settings with session management and account deletion.
+- **Auth** — Email/password + passkeys (WebAuthn) + Google OAuth + magic link via [Better Auth](https://better-auth.com/). Email verification on signup, custom sign-in/sign-up/forgot-password forms. Account settings with session management and account deletion. OAuth and magic link toggle via env vars.
 - **API** — Type-safe RPC via [oRPC](https://orpc.dev/) with TanStack Query integration. Public, protected, and admin procedure levels.
 - **Database** — [Drizzle ORM](https://orm.drizzle.team/) with PGlite (dev) / PostgreSQL (prod) auto-switching. Migrations, studio, the works.
 - **Email** — [React Email](https://react.email/) templates + [Resend](https://resend.com/) delivery. Email verification, password reset, password changed notification, account deleted confirmation, and welcome emails — all i18n-ready and sent in the user's preferred locale.
@@ -90,11 +90,12 @@ packages/config   → Shared TypeScript configs
 
 Services activate when their env vars are set. Leave them out and the service is simply off — no code changes needed.
 
-| Service      | Env Vars                                              |
-| ------------ | ----------------------------------------------------- |
-| Email        | `RESEND_API_KEY`, `EMAIL_FROM`                        |
-| Google OAuth | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`            |
-| PostHog      | `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST` |
+| Service      | Env Vars                                                               |
+| ------------ | ---------------------------------------------------------------------- |
+| Email        | `RESEND_API_KEY`, `EMAIL_FROM`                                         |
+| Google OAuth | `VITE_PUBLIC_GOOGLE_OAUTH`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
+| Magic Link   | `VITE_PUBLIC_MAGIC_LINK` (requires Email env vars)                     |
+| PostHog      | `VITE_PUBLIC_POSTHOG_KEY` (host defaults to US Cloud)                  |
 
 ## Testing
 

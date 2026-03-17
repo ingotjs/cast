@@ -42,8 +42,4 @@ describe("capability flags (consts)", () => {
   test("passkey is enabled", () => {
     expect(consts.auth.passkey).toBe(true);
   });
-
-  test("magicLink is disabled", () => {
-    expect(consts.auth.magicLink).toBe(false);
-  });
 });

@@ -19,13 +19,18 @@ const parseEnv = <T>(key: string, schema: z.ZodType<T>): T => {
  * Service env groups are enabled by env var presence.
  */
 export const clientEnv = {
+  googleOAuth: !!env.VITE_PUBLIC_GOOGLE_OAUTH,
+  magicLink: !!env.VITE_PUBLIC_MAGIC_LINK,
+
   posthog: env.VITE_PUBLIC_POSTHOG_KEY
     ? {
         VITE_PUBLIC_POSTHOG_KEY: parseEnv(
           "VITE_PUBLIC_POSTHOG_KEY",
           z.string().min(1)
         ),
-        VITE_PUBLIC_POSTHOG_HOST: parseEnv("VITE_PUBLIC_POSTHOG_HOST", z.url()),
+        VITE_PUBLIC_POSTHOG_HOST: z
+          .url()
+          .parse(env.VITE_PUBLIC_POSTHOG_HOST ?? "https://us.posthog.com"),
       }
     : undefined,
 };

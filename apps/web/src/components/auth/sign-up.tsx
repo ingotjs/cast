@@ -14,6 +14,7 @@ import { passwordRequirements, passwordSchema } from "../../lib/schemas";
 import { zodFormResolver } from "../../lib/zod-form-resolver";
 import { AuthCard } from "./auth-card";
 import { PasswordInput } from "./password-input";
+import { SocialAuth } from "./social-auth";
 
 const schema = z
   .object({
@@ -82,6 +83,7 @@ export const SignUp = () => {
       showTabs
       showLegal
     >
+      <SocialAuth />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="space-y-4"
