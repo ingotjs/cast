@@ -15,6 +15,7 @@ import { createAuthMiddleware } from "better-auth/api";
 import { admin } from "better-auth/plugins";
 
 import { db } from "./db";
+import { captureEmail } from "./email-capture";
 import { features, serverEnv } from "./env";
 
 // Reference: https://better-auth.com/docs
@@ -43,6 +44,8 @@ const sendEmailNotification = ({
   } else {
     console.log(`[auth] Email to ${to}: ${subject}`);
   }
+  // Always capture for E2E test verification
+  captureEmail({ to, subject, html });
 };
 
 /** Extract locale from a user object (additionalFields are typed as Record<string, unknown> in hooks) */

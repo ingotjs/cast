@@ -1,6 +1,8 @@
 import { consts } from "@packages/shared/consts";
 import { createFileRoute } from "@tanstack/react-router";
 
+import * as m from "../paraglide/messages";
+
 const TermsPage = () => (
   <main className="container mx-auto max-w-3xl px-4 py-12 md:py-20">
     <h1 className="text-3xl font-bold tracking-tight">Terms of Service</h1>
@@ -69,5 +71,13 @@ const TermsPage = () => (
 );
 
 export const Route = createFileRoute("/terms")({
+  head: () => ({
+    meta: [
+      { title: m.meta_terms_title() },
+      { name: "description", content: m.meta_terms_description() },
+      { property: "og:title", content: m.meta_terms_title() },
+      { property: "og:description", content: m.meta_terms_description() },
+    ],
+  }),
   component: TermsPage,
 });

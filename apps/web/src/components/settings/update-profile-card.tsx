@@ -39,7 +39,11 @@ export const UpdateProfileCard = () => {
 
   return (
     <SettingsCard title="Profile" description="Update your display name.">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
+        data-testid="update-profile-form"
+      >
         <div className="space-y-2">
           <Label htmlFor="name">Name</Label>
           <Input id="name" autoComplete="name" {...register("name")} />
@@ -48,7 +52,11 @@ export const UpdateProfileCard = () => {
           )}
         </div>
 
-        <Button type="submit" loading={isSubmitting}>
+        <Button
+          type="submit"
+          loading={isSubmitting}
+          data-testid="update-profile-submit"
+        >
           Save
         </Button>
       </form>

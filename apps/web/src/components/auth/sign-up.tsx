@@ -71,7 +71,11 @@ export const SignUp = () => {
       showTabs
       showLegal
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
+        data-testid="signup-form"
+      >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="firstName">First name</Label>
@@ -173,6 +177,7 @@ export const SignUp = () => {
           className="w-full"
           size="lg"
           loading={isSubmitting}
+          data-testid="signup-submit"
         >
           Create an account
         </Button>

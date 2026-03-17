@@ -13,6 +13,7 @@
     "db:generate": "bun run --cwd packages/server db:generate",
     "db:migrate": "bun run --cwd packages/server db:migrate",
     "dev:email": "turbo dev --filter @packages/email",
+    "e2e": "bun run --cwd apps/e2e e2e",
     "ok": "syncpack fix --log-levels error && bun ts && ultracite fix && turbo --output-logs=errors-only test",
     "ok:ci": "syncpack lint --log-levels error && bun ts && ultracite check && turbo --output-logs=errors-only test",
     "ts": "turbo --output-logs=errors-only ts",

@@ -1,0 +1,45 @@
+# OmegaStart
+
+> OmegaStart is the modern full-stack TypeScript starter. Ship production apps in minutes, not weeks.
+
+## About
+
+OmegaStart is a production-ready monorepo starter built on TanStack Start, Bun, and Turborepo. It includes authentication (email/password + passkeys), type-safe API (oRPC), database (Drizzle ORM + PGlite/PostgreSQL), transactional emails (React Email + Resend), full-stack i18n (Paraglide JS), structured logging (Pino), CI/CD (GitHub Actions), and one-click deployment (Railway).
+
+## Key Features
+
+- Zero-config local database: PGlite runs PostgreSQL in-process, no Docker needed
+- Type-safe from DB to UI: Drizzle schema types flow through oRPC to TanStack Query
+- Auth: email/password + passkeys (WebAuthn) via Better Auth, with email verification
+- Transactional emails: React Email templates + Resend, fully i18n-ready
+- Full-stack i18n: Paraglide JS across frontend, backend, and email templates
+- Feature flags: environment-validated, tree-shakeable, true/undefined signals
+- Admin dashboard: role-guarded user management (ban, roles, sessions)
+- Structured logging: Pino with oRPC integration and per-request IDs
+- CI/CD: GitHub Actions with type checking, linting, and tests
+- One-click deploy: Railway with auto-migrations and health checks
+
+## Tech Stack
+
+- Framework: TanStack Start (Vite + TanStack Router + Nitro)
+- Language: TypeScript (type-checked via tsgo)
+- API: oRPC + TanStack Query
+- Database: Drizzle ORM + PGlite / PostgreSQL
+- Auth: Better Auth (email/password, passkeys, admin)
+- UI: shadcn v4 + Tailwind CSS 4 + Base UI
+- Email: React Email + Resend
+- i18n: Paraglide JS (frontend + backend + email)
+- Logging: Pino
+- Linting: Ultracite (Oxlint + Oxfmt)
+- Package Manager: Bun
+- Monorepo: Turborepo
+- Deployment: Railway
+- CI/CD: GitHub Actions
+
+## Pages
+
+- Home: /
+- About: /about
+- FAQ: /faq
+- Privacy Policy: /privacy
+- Terms of Service: /terms

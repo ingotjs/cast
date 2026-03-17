@@ -9,6 +9,7 @@
     "./db/schema": "./src/db/schema.ts",
     "./env": "./src/env.ts",
     "./logger": "./src/logger.ts",
+    "./email-capture": "./src/email-capture.ts",
     "./orpc/*": "./src/orpc/*.ts",
     "./orpc": "./src/orpc/index.ts"
   },
@@ -18,7 +19,7 @@
     "db:migrate": "drizzle-kit migrate",
     "test": "bun test",
     "ts": "tsgo --noEmit",
-    "build": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide"
+    "buildd": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide"
   },
   "dependencies": {
     "@better-auth/passkey": "1.5.5",

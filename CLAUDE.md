@@ -25,6 +25,7 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 | `bun db:generate` | Generate migrations (**user MUST run manually**)     |
 | `bun db:migrate`  | Apply migrations (**user MUST run manually**)        |
 | `bun db:studio`   | Open Drizzle Studio                                  |
+| `bun e2e`         | Run Playwright E2E tests (from `apps/e2e`)           |
 
 ### Quality Verification
 
@@ -45,6 +46,7 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 | `packages/shared` | `@packages/shared` | Feature flags, constants, error handling                                |
 | `packages/email`  | `@packages/email`  | React Email templates + Resend                                          |
 | `packages/ui`     | `@packages/ui`     | shadcn v4 + Tailwind CSS + Base UI                                      |
+| `apps/e2e`        | —                  | Playwright E2E tests (auth flows, email verification)                   |
 | `packages/config` | `@packages/config` | Shared TypeScript configs                                               |
 
 ### Type Checking
@@ -213,13 +215,60 @@ Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
 - `DATABASE_URL` optional in dev (uses PGlite), required in prod
 - NEVER run `bun db:generate` or `bun db:migrate` via Claude Code — requires interactive input
 
-### SEO & Open Graph
+### SEO, Open Graph & LLMO
 
+**References:** [TanStack Start SEO guide](https://tanstack.com/start/latest/docs/framework/react/guide/seo) · [TanStack Start LLMO guide](https://tanstack.com/start/latest/docs/framework/react/guide/llmo)
+
+**Core setup:**
+
+- `consts.siteUrl` in `packages/shared/src/consts.ts` — **MUST update before deploying** (used in sitemap, robots.txt, JSON-LD)
+- SSR enabled by default — crawlers receive fully rendered HTML
+- Per-page `head()` on every public route — title, description, OG tags (i18n via Paraglide)
 - Dynamic favicon at `/api/icon?theme=light|dark` — renders via `@vercel/og`, adapts to dark/light mode
-- Dynamic OG image at `/api/og?title=...&description=...` — branded 1200x630 image
-- OG metadata configured in root route head
-- i18n messages for OG title/description (`og_title`, `og_description`)
-- Both image routes cache for 1 hour
+- Dynamic OG image at `/api/og?title=...&description=...` — branded 1200×630 image, 1-hour cache
+
+**Structured data (JSON-LD):**
+
+- Root route (`__root.tsx`): `WebSite` + `Organization` schema using `consts.appName` / `consts.siteUrl`
+- FAQ page (`/faq`): `FAQPage` schema with all Q&A pairs — highly effective for LLMO (AI systems extract Q&A pairs)
+
+**SEO files (all in `apps/web/public/`):**
+
+| File          | Purpose                                                                |
+| :------------ | :--------------------------------------------------------------------- |
+| `robots.txt`  | Allows all crawlers, disallows `/admin`, `/account`, `/auth/`, `/api/` |
+| `sitemap.xml` | Static sitemap for all public pages                                    |
+| `llms.txt`    | Machine-readable project summary for AI systems (LLMO)                 |
+
+**Per-page SEO pattern (MUST follow for all new public routes):**
+
+```tsx
+import * as m from "../paraglide/messages";
+
+export const Route = createFileRoute("/my-page")({
+  head: () => ({
+    meta: [
+      { title: m.meta_mypage_title() },
+      { name: "description", content: m.meta_mypage_description() },
+      { property: "og:title", content: m.meta_mypage_title() },
+      { property: "og:description", content: m.meta_mypage_description() },
+    ],
+  }),
+  component: MyPage,
+});
+```
+
+**Adding a new public page (SEO checklist):**
+
+1. Create route with `head()` containing title, description, and OG meta tags (i18n)
+2. Add i18n keys to `apps/web/messages/en.json` (pattern: `meta_{page}_title`, `meta_{page}_description`)
+3. Add page to `apps/web/public/sitemap.xml`
+4. Add page to `apps/web/public/llms.txt`
+5. If FAQ-like content, add `FAQPage` JSON-LD schema in `head().scripts`
+6. Add link in footer nav (`apps/web/src/components/footer.tsx`)
+7. Regenerate paraglide: `cd apps/web && npx @inlang/paraglide-js compile --project ./project.inlang --outdir ./src/paraglide`
+
+**i18n for meta tags:** All meta tag values MUST use Paraglide message functions (e.g., `m.meta_home_title()`). Keys are in `apps/web/messages/en.json`.
 
 ### Logging
 
@@ -348,6 +397,20 @@ const client = createRouterClient(router, {
 });
 const result = await client.admin.users.list({ limit: 10 });
 ```
+
+### E2E Testing (Playwright)
+
+[Playwright](https://playwright.dev/) E2E tests in `apps/e2e/`. See `apps/e2e/FEATURES.md` for full coverage table. See `.agents/skills/e2e-testing/SKILL.md` for detailed guidance.
+
+- Run: `cd apps/e2e && bunx playwright test` (dev server must be running or auto-starts)
+- **MUST use `data-testid` selectors** for buttons/forms — NEVER text-based selectors (i18n breaks them)
+- **MUST use `page.locator('#id')` for password fields** — `getByLabel` matches both input + toggle button
+- **Only ONE test per feature goes through the full UI** — others use `createUser` fixture (API-based) for speed
+- **Each test MUST use a unique email** via `uniqueEmail('prefix')` fixture
+- **Each test MUST have extensive JSDoc** at the file top explaining step-by-step what the test does
+- **MUST wait for `/account` page to settle** before interacting (session data loading causes re-renders)
+- Email verification: captured to `.email-captures/` as JSON, read via `getEmails` fixture
+- Auth guards use isomorphic `getSession()` from `apps/web/src/lib/auth-client.ts` (works during SSR + CSR)
 
 ### General Rules
 

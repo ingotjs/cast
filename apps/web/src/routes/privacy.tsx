@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import * as m from "../paraglide/messages";
+
 const PrivacyPage = () => (
   <main className="container mx-auto max-w-3xl px-4 py-12 md:py-20">
     <h1 className="text-3xl font-bold tracking-tight">Privacy Policy</h1>
@@ -83,5 +85,13 @@ const PrivacyPage = () => (
 );
 
 export const Route = createFileRoute("/privacy")({
+  head: () => ({
+    meta: [
+      { title: m.meta_privacy_title() },
+      { name: "description", content: m.meta_privacy_description() },
+      { property: "og:title", content: m.meta_privacy_title() },
+      { property: "og:description", content: m.meta_privacy_description() },
+    ],
+  }),
   component: PrivacyPage,
 });

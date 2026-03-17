@@ -1,3 +1,4 @@
+import { consts } from "@packages/shared/consts";
 import { Toaster } from "@packages/ui/components/sonner";
 import { PostHogProvider } from "@posthog/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
@@ -8,6 +9,7 @@ import { Footer } from "../components/footer";
 import { Header } from "../components/header";
 import { Providers } from "../components/providers";
 import { clientEnv } from "../lib/env";
+import * as m from "../paraglide/messages";
 
 import appCss from "../styles.css?url";
 
@@ -64,9 +66,10 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "OmegaStart" },
-      { property: "og:title", content: "OmegaStart" },
-      { property: "og:description", content: "The modern full-stack starter" },
+      { title: m.og_title() },
+      { name: "description", content: m.og_description() },
+      { property: "og:title", content: m.og_title() },
+      { property: "og:description", content: m.og_description() },
       { property: "og:image", content: "/api/og" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -83,6 +86,22 @@ export const Route = createRootRoute({
         media: "(prefers-color-scheme: dark)",
       },
       { rel: "stylesheet", href: appCss },
+    ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: consts.appName,
+          url: consts.siteUrl,
+          publisher: {
+            "@type": "Organization",
+            name: consts.appName,
+            url: consts.siteUrl,
+          },
+        }),
+      },
     ],
   }),
   shellComponent: RootDocument,

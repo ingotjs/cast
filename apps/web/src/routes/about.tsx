@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
+import * as m from "../paraglide/messages";
+
 const About = () => (
   <main className="page-wrap px-4 py-12">
     <section className="island-shell rounded-2xl p-6 sm:p-8">
@@ -17,5 +19,13 @@ const About = () => (
 );
 
 export const Route = createFileRoute("/about")({
+  head: () => ({
+    meta: [
+      { title: m.meta_about_title() },
+      { name: "description", content: m.meta_about_description() },
+      { property: "og:title", content: m.meta_about_title() },
+      { property: "og:description", content: m.meta_about_description() },
+    ],
+  }),
   component: About,
 });

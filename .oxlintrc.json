@@ -13,6 +13,14 @@
       "rules": {
         "node/no-process-env": "off"
       }
+    },
+    {
+      "files": ["apps/e2e/**"],
+      "rules": {
+        "eslint/no-empty-pattern": "off",
+        "react-hooks/rules-of-hooks": "off",
+        "unicorn/prefer-module": "off"
+      }
     }
   ],
   "rules": {

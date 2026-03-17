@@ -98,7 +98,7 @@ Enable a feature flag in `packages/shared/src/features.ts` and its env vars beco
 
 - **Unit & integration tests** via `bun:test` with PGlite — tests run against a real PostgreSQL engine, not mocks
 - **Test utilities** for creating authenticated users and calling oRPC procedures
-- **E2E tests** via Playwright
+- **E2E tests** via [Playwright](https://playwright.dev/) — full auth flow coverage (sign-up, sign-in, sign-out, change password, delete account) with email capture verification. Run `cd apps/e2e && bunx playwright test`
 
 ## Tech Stack
 

@@ -1,3 +1,7 @@
+import { Link } from "@tanstack/react-router";
+
+import * as m from "../paraglide/messages";
+
 export const Footer = () => {
   const year = new Date().getFullYear();
 
@@ -9,6 +13,17 @@ export const Footer = () => {
         </p>
         <p className="island-kicker m-0">Built with TanStack Start</p>
       </div>
+      <nav className="mt-4 flex justify-center gap-6 text-sm">
+        <Link to="/faq" className="transition hover:text-[var(--sea-ink)]">
+          {m.footer_faq()}
+        </Link>
+        <Link to="/privacy" className="transition hover:text-[var(--sea-ink)]">
+          {m.footer_privacy()}
+        </Link>
+        <Link to="/terms" className="transition hover:text-[var(--sea-ink)]">
+          {m.footer_terms()}
+        </Link>
+      </nav>
       <div className="mt-4 flex justify-center gap-4">
         <a
           href="https://x.com/tan_stack"

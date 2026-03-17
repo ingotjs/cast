@@ -49,7 +49,11 @@ export const SignIn = () => {
       showTabs
       showLegal
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
+        data-testid="signin-form"
+      >
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -92,6 +96,7 @@ export const SignIn = () => {
           className="w-full"
           size="lg"
           loading={isSubmitting}
+          data-testid="signin-submit"
         >
           Sign in
         </Button>

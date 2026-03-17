@@ -1,0 +1,80 @@
+/**
+ * E2E Test: Delete Account Flow
+ *
+ * Steps:
+ * 1. Create a user via the Better Auth API
+ * 2. Sign in through the UI
+ * 3. Navigate to the account settings page at /account
+ * 4. Click the "Delete account" trigger button to reveal the confirmation form
+ * 5. Enter the user's password in the confirmation field
+ * 6. Click the "Delete my account" confirmation button
+ * 7. Verify the user is redirected to the home page in unauthenticated state
+ * 8. Verify an account-deleted email was captured for the user
+ * 9. Verify the user can no longer sign in with their credentials
+ */
+
+import { expect, test } from "../fixtures/auth";
+
+test.describe("Delete Account", () => {
+  test("should delete account and prevent further sign-in", async ({
+    page,
+    createUser,
+    getEmails,
+  }) => {
+    const password = "TestPassword123!";
+    const { email } = await createUser({ password });
+
+    // Sign in through the UI
+    await page.context().clearCookies();
+    await page.goto("/auth/sign-in");
+    await expect(page.getByTestId("signin-form")).toBeVisible();
+    await page.getByLabel("Email").fill(email);
+    await page.locator("#password").fill(password);
+    await page.getByTestId("signin-submit").click();
+    await expect(page).toHaveURL("/", { timeout: 15_000 });
+
+    // Navigate to account settings
+    await page.goto("/account");
+
+    // Wait for page to settle (session data loading causes re-renders that
+    // reset component state — clicking too early would get undone)
+    await expect(page.getByText("Loading sessions...")).not.toBeVisible({
+      timeout: 10_000,
+    });
+
+    // Click the initial delete trigger button
+    await expect(page.getByTestId("delete-account-trigger")).toBeVisible();
+    await page.getByTestId("delete-account-trigger").click();
+
+    // Verify the confirmation form appears
+    await expect(page.getByTestId("delete-account-form")).toBeVisible();
+
+    // Enter password and confirm deletion
+    await page.locator("#delete-password").fill(password);
+    await page.getByTestId("delete-account-confirm").click();
+
+    // Verify redirect to home page in unauthenticated state
+    await expect(page).toHaveURL("/", { timeout: 15_000 });
+    await expect(page.getByTestId("home-signin-link")).toBeVisible({
+      timeout: 10_000,
+    });
+
+    // Verify account-deleted email was captured
+    await page.waitForTimeout(500);
+    const emails = getEmails(email);
+    const deletedEmail = emails.find((e) =>
+      e.subject.toLowerCase().includes("deleted")
+    );
+    expect(deletedEmail).toBeTruthy();
+
+    // Verify the deleted user cannot sign in anymore
+    await page.goto("/auth/sign-in");
+    await expect(page.getByTestId("signin-form")).toBeVisible();
+    await page.getByLabel("Email").fill(email);
+    await page.locator("#password").fill(password);
+    await page.getByTestId("signin-submit").click();
+
+    // Should remain on sign-in page (auth failure)
+    await expect(page).toHaveURL(/\/auth\/sign-in/, { timeout: 10_000 });
+  });
+});

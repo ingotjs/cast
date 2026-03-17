@@ -5,7 +5,7 @@ import {
   redirect,
 } from "@tanstack/react-router";
 
-import { authClient } from "../../lib/auth-client";
+import { getSession } from "../../lib/auth-client";
 
 const AdminLayout = () => (
   <div>
@@ -33,13 +33,13 @@ const AdminLayout = () => (
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async () => {
-    const session = await authClient.getSession();
+    const session = await getSession();
 
-    if (!session.data?.user) {
+    if (!session?.user) {
       throw redirect({ to: "/auth/$path", params: { path: "sign-in" } });
     }
 
-    if ((session.data.user as { role?: string }).role !== "admin") {
+    if ((session.user as { role?: string }).role !== "admin") {
       throw redirect({ to: "/" });
     }
   },

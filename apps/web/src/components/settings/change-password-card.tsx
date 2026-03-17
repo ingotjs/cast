@@ -61,7 +61,11 @@ export const ChangePasswordCard = () => {
 
   return (
     <SettingsCard title="Password" description="Change your account password.">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
+        data-testid="change-password-form"
+      >
         <div className="space-y-2">
           <Label htmlFor="currentPassword">Current Password</Label>
           <PasswordInput
@@ -129,7 +133,11 @@ export const ChangePasswordCard = () => {
           )}
         </div>
 
-        <Button type="submit" loading={isSubmitting}>
+        <Button
+          type="submit"
+          loading={isSubmitting}
+          data-testid="change-password-submit"
+        >
           Change password
         </Button>
       </form>

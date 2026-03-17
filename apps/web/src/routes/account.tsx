@@ -5,7 +5,7 @@ import { DeleteAccountCard } from "../components/settings/delete-account-card";
 import { PasskeysCard } from "../components/settings/passkeys-card";
 import { SessionsCard } from "../components/settings/sessions-card";
 import { UpdateProfileCard } from "../components/settings/update-profile-card";
-import { authClient } from "../lib/auth-client";
+import { getSession } from "../lib/auth-client";
 import { features } from "../lib/env";
 
 const AccountPage = () => (
@@ -27,9 +27,9 @@ const AccountPage = () => (
 
 export const Route = createFileRoute("/account")({
   beforeLoad: async () => {
-    const session = await authClient.getSession();
+    const session = await getSession();
 
-    if (!session.data?.user) {
+    if (!session?.user) {
       throw redirect({
         to: "/auth/$path",
         params: { path: "sign-in" },

@@ -1,6 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { useSession } from "../lib/auth-client";
+import * as m from "../paraglide/messages";
 
 const App = () => {
   const { data: session } = useSession();
@@ -23,6 +24,7 @@ const App = () => {
             <Link
               to="/admin"
               className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-5 py-2.5 font-semibold text-[var(--lagoon-deep)] text-sm no-underline transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.24)]"
+              data-testid="home-user-link"
             >
               Welcome, {session.user.name}
             </Link>
@@ -31,6 +33,7 @@ const App = () => {
               to="/auth/$path"
               params={{ path: "sign-in" }}
               className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-5 py-2.5 font-semibold text-[var(--lagoon-deep)] text-sm no-underline transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.24)]"
+              data-testid="home-signin-link"
             >
               Sign In
             </Link>
@@ -96,4 +99,14 @@ const App = () => {
   );
 };
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: m.meta_home_title() },
+      { name: "description", content: m.meta_home_description() },
+      { property: "og:title", content: m.meta_home_title() },
+      { property: "og:description", content: m.meta_home_description() },
+    ],
+  }),
+  component: App,
+});

@@ -31,8 +31,14 @@ dist
 # Local database
 .pglite
 
+# E2E email captures
+.email-captures
+
 # React Email dev server
 .react-email
+
+# Playwright MCP
+.playwright-mcp
 
 
 # Debug

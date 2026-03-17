@@ -5,6 +5,8 @@
 
 export const consts = {
   appName: "OmegaStart",
+  /** Production URL — update before deploying (used for sitemap, robots.txt, JSON-LD) */
+  siteUrl: "https://example.com",
   defaultLocale: "en",
 
   auth: {
