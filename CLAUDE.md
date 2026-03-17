@@ -156,7 +156,7 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 - User `locale` field stored in DB (default `"en"`, updatable via `input: true` in additionalFields)
 - `user.deleteUser` enabled — users can delete their own account with password confirmation
 - Email verification enabled (`sendOnSignUp: true`, `autoSignInAfterVerification: true`)
-- **Auth error i18n** — [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) translates all [error codes](https://better-auth.com/docs/reference/errors) via Paraglide. Detection: session locale → Accept-Language header. See `packages/server/src/auth-i18n.ts` for the translations builder.
+- **Auth error i18n** — [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) translates base + passkey [error codes](https://better-auth.com/docs/reference/errors) via Paraglide. English skipped (Better Auth defaults). Detection: session locale → Accept-Language. See `packages/server/src/auth-i18n.ts`.
 
 ### Transactional Emails
 
@@ -335,81 +335,13 @@ posthog?.capture({ distinctId: userId, event: "event_name", properties: { ... } 
 
 ### Internationalization (i18n)
 
-[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n across the entire stack. **All user-facing text MUST be internationalized** — NEVER hardcode strings.
+[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n across the entire stack. **All user-facing text MUST be internationalized** — NEVER hardcode strings. Full details in the **i18n skill** (`.agents/skills/i18n/SKILL.md`).
 
-i18n covers frontend UI, backend API responses, Zod validation errors, auth error messages, and email templates — every layer is locale-aware from day one.
+**CRITICAL — ZERO TOLERANCE for non-i18n strings.** Every text the user sees — browser, email, or API error — MUST come from a Paraglide message function.
 
-**Three separate Paraglide projects (separation of concerns):**
+Three Paraglide projects: Frontend (`apps/web/messages/`), Backend (`packages/server/messages/`), Email (`packages/email/messages/`). Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`).
 
-| Project  | Path                        | Covers                                                                        |
-| :------- | :-------------------------- | :---------------------------------------------------------------------------- |
-| Frontend | `apps/web/messages/`        | UI labels, buttons, placeholders, toasts, auth forms, settings, admin         |
-| Backend  | `packages/server/messages/` | Auth error messages (`auth_*`), oRPC errors, API responses, validation errors |
-| Email    | `packages/email/messages/`  | Subject lines, body copy, CTAs, transactional email content                   |
-
-Each has its own `project.inlang/settings.json` and generates its own `paraglide/messages`. Server strings never leak to client bundle.
-
-**Languages:** Currently English (`en`). When adding strings, MUST also translate for all languages in each `project.inlang/settings.json` `locales` array. Do NOT use machine translation from paraglide.
-
-**Paraglide integration (follows [official TanStack Start example](https://github.com/TanStack/router/tree/main/examples/react/start-i18n-paraglide)):**
-
-- `apps/web/src/server.ts` — `paraglideMiddleware` wraps the server entry for per-request locale detection
-- `apps/web/src/router.tsx` — `rewrite` with `deLocalizeUrl`/`localizeUrl` for URL-based locale support
-- `<html lang={getLocale()}>` in root layout — dynamic locale on HTML tag
-- Import style: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`)
-
-**CRITICAL — ZERO TOLERANCE for non-i18n strings:** ALL user-facing strings MUST use Paraglide. This includes UI text, Zod validation errors (frontend + backend), toast messages, auth forms, oRPC errors, email templates (subjects, body, buttons, disclaimers). There MUST be NEVER any hardcoded user-facing string anywhere in this codebase. Every text the user sees — whether in the browser, in an email, or in an API error — MUST come from a Paraglide message function.
-
-<details>
-<summary><strong>How to add a new i18n string</strong></summary>
-
-1. Add to the appropriate `messages/en.json`:
-   - Frontend → `apps/web/messages/en.json`
-   - Backend → `packages/server/messages/en.json`
-   - Email → `packages/email/messages/en.json`
-2. Import: `import { m } from "@/paraglide/messages"`
-3. Use:
-   ```tsx
-   <Label>{m.email_label()}</Label>; // JSX
-   z.string().min(1, m.email_required()); // Zod (frontend)
-   z.string({ error: () => m.field_required() }); // Zod (backend)
-   toast.success(m.profile_updated()); // Toast
-   ```
-4. Add translations for all other languages if they exist.
-
-</details>
-
-<details>
-<summary><strong>Zod i18n details (full-stack)</strong></summary>
-
-Every validation message the user sees is locale-aware:
-
-- **Frontend:** Message functions called at validation time (not import time), so module-level schemas resolve to current locale.
-- **Backend:** Message functions in Zod `error` callbacks resolve per-request via Paraglide's server runtime.
-
-</details>
-
-<details>
-<summary><strong>Auth error i18n (Better Auth i18n plugin)</strong></summary>
-
-All [Better Auth error codes](https://better-auth.com/docs/reference/errors) are translated via the [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n), integrated with Paraglide:
-
-- Error messages stored in `packages/server/messages/en.json` with `auth_` prefix (e.g., `auth_USER_NOT_FOUND`)
-- `packages/server/src/auth-i18n.ts` — `buildAuthTranslations()` dynamically iterates all `auth_*` Paraglide messages and maps them to Better Auth error codes
-- Plugin configured in `packages/server/src/auth.ts` with detection: `session` → `header` (user's stored locale, then Accept-Language)
-- Covers base, passkey, and admin error codes (73 total)
-- Adding a new locale: just add translations to `packages/server/messages/{locale}.json` — no code changes needed
-
-**Key pattern:** Paraglide key `auth_USER_NOT_FOUND` → Better Auth error code `USER_NOT_FOUND`. The `auth_` prefix is stripped at runtime by the builder.
-
-</details>
-
-<details>
-<summary><strong>Email i18n</strong></summary>
-
-Email templates use their own Paraglide project (`packages/email/messages/`). All email text — subjects, headings, body, buttons — MUST use Paraglide. Emails can be sent in the recipient's preferred locale.
-
-</details>
+Auth errors: [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) maps `auth_*` Paraglide keys to error codes. Covers base + passkey codes (55 total). English skipped at runtime (Better Auth handles defaults). See `packages/server/src/auth-i18n.ts`.
 
 ### Dependency Management
 
@@ -595,40 +527,40 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 
 ## Key Files
 
-| File                                     | Purpose                                                                              |
-| :--------------------------------------- | :----------------------------------------------------------------------------------- |
-| `packages/shared/src/consts.ts`          | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink) |
-| `packages/server/src/env.ts`             | Server env vars + feature-gated groups                                               |
-| `packages/server/src/auth.ts`            | Better Auth config + i18n plugin + all email triggers                                |
-| `packages/server/src/auth-i18n.ts`       | `buildAuthTranslations()` — Paraglide → Better Auth error code mapping               |
-| `packages/server/src/logger.ts`          | Structured console logger (Workers-compatible)                                       |
-| `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                                   |
-| `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                                  |
-| `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                                             |
-| `packages/server/src/db/utils.ts`        | `uuidPrimaryKey` helper                                                              |
-| `packages/server/src/orpc/base.ts`       | Procedure definitions (public/protected/admin)                                       |
-| `packages/server/src/orpc/router.ts`     | oRPC router                                                                          |
-| `apps/web/src/lib/env.ts`                | Client features + env groups                                                         |
-| `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                                          |
-| `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                                             |
-| `apps/web/src/lib/schemas.ts`            | Shared Zod schemas                                                                   |
-| `apps/web/src/lib/seo.ts`                | `seoMeta()` — generates OG + Twitter + meta tags from title/desc                     |
-| `apps/web/src/lib/zod-form-resolver.ts`  | Zod v4 resolver for react-hook-form                                                  |
-| `apps/web/src/routes/api/icon.tsx`       | Dynamic favicon (dark mode)                                                          |
-| `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                                     |
-| `apps/web/src/components/auth/`          | Auth forms                                                                           |
-| `apps/web/src/components/settings/`      | Account settings cards                                                               |
-| `apps/web/src/server.ts`                 | Server entry — paraglide middleware for per-request locale                           |
-| `apps/web/src/router.tsx`                | TanStack Router config — rewrite with locale URL support                             |
-| `apps/web/vite.config.ts`                | Vite config (paraglide, tailwind, tanstack, nitro, react compiler)                   |
-| `.oxlintrc.json`                         | Oxlint config                                                                        |
-| `.oxfmtrc.jsonc`                         | Oxfmt config                                                                         |
-| `.syncpackrc`                            | Syncpack config                                                                      |
-| `apps/web/wrangler.jsonc`                | Cloudflare Workers config (compat flags, observability)                              |
-| `.github/workflows/ci.yml`               | CI pipeline                                                                          |
-| `packages/email/templates.ts`            | Email render functions + localized subject helpers                                   |
-| `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                      |
-| `packages/email/emails/email-layout.tsx` | Shared email layout component                                                        |
-| `packages/server/messages/en.json`       | Server i18n strings (auth error messages with `auth_` prefix)                        |
-| `packages/email/messages/en.json`        | Email i18n strings                                                                   |
-| `bunfig.toml`                            | Bun config (exact versions, min release age)                                         |
+| File                                     | Purpose                                                                                |
+| :--------------------------------------- | :------------------------------------------------------------------------------------- |
+| `packages/shared/src/consts.ts`          | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink)   |
+| `packages/server/src/env.ts`             | Server env vars + feature-gated groups                                                 |
+| `packages/server/src/auth.ts`            | Better Auth config + i18n plugin + all email triggers                                  |
+| `packages/server/src/auth-i18n.ts`       | `buildAuthTranslations()` — Paraglide → Better Auth error codes (null if English-only) |
+| `packages/server/src/logger.ts`          | Structured console logger (Workers-compatible)                                         |
+| `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                                     |
+| `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                                    |
+| `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                                               |
+| `packages/server/src/db/utils.ts`        | `uuidPrimaryKey` helper                                                                |
+| `packages/server/src/orpc/base.ts`       | Procedure definitions (public/protected/admin)                                         |
+| `packages/server/src/orpc/router.ts`     | oRPC router                                                                            |
+| `apps/web/src/lib/env.ts`                | Client features + env groups                                                           |
+| `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                                            |
+| `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                                               |
+| `apps/web/src/lib/schemas.ts`            | Shared Zod schemas                                                                     |
+| `apps/web/src/lib/seo.ts`                | `seoMeta()` — generates OG + Twitter + meta tags from title/desc                       |
+| `apps/web/src/lib/zod-form-resolver.ts`  | Zod v4 resolver for react-hook-form                                                    |
+| `apps/web/src/routes/api/icon.tsx`       | Dynamic favicon (dark mode)                                                            |
+| `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                                       |
+| `apps/web/src/components/auth/`          | Auth forms                                                                             |
+| `apps/web/src/components/settings/`      | Account settings cards                                                                 |
+| `apps/web/src/server.ts`                 | Server entry — paraglide middleware for per-request locale                             |
+| `apps/web/src/router.tsx`                | TanStack Router config — rewrite with locale URL support                               |
+| `apps/web/vite.config.ts`                | Vite config (paraglide, tailwind, tanstack, nitro, react compiler)                     |
+| `.oxlintrc.json`                         | Oxlint config                                                                          |
+| `.oxfmtrc.jsonc`                         | Oxfmt config                                                                           |
+| `.syncpackrc`                            | Syncpack config                                                                        |
+| `apps/web/wrangler.jsonc`                | Cloudflare Workers config (compat flags, observability)                                |
+| `.github/workflows/ci.yml`               | CI pipeline                                                                            |
+| `packages/email/templates.ts`            | Email render functions + localized subject helpers                                     |
+| `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                        |
+| `packages/email/emails/email-layout.tsx` | Shared email layout component                                                          |
+| `packages/server/messages/en.json`       | Server i18n strings (auth error messages with `auth_` prefix)                          |
+| `packages/email/messages/en.json`        | Email i18n strings                                                                     |
+| `bunfig.toml`                            | Bun config (exact versions, min release age)                                           |

@@ -150,7 +150,7 @@ Each project generates its own type-safe message functions. Server strings never
 ### What's Covered
 
 - **UI text** — All labels, buttons, placeholders, and toasts use Paraglide (`m.key()`)
-- **Auth errors** — Every [Better Auth error code](https://better-auth.com/docs/reference/errors) is translated via the [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n). Error messages are managed in Paraglide and automatically mapped to Better Auth's i18n system. Locale detection uses the user's stored preference (DB) with `Accept-Language` header as fallback.
+- **Auth errors** — Base + passkey [Better Auth error codes](https://better-auth.com/docs/reference/errors) translated via the [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n). Error messages managed in Paraglide, automatically mapped to Better Auth's i18n system. English skipped at runtime (Better Auth provides defaults natively). Locale detection: user's stored preference (DB) → `Accept-Language` header.
 - **Zod validation** — Frontend and backend validation errors resolve per-locale via Paraglide message functions
 - **Transactional emails** — All email templates (verification, password reset, welcome, etc.) render in the recipient's preferred locale
 - **Meta tags & SEO** — Page titles, descriptions, and OG tags are i18n-aware
@@ -164,12 +164,15 @@ Each project generates its own type-safe message functions. Server strings never
 
 ### How Auth Error i18n Works
 
-The [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) is configured in `packages/server/src/auth.ts`. A translations builder (`packages/server/src/auth-i18n.ts`) dynamically maps all `auth_*` Paraglide message keys to Better Auth error codes at startup. When new locales are added, translations are automatically included.
+The [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) is conditionally added in `packages/server/src/auth.ts`. English uses Better Auth's built-in defaults — no duplication. The `auth_*` keys in `en.json` serve as Paraglide's canonical key list and translation reference for future locales.
+
+When a non-English locale is added, `buildAuthTranslations()` (`packages/server/src/auth-i18n.ts`) dynamically maps `auth_*` Paraglide messages to error codes. The plugin activates automatically — no code changes needed.
 
 ```
-Paraglide messages (en.json)  →  buildAuthTranslations()  →  Better Auth i18n plugin
-  auth_USER_NOT_FOUND              { en: { USER_NOT_FOUND:       Detects locale from
-  auth_INVALID_PASSWORD              "User not found", ... } }   session → Accept-Language
+English only:     i18n plugin NOT added (zero overhead)
+With new locale:  Paraglide fr.json auth_* keys  →  buildAuthTranslations()  →  i18n plugin
+                    "Utilisateur non trouvé"         { fr: { USER_NOT_FOUND:     session locale
+                                                       "...", ... } }            → Accept-Language
 ```
 
 ## Tech Stack

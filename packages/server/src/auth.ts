@@ -25,6 +25,9 @@ import { posthog } from "./posthog";
 // Reference: https://better-auth.com/docs
 // Reference: https://better-auth.com/docs/reference/security
 
+// Build translations for non-default locales (null when only English is configured)
+const authTranslations = buildAuthTranslations();
+
 const emailSender = serverEnv.email
   ? createEmailSender({
       apiKey: serverEnv.email.RESEND_API_KEY,
@@ -120,12 +123,16 @@ export const auth = betterAuth({
   // Reference: https://better-auth.com/docs/plugins/magic-link
   // Reference: https://better-auth.com/docs/plugins/i18n
   plugins: [
-    i18n({
-      translations: buildAuthTranslations(),
-      defaultLocale: consts.defaultLocale,
-      detection: ["session", "header"],
-      userLocaleField: "locale",
-    }),
+    ...(authTranslations
+      ? [
+          i18n({
+            translations: authTranslations,
+            defaultLocale: consts.defaultLocale,
+            detection: ["session", "header"],
+            userLocaleField: "locale",
+          }),
+        ]
+      : []),
     ...(consts.auth.passkey ? [passkey()] : []),
     ...(serverEnv.email
       ? [

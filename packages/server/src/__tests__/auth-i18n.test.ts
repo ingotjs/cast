@@ -1,62 +1,69 @@
 import { afterAll, describe, expect, test } from "bun:test";
 
+import { BASE_ERROR_CODES } from "better-auth";
+
 import { auth } from "../auth";
 import { buildAuthTranslations } from "../auth-i18n";
+import * as messages from "../paraglide/messages";
 import { cleanupTestUser, createTestUser, uniqueEmail } from "./test-utils";
+
+const AUTH_PREFIX = "auth_";
 
 // --- buildAuthTranslations ---
 
 describe("buildAuthTranslations", () => {
-  test("returns translations for all configured locales", () => {
+  test("returns null when only base locale is configured", () => {
     const translations = buildAuthTranslations();
 
-    expect(Object.keys(translations)).toContain("en");
+    // With only English configured, no translations needed — Better Auth handles defaults
+    expect(translations).toBeNull();
   });
 
-  test("includes base error codes", () => {
-    const translations = buildAuthTranslations();
-    const { en } = translations;
-
-    expect(en.USER_NOT_FOUND).toBe("User not found");
-    expect(en.INVALID_EMAIL_OR_PASSWORD).toBe("Invalid email or password");
-    expect(en.INVALID_PASSWORD).toBe("Invalid password");
-    expect(en.PASSWORD_TOO_SHORT).toBe("Password too short");
-    expect(en.USER_ALREADY_EXISTS).toBe("User already exists");
-    expect(en.SESSION_EXPIRED).toBe(
-      "Session expired. Re-authenticate to perform this action."
+  test("Paraglide messages cover all BASE_ERROR_CODES", () => {
+    const messageKeys = new Set(
+      Object.keys(messages).filter(
+        (k) =>
+          k.startsWith(AUTH_PREFIX) &&
+          typeof (messages as Record<string, unknown>)[k] === "function"
+      )
     );
+
+    const missingCodes: string[] = [];
+    for (const code of Object.keys(BASE_ERROR_CODES)) {
+      if (!messageKeys.has(`${AUTH_PREFIX}${code}`)) {
+        missingCodes.push(code);
+      }
+    }
+
+    expect(missingCodes).toEqual([]);
   });
 
-  test("includes passkey error codes", () => {
-    const translations = buildAuthTranslations();
-    const { en } = translations;
+  test("Paraglide messages cover passkey error codes", () => {
+    const passkeyCodeKeys = [
+      "CHALLENGE_NOT_FOUND",
+      "YOU_ARE_NOT_ALLOWED_TO_REGISTER_THIS_PASSKEY",
+      "FAILED_TO_VERIFY_REGISTRATION",
+      "PASSKEY_NOT_FOUND",
+      "AUTHENTICATION_FAILED",
+      "UNABLE_TO_CREATE_SESSION",
+      "FAILED_TO_UPDATE_PASSKEY",
+    ];
 
-    expect(en.CHALLENGE_NOT_FOUND).toBe("Challenge not found");
-    expect(en.PASSKEY_NOT_FOUND).toBe("Passkey not found");
-    expect(en.AUTHENTICATION_FAILED).toBe("Authentication failed");
-  });
+    const messageKeys = new Set(Object.keys(messages));
+    const missingCodes: string[] = [];
+    for (const code of passkeyCodeKeys) {
+      if (!messageKeys.has(`${AUTH_PREFIX}${code}`)) {
+        missingCodes.push(code);
+      }
+    }
 
-  test("includes admin error codes", () => {
-    const translations = buildAuthTranslations();
-    const { en } = translations;
-
-    expect(en.YOU_CANNOT_BAN_YOURSELF).toBe("You cannot ban yourself");
-    expect(en.BANNED_USER).toBe("You have been banned from this application");
-    expect(en.INVALID_ROLE_TYPE).toBe("Invalid role type");
-  });
-
-  test("does not include non-auth keys", () => {
-    const translations = buildAuthTranslations();
-    const { en } = translations;
-
-    // The 'm' namespace re-export should not leak into translations
-    expect(en.m).toBeUndefined();
+    expect(missingCodes).toEqual([]);
   });
 });
 
-// --- i18n error responses ---
+// --- Auth error responses (uses Better Auth defaults for English) ---
 
-describe("auth i18n error responses", () => {
+describe("auth error responses", () => {
   const testUserIds: string[] = [];
 
   afterAll(async () => {
@@ -65,7 +72,7 @@ describe("auth i18n error responses", () => {
     }
   });
 
-  test("returns translated INVALID_EMAIL_OR_PASSWORD on wrong password", async () => {
+  test("returns INVALID_EMAIL_OR_PASSWORD on wrong password", async () => {
     const email = uniqueEmail("i18n-wrong-pw");
     const result = await createTestUser({
       email,
@@ -85,10 +92,9 @@ describe("auth i18n error responses", () => {
     expect(response.ok).toBe(false);
     const body = await response.json();
     expect(body.code).toBe("INVALID_EMAIL_OR_PASSWORD");
-    expect(body.message).toBe("Invalid email or password");
   });
 
-  test("returns translated USER_NOT_FOUND for non-existent user sign-in", async () => {
+  test("returns error code for non-existent user sign-in", async () => {
     const response = await auth.handler(
       new Request("http://localhost/api/auth/sign-in/email", {
         method: "POST",
@@ -102,13 +108,12 @@ describe("auth i18n error responses", () => {
 
     expect(response.ok).toBe(false);
     const body = await response.json();
-    // Better Auth may return INVALID_EMAIL_OR_PASSWORD for security (prevents user enumeration)
     expect(["INVALID_EMAIL_OR_PASSWORD", "USER_NOT_FOUND"]).toContain(
       body.code
     );
   });
 
-  test("returns translated error on duplicate signup", async () => {
+  test("returns error on duplicate signup", async () => {
     const email = uniqueEmail("i18n-dup");
     const result = await createTestUser({
       email,
@@ -132,28 +137,5 @@ describe("auth i18n error responses", () => {
     expect(response.ok).toBe(false);
     const body = await response.json();
     expect(body.code).toBe("USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL");
-    expect(body.message).toBe("User already exists. Use another email.");
-  });
-
-  test("respects Accept-Language header for locale detection", async () => {
-    const response = await auth.handler(
-      new Request("http://localhost/api/auth/sign-in/email", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          "accept-language": "en-US,en;q=0.9",
-        },
-        body: JSON.stringify({
-          email: "nonexistent@test.local",
-          password: "password123456",
-        }),
-      })
-    );
-
-    expect(response.ok).toBe(false);
-    const body = await response.json();
-    // With only English configured, message should be in English
-    expect(typeof body.message).toBe("string");
-    expect(body.message.length).toBeGreaterThan(0);
   });
 });
