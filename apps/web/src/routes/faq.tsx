@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { seoMeta } from "../lib/seo";
-import * as m from "../paraglide/messages";
+import { m } from "../paraglide/messages";
 
 const getFaqs = () => [
   { question: m.faq_q_what_is(), answer: m.faq_a_what_is() },

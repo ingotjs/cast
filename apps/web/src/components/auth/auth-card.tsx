@@ -1,3 +1,4 @@
+import { Separator } from "@packages/ui/components/separator";
 import { cn } from "@packages/ui/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
 
@@ -55,21 +56,24 @@ const AuthCard = ({
         <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{description}</p>
         <div className="mt-6">{children}</div>
-      </div>
 
-      {showLegal && (
-        <p className="mt-6 text-center text-xs text-muted-foreground">
-          By signing up, you agree to the{" "}
-          <Link to="/terms" className="underline hover:text-foreground">
-            Terms of Service
-          </Link>{" "}
-          and{" "}
-          <Link to="/privacy" className="underline hover:text-foreground">
-            Privacy Policy
-          </Link>
-          .
-        </p>
-      )}
+        {showLegal && (
+          <>
+            <Separator className="mt-6" />
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              By signing up, you agree to the{" "}
+              <Link to="/terms" className="underline hover:text-foreground">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy" className="underline hover:text-foreground">
+                Privacy Policy
+              </Link>
+              .
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 };

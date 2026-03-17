@@ -2,7 +2,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { useSession } from "../lib/auth-client";
 import { seoMeta } from "../lib/seo";
-import * as m from "../paraglide/messages";
+import { m } from "../paraglide/messages";
 
 const App = () => {
   const { data: session } = useSession();

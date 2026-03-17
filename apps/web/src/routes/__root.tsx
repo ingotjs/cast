@@ -9,7 +9,8 @@ import { Footer } from "../components/footer";
 import { Header } from "../components/header";
 import { Providers } from "../components/providers";
 import { clientEnv } from "../lib/env";
-import * as m from "../paraglide/messages";
+import { m } from "../paraglide/messages";
+import { getLocale } from "../paraglide/runtime.js";
 
 import appCss from "../styles.css?url";
 
@@ -33,7 +34,7 @@ const AppContent = ({ children }: { children: React.ReactNode }) => (
 );
 
 const RootDocument = ({ children }: { children: React.ReactNode }) => (
-  <html lang="en" suppressHydrationWarning>
+  <html lang={getLocale()} suppressHydrationWarning>
     <head>
       {/* oxlint-disable-next-line react/no-danger -- Inline theme init script to prevent FOUC */}
       <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />

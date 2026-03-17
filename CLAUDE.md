@@ -244,7 +244,7 @@ Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
 
 ```tsx
 import { seoMeta } from "../lib/seo";
-import * as m from "../paraglide/messages";
+import { m } from "../paraglide/messages";
 
 export const Route = createFileRoute("/my-page")({
   head: () => ({
@@ -316,7 +316,12 @@ Each has its own `project.inlang/settings.json` and generates its own `paraglide
 
 **Languages:** Currently English (`en`). When adding strings, MUST also translate for all languages in each `project.inlang/settings.json` `locales` array. Do NOT use machine translation from paraglide.
 
-**Server-side i18n:** `overwriteGetLocale()` handles per-request locale. Reference: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/strategy#server-side
+**Paraglide integration (follows [official TanStack Start example](https://github.com/TanStack/router/tree/main/examples/react/start-i18n-paraglide)):**
+
+- `apps/web/src/server.ts` — `paraglideMiddleware` wraps the server entry for per-request locale detection
+- `apps/web/src/router.tsx` — `rewrite` with `deLocalizeUrl`/`localizeUrl` for URL-based locale support
+- `<html lang={getLocale()}>` in root layout — dynamic locale on HTML tag
+- Import style: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`)
 
 **CRITICAL — ZERO TOLERANCE for non-i18n strings:** ALL user-facing strings MUST use Paraglide. This includes UI text, Zod validation errors (frontend + backend), toast messages, auth forms, oRPC errors, email templates (subjects, body, buttons, disclaimers). There MUST be NEVER any hardcoded user-facing string anywhere in this codebase. Every text the user sees — whether in the browser, in an email, or in an API error — MUST come from a Paraglide message function.
 
@@ -327,7 +332,7 @@ Each has its own `project.inlang/settings.json` and generates its own `paraglide
    - Frontend → `apps/web/messages/en.json`
    - Backend → `packages/server/messages/en.json`
    - Email → `packages/email/messages/en.json`
-2. Import: `import * as m from "@/paraglide/messages"`
+2. Import: `import { m } from "@/paraglide/messages"`
 3. Use:
    ```tsx
    <Label>{m.email_label()}</Label>; // JSX
@@ -560,6 +565,8 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                   |
 | `apps/web/src/components/auth/`          | Auth forms                                                         |
 | `apps/web/src/components/settings/`      | Account settings cards                                             |
+| `apps/web/src/server.ts`                 | Server entry — paraglide middleware for per-request locale         |
+| `apps/web/src/router.tsx`                | TanStack Router config — rewrite with locale URL support           |
 | `apps/web/vite.config.ts`                | Vite config (paraglide, tailwind, tanstack, nitro, react compiler) |
 | `.oxlintrc.json`                         | Oxlint config                                                      |
 | `.oxfmtrc.jsonc`                         | Oxfmt config                                                       |

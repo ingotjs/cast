@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import * as m from "../paraglide/messages";
+import { m } from "../paraglide/messages";
 
 export const Footer = () => {
   const year = new Date().getFullYear();

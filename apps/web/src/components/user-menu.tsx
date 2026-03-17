@@ -17,7 +17,7 @@ import {
 import { Link } from "@tanstack/react-router";
 
 import { signOut, useSession } from "@/lib/auth-client";
-import * as m from "@/paraglide/messages";
+import { m } from "@/paraglide/messages";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);

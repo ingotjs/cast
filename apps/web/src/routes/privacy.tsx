@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { seoMeta } from "../lib/seo";
-import * as m from "../paraglide/messages";
+import { m } from "../paraglide/messages";
 
 const PrivacyPage = () => (
   <main className="container mx-auto max-w-3xl px-4 py-12 md:py-20">
