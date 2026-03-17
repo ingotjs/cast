@@ -39,15 +39,15 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 
 ### Monorepo Structure
 
-| Package           | Alias              | Description                                                             |
-| :---------------- | :----------------- | :---------------------------------------------------------------------- |
-| `apps/web`        | —                  | TanStack Start app (Vite + Router + Nitro). Admin dashboard at `/admin` |
-| `packages/server` | `@packages/server` | oRPC router, Drizzle + PGlite/PostgreSQL, Better Auth, Pino logging     |
-| `packages/shared` | `@packages/shared` | Constants, capability flags, error handling                             |
-| `packages/email`  | `@packages/email`  | React Email templates + Resend                                          |
-| `packages/ui`     | `@packages/ui`     | shadcn v4 + Tailwind CSS + Base UI                                      |
-| `apps/e2e`        | —                  | Playwright E2E tests (auth flows, email verification)                   |
-| `packages/config` | `@packages/config` | Shared TypeScript configs                                               |
+| Package           | Alias              | Description                                                                |
+| :---------------- | :----------------- | :------------------------------------------------------------------------- |
+| `apps/web`        | —                  | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
+| `packages/server` | `@packages/server` | oRPC router, Drizzle + PGlite/Neon, Better Auth, structured logging        |
+| `packages/shared` | `@packages/shared` | Constants, capability flags, error handling                                |
+| `packages/email`  | `@packages/email`  | React Email templates + Resend                                             |
+| `packages/ui`     | `@packages/ui`     | shadcn v4 + Tailwind CSS + Base UI                                         |
+| `apps/e2e`        | —                  | Playwright E2E tests (auth flows, email verification)                      |
+| `packages/config` | `@packages/config` | Shared TypeScript configs                                                  |
 
 ### Type Checking
 
@@ -212,14 +212,14 @@ Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
 
 ### Database
 
-[Drizzle ORM](https://orm.drizzle.team/) — auto-switches PGlite (dev) / PostgreSQL (prod).
+[Drizzle ORM](https://orm.drizzle.team/) — auto-switches PGlite (dev) / [Neon](https://neon.tech/) (prod).
 
 | What        | Where                                                             |
 | :---------- | :---------------------------------------------------------------- |
 | DB client   | `packages/server/src/db/index.ts`                                 |
 | Schema      | `packages/server/src/db/schema.ts` — Better Auth tables + indexes |
 | UUID helper | `packages/server/src/db/utils.ts` — `uuidPrimaryKey`              |
-| Migrations  | `packages/server/drizzle/` — auto-applied on Railway deploy       |
+| Migrations  | `packages/server/drizzle/` — applied via CI or `bun db:migrate`   |
 | Local data  | `.pglite/` (gitignored)                                           |
 
 - `DATABASE_URL` optional in dev (uses PGlite), required in prod
@@ -283,17 +283,14 @@ export const Route = createFileRoute("/my-page")({
 
 ### Logging
 
-[Pino](https://getpino.io/) for local/stdout + [OpenTelemetry](https://opentelemetry.io/) export to [PostHog Logs](https://posthog.com/docs/logs) when PostHog is enabled.
+Structured console logger — Cloudflare Workers compatible. JSON in prod (Cloudflare Logpush), colored output in dev.
 
-| What                 | Where                                                                         |
-| :------------------- | :---------------------------------------------------------------------------- |
-| Logger instance      | `packages/server/src/logger.ts`                                               |
-| oRPC plugin          | `@orpc/experimental-pino` `LoggingHandlerPlugin` — auto-logs with request IDs |
-| Access in procedures | `getLogger(context)` from `@packages/server/orpc/base`                        |
-| OTel → PostHog       | `packages/server/src/otel.ts` — `NodeSDK` + `OTLPLogExporter` to PostHog      |
-| OTel logger          | `import { otelLogger } from "@packages/server/otel"` — emit logs to PostHog   |
+| What            | Where                                              |
+| :-------------- | :------------------------------------------------- |
+| Logger instance | `packages/server/src/logger.ts`                    |
+| Methods         | `logger.info()`, `.warn()`, `.error()`, `.debug()` |
 
-Pino handles local dev (pretty-printed) and stdout (Railway). OpenTelemetry SDK exports server logs to PostHog Logs via OTLP — view them alongside analytics and session replays in one dashboard.
+Cloudflare Workers observability is enabled in `wrangler.jsonc` (`"observability": { "enabled": true }`).
 
 ### Analytics, Error Tracking & Event Capture
 
@@ -404,23 +401,23 @@ Email templates use their own Paraglide project (`packages/email/messages/`). Al
 
 ### Hosting & Deployment
 
-[Railway](https://railway.com/) via `railway.json` — zero-config, fastest path to production.
+[Cloudflare Workers](https://workers.cloudflare.com/) via `@cloudflare/vite-plugin` + [Neon](https://neon.tech/) serverless PostgreSQL.
 
-| Step         | Config                                     |
-| :----------- | :----------------------------------------- |
-| Build        | Railpack (auto-detects Bun monorepo)       |
-| Pre-deploy   | `bun db:migrate` (auto-applies migrations) |
-| Start        | `bun run --cwd apps/web start` (Nitro)     |
-| Health check | `/api/auth/ok`                             |
-| Restart      | On failure                                 |
+| What         | Config                                                                        |
+| :----------- | :---------------------------------------------------------------------------- |
+| Build/Deploy | `cd apps/web && bun run deploy` (Vite build + `wrangler deploy`)              |
+| Wrangler     | `apps/web/wrangler.jsonc` — Workers config, `nodejs_compat`, observability    |
+| Migrations   | `bun db:migrate` with `DATABASE_URL` pointing to Neon (run in CI or manually) |
+| Health check | `/api/auth/ok`                                                                |
+| Secrets      | `wrangler secret put DATABASE_URL`, `BETTER_AUTH_SECRET`, etc.                |
 
-Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#railway--official-partner
+Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#cloudflare-workers--official-partner
 
 ### CI/CD
 
 GitHub Actions (`.github/workflows/ci.yml`) — runs `bun ok:ci` on push to `main` and PRs. Uses `oven-sh/setup-bun@v2`.
 
-On push to `main`, also uploads source maps to PostHog (`PostHog/upload-source-maps@v2`) for error tracking stack traces. Requires `POSTHOG_PROJECT_ID` and `POSTHOG_CLI_API_KEY` GitHub secrets. The `sourcemap: true` Vite build config generates the maps.
+On push to `main`: deploys to Cloudflare Workers, runs DB migrations against Neon, uploads source maps to PostHog, reports CI metrics. Requires GitHub secrets: `CLOUDFLARE_API_TOKEN`, `DATABASE_URL`, `POSTHOG_PROJECT_ID`, `POSTHOG_CLI_API_KEY`, `POSTHOG_PROJECT_API_KEY`.
 
 ---
 
@@ -585,8 +582,7 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `packages/shared/src/consts.ts`          | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink) |
 | `packages/server/src/env.ts`             | Server env vars + feature-gated groups                                               |
 | `packages/server/src/auth.ts`            | Better Auth config + all email triggers                                              |
-| `packages/server/src/logger.ts`          | Pino logger instance                                                                 |
-| `packages/server/src/otel.ts`            | OpenTelemetry SDK — exports server logs to PostHog Logs                              |
+| `packages/server/src/logger.ts`          | Structured console logger (Workers-compatible)                                       |
 | `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                                   |
 | `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                                  |
 | `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                                             |
@@ -609,7 +605,7 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `.oxlintrc.json`                         | Oxlint config                                                                        |
 | `.oxfmtrc.jsonc`                         | Oxfmt config                                                                         |
 | `.syncpackrc`                            | Syncpack config                                                                      |
-| `railway.json`                           | Railway deployment                                                                   |
+| `apps/web/wrangler.jsonc`                | Cloudflare Workers config (compat flags, observability)                              |
 | `.github/workflows/ci.yml`               | CI pipeline                                                                          |
 | `packages/email/templates.ts`            | Email render functions + localized subject helpers                                   |
 | `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                      |

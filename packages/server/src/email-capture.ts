@@ -1,27 +1,14 @@
-import {
-  existsSync,
-  mkdirSync,
-  readFileSync,
-  readdirSync,
-  unlinkSync,
-  writeFileSync,
-} from "node:fs";
-import { join } from "node:path";
+// Email capture for E2E test verification — dev/test only.
+// Uses node:fs which is not available in Cloudflare Workers.
+// Dynamic imports ensure fs/path are only loaded in dev.
 
-// Reference: https://nodejs.org/api/fs.html
+// oxlint-disable-next-line node/no-process-env -- email capture needs to check environment
+const isDev = process.env.NODE_ENV !== "production";
 
-// Use import.meta.dirname to resolve relative to this file, then navigate to project root
-const EMAIL_CAPTURE_DIR = join(import.meta.dirname, "../../../.email-captures");
-
-/** Ensure the capture directory exists */
-const ensureDir = () => {
-  if (!existsSync(EMAIL_CAPTURE_DIR)) {
-    mkdirSync(EMAIL_CAPTURE_DIR, { recursive: true });
-  }
-};
+const DIR_SUFFIX = "../../../.email-captures";
 
 /** Capture an email to a JSON file for E2E test verification */
-export const captureEmail = ({
+export const captureEmail = async ({
   to,
   subject,
   html,
@@ -30,37 +17,70 @@ export const captureEmail = ({
   subject: string;
   html: string;
 }) => {
-  ensureDir();
+  if (!isDev) {
+    return;
+  }
+
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const dir = path.join(import.meta.dirname, DIR_SUFFIX);
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
   const filename = to.replaceAll(/[^a-zA-Z0-9@._-]/g, "_");
-  const filepath = join(EMAIL_CAPTURE_DIR, `${filename}.json`);
+  const filepath = path.join(dir, `${filename}.json`);
 
   let existing: Record<string, { subject: string; html: string }> = {};
-  if (existsSync(filepath)) {
-    existing = JSON.parse(readFileSync(filepath, "utf8"));
+  if (fs.existsSync(filepath)) {
+    existing = JSON.parse(fs.readFileSync(filepath, "utf8"));
   }
 
   existing[new Date().toISOString()] = { subject, html };
-  writeFileSync(filepath, JSON.stringify(existing, null, 2));
+  fs.writeFileSync(filepath, JSON.stringify(existing, null, 2));
 };
 
 /** Read captured emails for a recipient */
-export const readCapturedEmails = (
+export const readCapturedEmails = async (
   email: string
-): Record<string, { subject: string; html: string }> => {
-  ensureDir();
-  const filename = email.replaceAll(/[^a-zA-Z0-9@._-]/g, "_");
-  const filepath = join(EMAIL_CAPTURE_DIR, `${filename}.json`);
-
-  if (!existsSync(filepath)) {
+): Promise<Record<string, { subject: string; html: string }>> => {
+  if (!isDev) {
     return {};
   }
-  return JSON.parse(readFileSync(filepath, "utf8"));
+
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const dir = path.join(import.meta.dirname, DIR_SUFFIX);
+
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  const filename = email.replaceAll(/[^a-zA-Z0-9@._-]/g, "_");
+  const filepath = path.join(dir, `${filename}.json`);
+
+  if (!fs.existsSync(filepath)) {
+    return {};
+  }
+  return JSON.parse(fs.readFileSync(filepath, "utf8"));
 };
 
 /** Clear all captured emails */
-export const clearCapturedEmails = () => {
-  ensureDir();
-  for (const file of readdirSync(EMAIL_CAPTURE_DIR)) {
-    unlinkSync(join(EMAIL_CAPTURE_DIR, file));
+export const clearCapturedEmails = async () => {
+  if (!isDev) {
+    return;
+  }
+
+  const fs = await import("node:fs");
+  const path = await import("node:path");
+  const dir = path.join(import.meta.dirname, DIR_SUFFIX);
+
+  if (!fs.existsSync(dir)) {
+    return;
+  }
+
+  for (const file of fs.readdirSync(dir)) {
+    fs.unlinkSync(path.join(dir, file));
   }
 };

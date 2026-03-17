@@ -1,20 +1,8 @@
-import { LoggingHandlerPlugin } from "@orpc/experimental-pino";
 import { RPCHandler } from "@orpc/server/fetch";
-import { logger } from "@packages/server/logger";
 import { router } from "@packages/server/orpc";
 import { createFileRoute } from "@tanstack/react-router";
 
-// Reference: https://orpc.dev/docs/integrations/pino
-const handler = new RPCHandler(router, {
-  plugins: [
-    new LoggingHandlerPlugin({
-      logger,
-      generateId: () => crypto.randomUUID(),
-      logRequestResponse: true,
-      logRequestAbort: true,
-    }),
-  ],
-});
+const handler = new RPCHandler(router);
 
 export const Route = createFileRoute("/api/rpc/$")({
   server: {

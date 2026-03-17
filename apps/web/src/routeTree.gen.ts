@@ -22,6 +22,7 @@ import { Route as ApiOgRouteImport } from './routes/api/og'
 import { Route as ApiIconRouteImport } from './routes/api/icon'
 import { Route as AdminAnalyticsRouteImport } from './routes/admin/analytics'
 import { Route as ApiRpcSplatRouteImport } from './routes/api/rpc.$'
+import { Route as ApiPhSplatRouteImport } from './routes/api/ph.$'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth.$'
 
 const TermsRoute = TermsRouteImport.update({
@@ -89,6 +90,11 @@ const ApiRpcSplatRoute = ApiRpcSplatRouteImport.update({
   path: '/api/rpc/$',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPhSplatRoute = ApiPhSplatRouteImport.update({
+  id: '/api/ph/$',
+  path: '/api/ph/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -109,6 +115,7 @@ export interface FileRoutesByFullPath {
   '/auth/$path': typeof AuthPathRoute
   '/admin/': typeof AdminIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/ph/$': typeof ApiPhSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesByTo {
@@ -124,6 +131,7 @@ export interface FileRoutesByTo {
   '/auth/$path': typeof AuthPathRoute
   '/admin': typeof AdminIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/ph/$': typeof ApiPhSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRoutesById {
@@ -141,6 +149,7 @@ export interface FileRoutesById {
   '/auth/$path': typeof AuthPathRoute
   '/admin/': typeof AdminIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
+  '/api/ph/$': typeof ApiPhSplatRoute
   '/api/rpc/$': typeof ApiRpcSplatRoute
 }
 export interface FileRouteTypes {
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/auth/$path'
     | '/admin/'
     | '/api/auth/$'
+    | '/api/ph/$'
     | '/api/rpc/$'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/auth/$path'
     | '/admin'
     | '/api/auth/$'
+    | '/api/ph/$'
     | '/api/rpc/$'
   id:
     | '__root__'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/auth/$path'
     | '/admin/'
     | '/api/auth/$'
+    | '/api/ph/$'
     | '/api/rpc/$'
   fileRoutesById: FileRoutesById
 }
@@ -205,6 +217,7 @@ export interface RootRouteChildren {
   ApiOgRoute: typeof ApiOgRoute
   AuthPathRoute: typeof AuthPathRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiPhSplatRoute: typeof ApiPhSplatRoute
   ApiRpcSplatRoute: typeof ApiRpcSplatRoute
 }
 
@@ -308,6 +321,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAuthSplatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/ph/$': {
+      id: '/api/ph/$'
+      path: '/api/ph/$'
+      fullPath: '/api/ph/$'
+      preLoaderRoute: typeof ApiPhSplatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -337,6 +357,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiOgRoute: ApiOgRoute,
   AuthPathRoute: AuthPathRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiPhSplatRoute: ApiPhSplatRoute,
   ApiRpcSplatRoute: ApiRpcSplatRoute,
 }
 export const routeTree = rootRouteImport

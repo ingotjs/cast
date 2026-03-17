@@ -29,17 +29,17 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 
 ### Deploy in 60 Seconds
 
-**[Railway](https://railway.com/)** is the recommended deployment target — fastest path from code to production:
+**[Cloudflare Workers](https://workers.cloudflare.com/)** + **[Neon](https://neon.tech/)** — serverless edge deployment with serverless Postgres:
 
-1. Connect your repo to Railway
-2. Set `DATABASE_URL`, `BETTER_AUTH_SECRET`
-3. Deploy. Database migrations run automatically.
+1. Create a Neon database, copy the connection string
+2. Set secrets: `wrangler secret put DATABASE_URL`, `wrangler secret put BETTER_AUTH_SECRET`
+3. Deploy: `cd apps/web && bun run deploy`
 
-That's it. Health checks, restart policies, and build detection are pre-configured in `railway.json`. Other providers (Vercel, Fly.io, etc.) work too.
+CI auto-deploys on push to `main` — runs migrations against Neon, then deploys to Cloudflare. Pre-configured in `.github/workflows/ci.yml`.
 
 ### CI/CD Included
 
-GitHub Actions runs `bun ok:ci` on every push and PR — type checking, linting, and tests. Push with confidence.
+GitHub Actions runs `bun ok:ci` on every push and PR. On `main`, also deploys to Cloudflare Workers, runs DB migrations, uploads source maps to PostHog, and reports CI metrics.
 
 ## Quick Start
 
@@ -80,11 +80,11 @@ packages/config   → Shared TypeScript configs
 
 ### Required (Production)
 
-| Variable                | Description                           |
-| ----------------------- | ------------------------------------- |
-| `DATABASE_URL`          | PostgreSQL connection string          |
-| `BETTER_AUTH_SECRET`    | Auth encryption secret (min 32 chars) |
-| `RAILWAY_PUBLIC_DOMAIN` | Auto-set by Railway                   |
+| Variable             | Description                             |
+| -------------------- | --------------------------------------- |
+| `DATABASE_URL`       | Neon PostgreSQL connection string       |
+| `BETTER_AUTH_SECRET` | Auth encryption secret (min 32 chars)   |
+| `URL`                | Production URL (e.g. https://myapp.com) |
 
 ### Optional (Service Features)
 
@@ -133,23 +133,23 @@ Automatic on both client and server — no extra setup required.
 
 ## Tech Stack
 
-| Layer           | Technology                                                                             |
-| --------------- | -------------------------------------------------------------------------------------- |
-| Framework       | [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router + Nitro)          |
-| Language        | TypeScript 5.9 (type-checked via [tsgo](https://github.com/microsoft/typescript-go))   |
-| API             | [oRPC](https://orpc.dev/) + [TanStack Query](https://tanstack.com/query)               |
-| Database        | [Drizzle ORM](https://orm.drizzle.team/) + PGlite / PostgreSQL                         |
-| Auth            | [Better Auth](https://better-auth.com/) (email/password, passkeys, admin)              |
-| UI              | [shadcn v4](https://ui.shadcn.com/) + Tailwind CSS 4 + [Base UI](https://base-ui.com/) |
-| Email           | [React Email](https://react.email/) + [Resend](https://resend.com/)                    |
-| i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)  |
-| Logging         | [Pino](https://getpino.io/) + oRPC plugin                                              |
-| Analytics       | [PostHog](https://posthog.com/) (client + server, error tracking)                      |
-| Linting         | [Ultracite](https://github.com/haydenbleasel/ultracite) (Oxlint + Oxfmt)               |
-| Package Manager | [Bun](https://bun.sh/)                                                                 |
-| Monorepo        | [Turborepo](https://turborepo.dev/)                                                    |
-| Deployment      | [Railway](https://railway.com/)                                                        |
-| CI/CD           | GitHub Actions                                                                         |
+| Layer           | Technology                                                                                  |
+| --------------- | ------------------------------------------------------------------------------------------- |
+| Framework       | [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router + Cloudflare Workers)  |
+| Language        | TypeScript 5.9 (type-checked via [tsgo](https://github.com/microsoft/typescript-go))        |
+| API             | [oRPC](https://orpc.dev/) + [TanStack Query](https://tanstack.com/query)                    |
+| Database        | [Drizzle ORM](https://orm.drizzle.team/) + PGlite (dev) / [Neon](https://neon.tech/) (prod) |
+| Auth            | [Better Auth](https://better-auth.com/) (email/password, passkeys, admin)                   |
+| UI              | [shadcn v4](https://ui.shadcn.com/) + Tailwind CSS 4 + [Base UI](https://base-ui.com/)      |
+| Email           | [React Email](https://react.email/) + [Resend](https://resend.com/)                         |
+| i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)       |
+| Logging         | Structured console logger (Cloudflare Logpush compatible)                                   |
+| Analytics       | [PostHog](https://posthog.com/) (client + server, error tracking)                           |
+| Linting         | [Ultracite](https://github.com/haydenbleasel/ultracite) (Oxlint + Oxfmt)                    |
+| Package Manager | [Bun](https://bun.sh/)                                                                      |
+| Monorepo        | [Turborepo](https://turborepo.dev/)                                                         |
+| Deployment      | [Cloudflare Workers](https://workers.cloudflare.com/) + [Neon](https://neon.tech/)          |
+| CI/CD           | GitHub Actions                                                                              |
 
 <details>
 <summary>Claude Code Skills</summary>

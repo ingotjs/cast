@@ -56,6 +56,9 @@ const getUserLocale = (user: Record<string, unknown>): string =>
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "pg", usePlural: true }),
+  // Reference: https://better-auth.com/docs/adapters/postgresql#joins-experimental
+  // Joins reduce DB round-trips (2-3x perf boost) — only works with real PostgreSQL, not PGlite
+  ...(serverEnv.DATABASE_URL ? { experimental: { joins: true } } : {}),
   secret: serverEnv.BETTER_AUTH_SECRET,
   baseURL: serverEnv.BETTER_AUTH_URL ?? serverEnv.URL,
   trustedOrigins: [serverEnv.URL],
