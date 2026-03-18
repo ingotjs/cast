@@ -6,12 +6,14 @@ import viteReact from "@vitejs/plugin-react";
 import alchemy from "alchemy/cloudflare/tanstack-start";
 import type { PluginOption } from "vite-plus";
 import { defineConfig } from "vite-plus";
-import tsconfigPaths from "vite-tsconfig-paths";
 
 // Reference: https://alchemy.run/guides/cloudflare-tanstack-start/
 
 const config = defineConfig({
   server: { port: 3000 },
+  resolve: {
+    tsconfigPaths: true,
+  },
   build: {
     // For posthog
     sourcemap: true,
@@ -24,7 +26,6 @@ const config = defineConfig({
       strategy: ["cookie", "preferredLanguage", "url", "baseLocale"],
     }),
     devtools(),
-    tsconfigPaths({ projects: ["./tsconfig.json"] }),
     tailwindcss(),
     alchemy(),
     tanstackStart(),
