@@ -82,11 +82,15 @@ Every custom skill MUST include the "Keep this skill in sync" blockquote. The co
 
 ## Registering a New Skill
 
-After creating a skill, it MUST be registered in CLAUDE.md's auto-invoke skills table:
+After creating a skill:
+
+1. **Register in CLAUDE.md's auto-invoke skills table:**
 
 ```markdown
 | `_my-skill` | Trigger description for when this skill should activate |
 ```
+
+2. **Symlink into `.claude/skills/`:** `ln -s ../../.agents/skills/_my-skill .claude/skills/_my-skill`
 
 ## Reviewing Skills
 

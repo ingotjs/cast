@@ -30,7 +30,7 @@ import { expect, test } from "../fixtures/auth";
 const generateEmail = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e.test`;
 
 test.describe("Sign Up", () => {
-  test("should create an account through the UI and redirect to home", async ({ page, getEmails }) => {
+  test("should create an account through the UI and redirect to home", async ({ page, expectEmail }) => {
     const email = generateEmail("signup");
     const password = "TestPassword123!";
     const firstName = "Test";
@@ -38,9 +38,7 @@ test.describe("Sign Up", () => {
 
     // Navigate to the sign-up page and wait for form hydration
     await page.goto("/auth/sign-up");
-    await page.waitForSelector("[data-testid='signup-form'][data-hydrated]", {
-      timeout: 10_000,
-    });
+    await page.waitForSelector("[data-testid='signup-form'][data-hydrated]");
 
     // Fill in the registration form using id locators for reliability
     await page.locator("#firstName").fill(firstName);
@@ -52,18 +50,12 @@ test.describe("Sign Up", () => {
     // Submit the form
     await page.getByTestId("signup-submit").click();
 
-    // Verify redirect to home page and authenticated state
+    // Auth redirect involves server-side session creation + redirect
     await expect(page).toHaveURL("/", { timeout: 15_000 });
-    await expect(page.getByTestId("user-menu-trigger")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByTestId("user-menu-trigger")).toBeVisible();
 
-    // Verify verification email was captured (poll — email capture is async)
-    await expect(() => {
-      const emails = getEmails(email);
-      const verificationEmail = emails.find((e) => e.subject.toLowerCase().includes("verif"));
-      expect(verificationEmail).toBeTruthy();
-    }).toPass({ timeout: 5_000 });
+    // Verify verification email was captured
+    await expectEmail(email, "verif");
   });
 
   test("should show validation errors for empty fields", async ({ page }) => {

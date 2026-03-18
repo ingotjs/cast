@@ -26,6 +26,8 @@ type AuthFixtures = {
   authenticatedPage: TestUser;
   /** Read captured emails for a recipient */
   getEmails: (email: string) => CapturedEmail[];
+  /** Assert an email with a matching subject keyword was captured (polls until found) */
+  expectEmail: (email: string, subjectKeyword: string) => Promise<void>;
   /** Clear all captured emails */
   clearEmails: () => void;
 };
@@ -73,6 +75,15 @@ export const test = base.extend<AuthFixtures>({
         timestamp,
         ...content,
       }));
+    });
+  },
+
+  expectEmail: async ({ getEmails }, use) => {
+    await use(async (email: string, subjectKeyword: string) => {
+      await expect(() => {
+        const found = getEmails(email).find((e) => e.subject.toLowerCase().includes(subjectKeyword));
+        expect(found).toBeTruthy();
+      }).toPass();
     });
   },
 

@@ -20,15 +20,13 @@
 import { expect, test } from "../fixtures/auth";
 
 test.describe("Delete Account", () => {
-  test("should delete account and prevent further sign-in", async ({ page, authenticatedPage, getEmails }) => {
+  test("should delete account and prevent further sign-in", async ({ page, authenticatedPage, expectEmail }) => {
     // Navigate to account settings
     await page.goto("/account");
 
     // Wait for page to settle (session data loading causes re-renders that
     // reset component state — clicking too early would get undone)
-    await expect(page.getByText("Loading sessions...")).not.toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByText("Loading sessions...")).not.toBeVisible();
 
     // Click the initial delete trigger button
     await expect(page.getByTestId("delete-account-trigger")).toBeVisible();
@@ -41,18 +39,12 @@ test.describe("Delete Account", () => {
     await page.locator("#delete-password").fill(authenticatedPage.password);
     await page.getByTestId("delete-account-confirm").click();
 
-    // Verify redirect to home page in unauthenticated state
+    // Auth redirect involves server-side session invalidation + redirect
     await expect(page).toHaveURL("/", { timeout: 15_000 });
-    await expect(page.getByTestId("header-signin-link")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByTestId("header-signin-link")).toBeVisible();
 
-    // Verify account-deleted email was captured (poll — email capture is async)
-    await expect(() => {
-      const emails = getEmails(authenticatedPage.email);
-      const deletedEmail = emails.find((e) => e.subject.toLowerCase().includes("deleted"));
-      expect(deletedEmail).toBeTruthy();
-    }).toPass({ timeout: 5_000 });
+    // Verify account-deleted email was captured
+    await expectEmail(authenticatedPage.email, "deleted");
 
     // Verify the deleted user cannot sign in anymore
     await page.goto("/auth/sign-in");
@@ -62,6 +54,6 @@ test.describe("Delete Account", () => {
     await page.getByTestId("signin-submit").click();
 
     // Should remain on sign-in page (auth failure)
-    await expect(page).toHaveURL(/\/auth\/sign-in/, { timeout: 10_000 });
+    await expect(page).toHaveURL(/\/auth\/sign-in/);
   });
 });

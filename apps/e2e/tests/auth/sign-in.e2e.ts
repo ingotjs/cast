@@ -30,9 +30,7 @@ test.describe("Sign In", () => {
   test("should sign in with valid credentials and redirect to home", async ({ page, testUser }) => {
     // Navigate to sign-in page and wait for form hydration
     await page.goto("/auth/sign-in");
-    await page.waitForSelector("[data-testid='signin-form'][data-hydrated]", {
-      timeout: 10_000,
-    });
+    await page.waitForSelector("[data-testid='signin-form'][data-hydrated]");
 
     // Fill in credentials using input id selectors (PasswordInput wraps input
     // inside a div alongside a toggle button, so getByLabel resolves to 2 elements)
@@ -42,18 +40,14 @@ test.describe("Sign In", () => {
     // Submit the form
     await page.getByTestId("signin-submit").click();
 
-    // Verify redirect to home and authenticated state
+    // Auth redirect involves server-side session creation + redirect
     await expect(page).toHaveURL("/", { timeout: 15_000 });
-    await expect(page.getByTestId("user-menu-trigger")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByTestId("user-menu-trigger")).toBeVisible();
   });
 
   test("should show error for invalid credentials", async ({ page }) => {
     await page.goto("/auth/sign-in");
-    await expect(page.getByTestId("header-signin-link")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByTestId("header-signin-link")).toBeVisible();
 
     await page.getByLabel("Email").fill("nonexistent@e2e.test");
     await page.locator("#password").fill("WrongPassword123!");
@@ -61,7 +55,7 @@ test.describe("Sign In", () => {
     await page.getByTestId("signin-submit").click();
 
     // Should stay on the sign-in page
-    await expect(page).toHaveURL(/\/auth\/sign-in/, { timeout: 10_000 });
+    await expect(page).toHaveURL(/\/auth\/sign-in/);
   });
 
   test("should show validation errors for empty fields", async ({ page }) => {

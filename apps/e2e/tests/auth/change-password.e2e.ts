@@ -25,21 +25,21 @@
 import { expect, test } from "../fixtures/auth";
 
 test.describe("Change Password", () => {
-  test("should change password and allow sign-in with new password", async ({ page, authenticatedPage, getEmails }) => {
+  test("should change password and allow sign-in with new password", async ({
+    page,
+    authenticatedPage,
+    expectEmail,
+  }) => {
     const newPassword = "NewPassword456!";
 
     // Navigate to account settings
     await page.goto("/account");
-    await expect(page.getByTestId("change-password-form")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByTestId("change-password-form")).toBeVisible();
 
     // Wait for the page to fully settle (session data loading causes re-renders
     // that reset form fields). The "Sessions" card shows "Loading sessions..." then
     // actual session data — wait for that to stabilize.
-    await expect(page.getByText("Loading sessions...")).not.toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByText("Loading sessions...")).not.toBeVisible();
 
     // Fill in the change-password form
     await page.locator("#currentPassword").fill(authenticatedPage.password);
@@ -50,25 +50,15 @@ test.describe("Change Password", () => {
     await page.getByTestId("change-password-submit").click();
 
     // Verify success toast
-    await expect(page.getByText("Password changed successfully")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByText("Password changed successfully")).toBeVisible();
 
-    // Verify password-changed email was captured (poll — email capture is async)
-    await expect(() => {
-      const emails = getEmails(authenticatedPage.email);
-      const passwordChangedEmail = emails.find(
-        (e) => e.subject.toLowerCase().includes("password") && e.subject.toLowerCase().includes("change")
-      );
-      expect(passwordChangedEmail).toBeTruthy();
-    }).toPass({ timeout: 5_000 });
+    // Verify password-changed email was captured
+    await expectEmail(authenticatedPage.email, "password");
 
     // Sign out via user menu
     await page.getByTestId("user-menu-trigger").click();
     await page.getByTestId("user-menu-signout").click();
-    await expect(page.getByTestId("header-signin-link")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByTestId("header-signin-link")).toBeVisible();
 
     // Sign in with new password through the UI
     await page.goto("/auth/sign-in");
@@ -76,19 +66,15 @@ test.describe("Change Password", () => {
     await page.getByLabel("Email").fill(authenticatedPage.email);
     await page.locator("#password").fill(newPassword);
     await page.getByTestId("signin-submit").click();
-    await expect(page).toHaveURL("/", { timeout: 15_000 });
+    await expect(page).toHaveURL("/");
   });
 
   test("should reject incorrect current password", async ({ page, authenticatedPage: _setup }) => {
     await page.goto("/account");
-    await expect(page.getByTestId("change-password-form")).toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByTestId("change-password-form")).toBeVisible();
 
     // Wait for page to settle (session data loading)
-    await expect(page.getByText("Loading sessions...")).not.toBeVisible({
-      timeout: 10_000,
-    });
+    await expect(page.getByText("Loading sessions...")).not.toBeVisible();
 
     // Use wrong current password
     await page.locator("#currentPassword").fill("WrongPassword999!");
@@ -98,9 +84,7 @@ test.describe("Change Password", () => {
     await page.getByTestId("change-password-submit").click();
 
     // Should show an error, not success
-    await expect(page.getByText("Password changed successfully")).not.toBeVisible({
-      timeout: 5000,
-    });
+    await expect(page.getByText("Password changed successfully")).not.toBeVisible();
 
     // _setup activates the authenticatedPage fixture (unused directly)
   });

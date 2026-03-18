@@ -32,13 +32,13 @@ bunx playwright test tests/auth/  # specific directory
 
 ## Test Fixtures (`tests/fixtures/auth.ts`)
 
-| Fixture        | Description                                              |
-| :------------- | :------------------------------------------------------- |
-| `createUser`   | Creates user via Better Auth API, returns email/password  |
-| `signInViaAPI` | Signs in via API, sets session cookies on browser context |
-| `getEmails`    | Reads captured emails from `packages/email/.etc/.email-captures/` directory   |
-| `clearEmails`  | Clears all captured emails                               |
-| `uniqueEmail`  | Generates unique test email with prefix                   |
+| Fixture             | Description                                                          |
+| :------------------ | :------------------------------------------------------------------- |
+| `testUser`          | Creates user via API, clears cookies. Returns `{ email, password }`  |
+| `authenticatedPage` | Creates user via API, keeps session cookies. Returns credentials     |
+| `getEmails`         | Reads captured emails for a recipient (low-level)                    |
+| `expectEmail`       | Asserts an email with matching subject keyword was captured (polls)  |
+| `clearEmails`       | Clears all captured emails                                           |
 
 ## Rules — MUST follow
 
@@ -49,6 +49,12 @@ bunx playwright test tests/auth/  # specific directory
 - **Use `page.getByLabel()` for non-password text inputs** (Email, First name, etc.)
 - **NEVER use text-based selectors** for interactive elements — text changes with i18n
 - **NEVER use `waitForLoadState('networkidle')`** — use `expect` assertions instead
+
+### Timeouts
+
+- **Global expect timeout is 5s** (`playwright.config.ts`). NEVER add custom timeouts unless there's a specific reason.
+- **If a custom timeout is needed**, add a comment explaining why (e.g., `// Auth redirect involves server-side session creation + redirect`).
+- **Only known exception:** `toHaveURL("/", { timeout: 15_000 })` after auth actions (sign-in, sign-up, delete account) — server-side session + redirect is slow.
 
 ### Test structure
 
@@ -70,19 +76,15 @@ await expect(
 
 ### Email verification
 
-Emails are captured to `packages/email/.etc/.email-captures/` as JSON files (filename = recipient email, key = timestamp, value = { subject, html }). Use the `getEmails` fixture with `expect().toPass()` for polling (email capture is async):
+Emails are captured to `packages/email/.etc/.email-captures/` as JSON files. Use the `expectEmail` fixture to assert an email was sent (polls automatically):
 
 ```ts
-await expect(() => {
-  const emails = getEmails(email);
-  const verificationEmail = emails.find((e) =>
-    e.subject.toLowerCase().includes("verif")
-  );
-  expect(verificationEmail).toBeTruthy();
-}).toPass({ timeout: 5_000 });
+await expectEmail(email, "verif");       // verification email
+await expectEmail(email, "password");    // password changed
+await expectEmail(email, "deleted");     // account deleted
 ```
 
-**NEVER use `waitForTimeout()` before checking emails** — it's a race condition. Always use `expect().toPass()` to poll.
+**NEVER use `waitForTimeout()` before checking emails** — it's a race condition.
 
 **MUST verify email was sent** for any flow that triggers an email notification. Every E2E test that exercises a flow sending an email MUST assert the email was captured.
 
