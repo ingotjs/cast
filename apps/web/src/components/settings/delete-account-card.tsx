@@ -41,15 +41,9 @@ export const DeleteAccountCard = () => {
       destructive
     >
       {showConfirm ? (
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4"
-          data-testid="delete-account-form"
-        >
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-testid="delete-account-form">
           <div className="space-y-2">
-            <Label htmlFor="delete-password">
-              Enter your password to confirm
-            </Label>
+            <Label htmlFor="delete-password">Enter your password to confirm</Label>
             <Input
               id="delete-password"
               type="password"
@@ -58,29 +52,16 @@ export const DeleteAccountCard = () => {
             />
           </div>
           <div className="flex gap-2">
-            <Button
-              type="submit"
-              variant="destructive"
-              loading={isSubmitting}
-              data-testid="delete-account-confirm"
-            >
+            <Button type="submit" variant="destructive" loading={isSubmitting} data-testid="delete-account-confirm">
               Delete my account
             </Button>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => setShowConfirm(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => setShowConfirm(false)}>
               Cancel
             </Button>
           </div>
         </form>
       ) : (
-        <Button
-          variant="destructive"
-          onClick={() => setShowConfirm(true)}
-          data-testid="delete-account-trigger"
-        >
+        <Button variant="destructive" onClick={() => setShowConfirm(true)} data-testid="delete-account-trigger">
           Delete account
         </Button>
       )}

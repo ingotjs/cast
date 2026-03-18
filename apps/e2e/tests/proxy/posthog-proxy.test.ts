@@ -28,9 +28,7 @@ test.describe("PostHog reverse proxy", () => {
     expect(text).toContain("API key");
   });
 
-  test("non-proxied /api/ routes return app HTML, not PostHog", async ({
-    request,
-  }) => {
+  test("non-proxied /api/ routes return app HTML, not PostHog", async ({ request }) => {
     const response = await request.get("/api/nonexistent");
     const text = await response.text();
 

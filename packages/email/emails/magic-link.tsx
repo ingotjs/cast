@@ -12,13 +12,7 @@ type MagicLinkEmailProps = {
   locale?: string;
 };
 
-export const MagicLinkEmail = ({
-  token,
-  magicLink,
-  appName,
-  appUrl,
-  locale = "en",
-}: MagicLinkEmailProps) => (
+export const MagicLinkEmail = ({ token, magicLink, appName, appUrl, locale = "en" }: MagicLinkEmailProps) => (
   <EmailLayout
     locale={locale}
     previewText={m.email_magic_link_preview({ appName, token }, loc(locale))}
@@ -28,9 +22,7 @@ export const MagicLinkEmail = ({
     <Text className="mt-7 mb-0 font-bold text-3xl text-[#1d1c1d]">
       {m.email_magic_link_heading({ appName }, loc(locale))}
     </Text>
-    <Text className="mt-8 mb-6 text-black text-lg leading-7">
-      {m.email_magic_link_body({}, loc(locale))}
-    </Text>
+    <Text className="mt-8 mb-6 text-black text-lg leading-7">{m.email_magic_link_body({}, loc(locale))}</Text>
     <Text className="my-0 rounded-lg border border-gray-200 bg-gray-100 px-4 py-2.5 text-center font-semibold text-black text-xl">
       {token}
     </Text>
@@ -40,9 +32,7 @@ export const MagicLinkEmail = ({
     >
       {m.email_magic_link_button({}, loc(locale))}
     </Button>
-    <Text className="mt-5 mb-0 text-[#444] text-sm">
-      {m.email_magic_link_disclaimer({}, loc(locale))}
-    </Text>
+    <Text className="mt-5 mb-0 text-[#444] text-sm">{m.email_magic_link_disclaimer({}, loc(locale))}</Text>
   </EmailLayout>
 );
 

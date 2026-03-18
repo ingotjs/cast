@@ -52,9 +52,7 @@ export const MagicLinkAuth = () => {
     return (
       <div className="text-center">
         <Separator className="mb-4" />
-        <p className="text-sm text-muted-foreground">
-          We sent you a magic link. Check your email to sign in.
-        </p>
+        <p className="text-sm text-muted-foreground">We sent you a magic link. Check your email to sign in.</p>
       </div>
     );
   }
@@ -77,9 +75,7 @@ export const MagicLinkAuth = () => {
             autoComplete="email"
             {...register("email")}
           />
-          {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
-          )}
+          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
         <Button
           type="submit"

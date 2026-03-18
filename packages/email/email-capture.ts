@@ -8,15 +8,7 @@ const isDev = process.env.NODE_ENV !== "production";
 const DIR_SUFFIX = "../../.email-captures";
 
 /** Capture an email to a JSON file for E2E test verification */
-export const captureEmail = async ({
-  to,
-  subject,
-  html,
-}: {
-  to: string;
-  subject: string;
-  html: string;
-}) => {
+export const captureEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }) => {
   if (!isDev) {
     return;
   }
@@ -42,9 +34,7 @@ export const captureEmail = async ({
 };
 
 /** Read captured emails for a recipient */
-export const readCapturedEmails = async (
-  email: string
-): Promise<Record<string, { subject: string; html: string }>> => {
+export const readCapturedEmails = async (email: string): Promise<Record<string, { subject: string; html: string }>> => {
   if (!isDev) {
     return {};
   }

@@ -26,10 +26,7 @@ const AUTH_PREFIX = "auth_";
  * the plugin's `$ERROR_CODES` export, then compile Paraglide (`bun run build`
  * in `packages/auth`).
  */
-export const buildAuthTranslations = (): Record<
-  string,
-  Record<string, string>
-> | null => {
+export const buildAuthTranslations = (): Record<string, Record<string, string>> | null => {
   const translations: Record<string, Record<string, string>> = {};
 
   for (const locale of locales) {
@@ -43,9 +40,7 @@ export const buildAuthTranslations = (): Record<
     for (const [key, fn] of Object.entries(messages)) {
       if (key.startsWith(AUTH_PREFIX) && typeof fn === "function") {
         const errorCode = key.slice(AUTH_PREFIX.length);
-        translations[locale][errorCode] = (
-          fn as (options: { locale: string }) => string
-        )({ locale });
+        translations[locale][errorCode] = (fn as (options: { locale: string }) => string)({ locale });
       }
     }
   }

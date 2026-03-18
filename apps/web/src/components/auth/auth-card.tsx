@@ -10,13 +10,7 @@ type AuthCardProps = {
   showLegal?: boolean;
 };
 
-const AuthCard = ({
-  children,
-  title,
-  description,
-  showTabs,
-  showLegal,
-}: AuthCardProps) => {
+const AuthCard = ({ children, title, description, showTabs, showLegal }: AuthCardProps) => {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isSignIn = pathname === "/auth/sign-in";
   const isSignUp = pathname === "/auth/sign-up";
@@ -30,9 +24,7 @@ const AuthCard = ({
             params={{ path: "sign-in" }}
             className={cn(
               "text-sm font-medium transition-colors",
-              isSignIn
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground"
+              isSignIn ? "text-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >
             Sign In
@@ -42,9 +34,7 @@ const AuthCard = ({
             params={{ path: "sign-up" }}
             className={cn(
               "text-sm font-medium transition-colors",
-              isSignUp
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground"
+              isSignUp ? "text-foreground" : "text-muted-foreground hover:text-foreground"
             )}
           >
             Sign Up

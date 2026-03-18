@@ -64,32 +64,16 @@ export const ChangePasswordCard = () => {
 
   return (
     <SettingsCard title="Password" description="Change your account password.">
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4"
-        data-testid="change-password-form"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-testid="change-password-form">
         <div className="space-y-2">
           <Label htmlFor="currentPassword">Current Password</Label>
-          <PasswordInput
-            id="currentPassword"
-            autoComplete="current-password"
-            {...register("currentPassword")}
-          />
-          {errors.currentPassword && (
-            <p className="text-sm text-destructive">
-              {errors.currentPassword.message}
-            </p>
-          )}
+          <PasswordInput id="currentPassword" autoComplete="current-password" {...register("currentPassword")} />
+          {errors.currentPassword && <p className="text-sm text-destructive">{errors.currentPassword.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="newPassword">New Password</Label>
-          <PasswordInput
-            id="newPassword"
-            autoComplete="new-password"
-            {...register("newPassword")}
-          />
+          <PasswordInput id="newPassword" autoComplete="new-password" {...register("newPassword")} />
           {newPassword.length > 0 && (
             <ul className="mt-1.5 space-y-1">
               {passwordRequirements.map((req) => {
@@ -99,48 +83,26 @@ export const ChangePasswordCard = () => {
                     key={req.label}
                     className={cn(
                       "flex items-center gap-1.5 text-xs",
-                      met
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-muted-foreground"
+                      met ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
                     )}
                   >
-                    {met ? (
-                      <Check className="size-3" />
-                    ) : (
-                      <X className="size-3" />
-                    )}
+                    {met ? <Check className="size-3" /> : <X className="size-3" />}
                     {req.label}
                   </li>
                 );
               })}
             </ul>
           )}
-          {errors.newPassword && (
-            <p className="text-sm text-destructive">
-              {errors.newPassword.message}
-            </p>
-          )}
+          {errors.newPassword && <p className="text-sm text-destructive">{errors.newPassword.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="confirmPassword">Confirm New Password</Label>
-          <PasswordInput
-            id="confirmPassword"
-            autoComplete="new-password"
-            {...register("confirmPassword")}
-          />
-          {errors.confirmPassword && (
-            <p className="text-sm text-destructive">
-              {errors.confirmPassword.message}
-            </p>
-          )}
+          <PasswordInput id="confirmPassword" autoComplete="new-password" {...register("confirmPassword")} />
+          {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
         </div>
 
-        <Button
-          type="submit"
-          loading={isSubmitting}
-          data-testid="change-password-submit"
-        >
+        <Button type="submit" loading={isSubmitting} data-testid="change-password-submit">
           Change password
         </Button>
       </form>

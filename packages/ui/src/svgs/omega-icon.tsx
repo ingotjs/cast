@@ -2,13 +2,7 @@
  * Omega (Ω) icon — used for favicon, OG image, and branding.
  * Renders an Ω glyph in a rounded square. Color inherits from parent via currentColor.
  */
-export const OmegaIcon = ({
-  size = 120,
-  className,
-}: {
-  size?: number;
-  className?: string;
-}) => (
+export const OmegaIcon = ({ size = 120, className }: { size?: number; className?: string }) => (
   <svg
     width={size}
     height={size}

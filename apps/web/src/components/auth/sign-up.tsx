@@ -77,68 +77,31 @@ export const SignUp = () => {
   };
 
   return (
-    <AuthCard
-      title="Sign Up"
-      description="Enter your email below to create an account"
-      showTabs
-      showLegal
-    >
+    <AuthCard title="Sign Up" description="Enter your email below to create an account" showTabs showLegal>
       <SocialAuth />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4"
-        data-testid="signup-form"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-testid="signup-form">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="firstName">First name</Label>
-            <Input
-              id="firstName"
-              autoComplete="given-name"
-              {...register("firstName")}
-            />
-            {errors.firstName && (
-              <p className="text-sm text-destructive">
-                {errors.firstName.message}
-              </p>
-            )}
+            <Input id="firstName" autoComplete="given-name" {...register("firstName")} />
+            {errors.firstName && <p className="text-sm text-destructive">{errors.firstName.message}</p>}
           </div>
           <div className="space-y-2">
             <Label htmlFor="lastName">Last name</Label>
-            <Input
-              id="lastName"
-              autoComplete="family-name"
-              {...register("lastName")}
-            />
-            {errors.lastName && (
-              <p className="text-sm text-destructive">
-                {errors.lastName.message}
-              </p>
-            )}
+            <Input id="lastName" autoComplete="family-name" {...register("lastName")} />
+            {errors.lastName && <p className="text-sm text-destructive">{errors.lastName.message}</p>}
           </div>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            autoComplete="email"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
-          )}
+          <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" {...register("email")} />
+          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="password">Password</Label>
-          <PasswordInput
-            id="password"
-            autoComplete="new-password"
-            {...register("password")}
-          />
+          <PasswordInput id="password" autoComplete="new-password" {...register("password")} />
           {password.length > 0 && (
             <ul className="mt-1.5 space-y-1">
               {passwordRequirements.map((req) => {
@@ -148,50 +111,26 @@ export const SignUp = () => {
                     key={req.label}
                     className={cn(
                       "flex items-center gap-1.5 text-xs",
-                      met
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-muted-foreground"
+                      met ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
                     )}
                   >
-                    {met ? (
-                      <Check className="size-3" />
-                    ) : (
-                      <X className="size-3" />
-                    )}
+                    {met ? <Check className="size-3" /> : <X className="size-3" />}
                     {req.label}
                   </li>
                 );
               })}
             </ul>
           )}
-          {errors.password && (
-            <p className="text-sm text-destructive">
-              {errors.password.message}
-            </p>
-          )}
+          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <PasswordInput
-            id="confirmPassword"
-            autoComplete="new-password"
-            {...register("confirmPassword")}
-          />
-          {errors.confirmPassword && (
-            <p className="text-sm text-destructive">
-              {errors.confirmPassword.message}
-            </p>
-          )}
+          <PasswordInput id="confirmPassword" autoComplete="new-password" {...register("confirmPassword")} />
+          {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          size="lg"
-          loading={isSubmitting}
-          data-testid="signup-submit"
-        >
+        <Button type="submit" className="w-full" size="lg" loading={isSubmitting} data-testid="signup-submit">
           Create an account
         </Button>
       </form>

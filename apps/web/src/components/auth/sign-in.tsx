@@ -53,30 +53,13 @@ export const SignIn = () => {
   };
 
   return (
-    <AuthCard
-      title="Sign In"
-      description="Enter your credentials to sign in"
-      showTabs
-      showLegal
-    >
+    <AuthCard title="Sign In" description="Enter your credentials to sign in" showTabs showLegal>
       <SocialAuth />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4"
-        data-testid="signin-form"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-testid="signin-form">
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="you@example.com"
-            autoComplete="email"
-            {...register("email")}
-          />
-          {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
-          )}
+          <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" {...register("email")} />
+          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
         </div>
 
         <div className="space-y-2">
@@ -90,25 +73,11 @@ export const SignIn = () => {
               Forgot password?
             </Link>
           </div>
-          <PasswordInput
-            id="password"
-            autoComplete="current-password"
-            {...register("password")}
-          />
-          {errors.password && (
-            <p className="text-sm text-destructive">
-              {errors.password.message}
-            </p>
-          )}
+          <PasswordInput id="password" autoComplete="current-password" {...register("password")} />
+          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          size="lg"
-          loading={isSubmitting}
-          data-testid="signin-submit"
-        >
+        <Button type="submit" className="w-full" size="lg" loading={isSubmitting} data-testid="signin-submit">
           Sign in
         </Button>
       </form>

@@ -26,18 +26,14 @@ export const PasswordChangedEmail = ({
     <Text className="mt-7 mb-0 font-bold text-3xl text-[#1d1c1d]">
       {m.email_password_changed_heading({}, loc(locale))}
     </Text>
-    <Text className="mt-8 mb-6 text-black text-lg leading-7">
-      {m.email_password_changed_body({}, loc(locale))}
-    </Text>
+    <Text className="mt-8 mb-6 text-black text-lg leading-7">{m.email_password_changed_body({}, loc(locale))}</Text>
     <Button
       href={resetPasswordLink}
       className="mt-3.5 mb-0 box-border inline-block w-full rounded-lg bg-black px-4 py-3 text-center font-semibold text-white no-underline"
     >
       {m.email_password_changed_button({}, loc(locale))}
     </Button>
-    <Text className="mt-5 mb-0 text-[#444] text-sm">
-      {m.email_password_changed_disclaimer({}, loc(locale))}
-    </Text>
+    <Text className="mt-5 mb-0 text-[#444] text-sm">{m.email_password_changed_disclaimer({}, loc(locale))}</Text>
   </EmailLayout>
 );
 

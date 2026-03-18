@@ -7,6 +7,4 @@ export const passwordSchema = z
   .max(128, "Password is too long");
 
 /** Password requirements displayed to the user */
-export const passwordRequirements = [
-  { label: "At least 8 characters", test: (pw: string) => pw.length >= 8 },
-];
+export const passwordRequirements = [{ label: "At least 8 characters", test: (pw: string) => pw.length >= 8 }];

@@ -16,9 +16,7 @@ type SafeParseResult<T> =
  * Avoids @hookform/resolvers dependency which may not support Zod v4.
  */
 export const zodFormResolver =
-  <T extends FieldValues>(schema: {
-    safeParseAsync: (data: unknown) => Promise<SafeParseResult<T>>;
-  }) =>
+  <T extends FieldValues>(schema: { safeParseAsync: (data: unknown) => Promise<SafeParseResult<T>> }) =>
   async (values: T): Promise<ResolverResult<T>> => {
     const result = await schema.safeParseAsync(values);
 

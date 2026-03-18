@@ -1,14 +1,4 @@
-import {
-  Body,
-  Container,
-  Head,
-  Html,
-  Link,
-  Preview,
-  Section,
-  Tailwind,
-  Text,
-} from "@react-email/components";
+import { Body, Container, Head, Html, Link, Preview, Section, Tailwind, Text } from "@react-email/components";
 import type { ReactNode } from "react";
 
 import { loc } from "../locale";
@@ -22,13 +12,7 @@ type EmailLayoutProps = {
   children: ReactNode;
 };
 
-export const EmailLayout = ({
-  locale,
-  previewText,
-  appName,
-  appUrl,
-  children,
-}: EmailLayoutProps) => (
+export const EmailLayout = ({ locale, previewText, appName, appUrl, children }: EmailLayoutProps) => (
   <Html lang={locale} dir="ltr">
     <Head />
     <Preview>{previewText}</Preview>

@@ -11,9 +11,7 @@ import { getSession } from "../lib/auth-client";
 const AccountPage = () => (
   <main className="container mx-auto max-w-2xl px-4 py-12 md:py-20">
     <h1 className="text-3xl font-bold tracking-tight">Account</h1>
-    <p className="mt-2 text-sm text-muted-foreground">
-      Manage your account settings and preferences.
-    </p>
+    <p className="mt-2 text-sm text-muted-foreground">Manage your account settings and preferences.</p>
 
     <div className="mt-8 space-y-6">
       <UpdateProfileCard />

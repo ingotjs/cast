@@ -1,11 +1,7 @@
 import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 
 import { createRouterClient, ORPCError } from "@orpc/server";
-import {
-  cleanupTestUser,
-  createTestUser,
-  uniqueEmail,
-} from "@packages/auth/test-utils";
+import { cleanupTestUser, createTestUser, uniqueEmail } from "@packages/auth/test-utils";
 
 import { router } from "../router";
 
@@ -56,15 +52,11 @@ afterAll(async () => {
 
 describe("admin auth middleware", () => {
   test("rejects unauthenticated requests", async () => {
-    await expect(
-      noAuthClient.admin.users.list({ limit: 10, offset: 0 })
-    ).rejects.toThrow(ORPCError);
+    await expect(noAuthClient.admin.users.list({ limit: 10, offset: 0 })).rejects.toThrow(ORPCError);
   });
 
   test("rejects non-admin users", async () => {
-    await expect(
-      userClient.admin.users.list({ limit: 10, offset: 0 })
-    ).rejects.toThrow(ORPCError);
+    await expect(userClient.admin.users.list({ limit: 10, offset: 0 })).rejects.toThrow(ORPCError);
   });
 
   test("rejects non-admin with FORBIDDEN code", async () => {

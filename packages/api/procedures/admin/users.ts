@@ -17,9 +17,7 @@ export const listUsers = adminProcedure
       query: {
         limit: input.limit,
         offset: input.offset,
-        ...(input.search
-          ? { searchValue: input.search, searchField: "email" as const }
-          : {}),
+        ...(input.search ? { searchValue: input.search, searchField: "email" as const } : {}),
       },
     });
     return result;
@@ -42,14 +40,12 @@ export const banUser = adminProcedure
     })
   );
 
-export const unbanUser = adminProcedure
-  .input(z.object({ userId: z.string().min(1) }))
-  .handler(({ input, context }) =>
-    auth.api.unbanUser({
-      headers: context.headers,
-      body: { userId: input.userId },
-    })
-  );
+export const unbanUser = adminProcedure.input(z.object({ userId: z.string().min(1) })).handler(({ input, context }) =>
+  auth.api.unbanUser({
+    headers: context.headers,
+    body: { userId: input.userId },
+  })
+);
 
 export const setRole = adminProcedure
   .input(
@@ -65,11 +61,9 @@ export const setRole = adminProcedure
     })
   );
 
-export const removeUser = adminProcedure
-  .input(z.object({ userId: z.string().min(1) }))
-  .handler(({ input, context }) =>
-    auth.api.removeUser({
-      headers: context.headers,
-      body: { userId: input.userId },
-    })
-  );
+export const removeUser = adminProcedure.input(z.object({ userId: z.string().min(1) })).handler(({ input, context }) =>
+  auth.api.removeUser({
+    headers: context.headers,
+    body: { userId: input.userId },
+  })
+);

@@ -27,7 +27,5 @@ export function number(locale, input, options) {
  * @returns {string}
  */
 export function datetime(locale, input, options) {
-  return new Intl.DateTimeFormat(locale, options).format(
-    new Date(/** @type {string} */ (input))
-  );
+  return new Intl.DateTimeFormat(locale, options).format(new Date(/** @type {string} */ (input)));
 }

@@ -27,14 +27,10 @@
 
 import { expect, test } from "../fixtures/auth";
 
-const generateEmail = (prefix: string) =>
-  `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e.test`;
+const generateEmail = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e.test`;
 
 test.describe("Sign Up", () => {
-  test("should create an account through the UI and redirect to home", async ({
-    page,
-    getEmails,
-  }) => {
+  test("should create an account through the UI and redirect to home", async ({ page, getEmails }) => {
     const email = generateEmail("signup");
     const password = "TestPassword123!";
     const firstName = "Test";
@@ -70,9 +66,7 @@ test.describe("Sign Up", () => {
     const emails = getEmails(email);
     expect(emails.length).toBeGreaterThanOrEqual(1);
 
-    const verificationEmail = emails.find((e) =>
-      e.subject.toLowerCase().includes("verif")
-    );
+    const verificationEmail = emails.find((e) => e.subject.toLowerCase().includes("verif"));
     expect(verificationEmail).toBeTruthy();
   });
 

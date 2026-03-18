@@ -14,8 +14,7 @@ type SessionItem = {
   createdAt: Date;
 };
 
-const isMobileUserAgent = (ua?: string | null) =>
-  Boolean(ua && /mobile|android|iphone|ipad/i.test(ua));
+const isMobileUserAgent = (ua?: string | null) => Boolean(ua && /mobile|android|iphone|ipad/i.test(ua));
 
 const formatDate = (date: Date) =>
   new Date(date).toLocaleDateString(undefined, {
@@ -59,17 +58,10 @@ export const SessionsCard = () => {
   };
 
   return (
-    <SettingsCard
-      title="Sessions"
-      description="Manage your active sessions across devices."
-    >
-      {loading && (
-        <p className="text-sm text-muted-foreground">Loading sessions...</p>
-      )}
+    <SettingsCard title="Sessions" description="Manage your active sessions across devices.">
+      {loading && <p className="text-sm text-muted-foreground">Loading sessions...</p>}
 
-      {!loading && sessions.length === 0 && (
-        <p className="text-sm text-muted-foreground">No active sessions.</p>
-      )}
+      {!loading && sessions.length === 0 && <p className="text-sm text-muted-foreground">No active sessions.</p>}
 
       {!loading && sessions.length > 0 && (
         <div className="space-y-3">
@@ -86,13 +78,10 @@ export const SessionsCard = () => {
                 )}
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">
-                    {session.userAgent
-                      ? session.userAgent.slice(0, 50)
-                      : "Unknown device"}
+                    {session.userAgent ? session.userAgent.slice(0, 50) : "Unknown device"}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {session.ipAddress ?? "Unknown IP"} &middot;{" "}
-                    {formatDate(session.createdAt)}
+                    {session.ipAddress ?? "Unknown IP"} &middot; {formatDate(session.createdAt)}
                   </p>
                 </div>
               </div>

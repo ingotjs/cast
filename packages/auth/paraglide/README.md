@@ -53,13 +53,7 @@ m.greeting({ name: "Sam" }, { locale: "de" }); // "Hallo, Sam!"
 ## Runtime API
 
 ```js
-import {
-  getLocale,
-  getTextDirection,
-  setLocale,
-  locales,
-  baseLocale,
-} from "./paraglide/runtime.js";
+import { getLocale, getTextDirection, setLocale, locales, baseLocale } from "./paraglide/runtime.js";
 
 getLocale(); // Current locale, e.g., "en"
 getTextDirection(); // "ltr" | "rtl" for current locale

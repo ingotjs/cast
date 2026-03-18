@@ -22,9 +22,7 @@ describe("buildAuthTranslations", () => {
   test("Paraglide messages cover all BASE_ERROR_CODES", () => {
     const messageKeys = new Set(
       Object.keys(messages).filter(
-        (k) =>
-          k.startsWith(AUTH_PREFIX) &&
-          typeof (messages as Record<string, unknown>)[k] === "function"
+        (k) => k.startsWith(AUTH_PREFIX) && typeof (messages as Record<string, unknown>)[k] === "function"
       )
     );
 
@@ -108,9 +106,7 @@ describe("auth error responses", () => {
 
     expect(response.ok).toBe(false);
     const body = await response.json();
-    expect(["INVALID_EMAIL_OR_PASSWORD", "USER_NOT_FOUND"]).toContain(
-      body.code
-    );
+    expect(["INVALID_EMAIL_OR_PASSWORD", "USER_NOT_FOUND"]).toContain(body.code);
   });
 
   test("returns error on duplicate signup", async () => {

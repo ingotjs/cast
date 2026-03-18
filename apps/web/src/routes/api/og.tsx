@@ -13,8 +13,7 @@ export const Route = createFileRoute("/api/og")({
       GET: ({ request }) => {
         const { searchParams } = new URL(request.url);
         const title = searchParams.get("title") ?? "OmegaStart";
-        const description =
-          searchParams.get("description") ?? "The modern full-stack starter";
+        const description = searchParams.get("description") ?? "The modern full-stack starter";
 
         return new ImageResponse(
           <div

@@ -64,10 +64,7 @@ export const ResetPassword = ({ token }: { token?: string }) => {
 
   if (!token) {
     return (
-      <AuthCard
-        title="Invalid Link"
-        description="This password reset link is invalid or has expired"
-      >
+      <AuthCard title="Invalid Link" description="This password reset link is invalid or has expired">
         <div className="text-center">
           <Link
             to="/auth/$path"
@@ -83,18 +80,11 @@ export const ResetPassword = ({ token }: { token?: string }) => {
   }
 
   return (
-    <AuthCard
-      title="Reset Password"
-      description="Enter your new password below"
-    >
+    <AuthCard title="Reset Password" description="Enter your new password below">
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="password">New Password</Label>
-          <PasswordInput
-            id="password"
-            autoComplete="new-password"
-            {...register("password")}
-          />
+          <PasswordInput id="password" autoComplete="new-password" {...register("password")} />
           {password.length > 0 && (
             <ul className="mt-1.5 space-y-1">
               {passwordRequirements.map((req) => {
@@ -104,49 +94,26 @@ export const ResetPassword = ({ token }: { token?: string }) => {
                     key={req.label}
                     className={cn(
                       "flex items-center gap-1.5 text-xs",
-                      met
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-muted-foreground"
+                      met ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
                     )}
                   >
-                    {met ? (
-                      <Check className="size-3" />
-                    ) : (
-                      <X className="size-3" />
-                    )}
+                    {met ? <Check className="size-3" /> : <X className="size-3" />}
                     {req.label}
                   </li>
                 );
               })}
             </ul>
           )}
-          {errors.password && (
-            <p className="text-sm text-destructive">
-              {errors.password.message}
-            </p>
-          )}
+          {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <PasswordInput
-            id="confirmPassword"
-            autoComplete="new-password"
-            {...register("confirmPassword")}
-          />
-          {errors.confirmPassword && (
-            <p className="text-sm text-destructive">
-              {errors.confirmPassword.message}
-            </p>
-          )}
+          <PasswordInput id="confirmPassword" autoComplete="new-password" {...register("confirmPassword")} />
+          {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
         </div>
 
-        <Button
-          type="submit"
-          className="w-full"
-          size="lg"
-          loading={isSubmitting}
-        >
+        <Button type="submit" className="w-full" size="lg" loading={isSubmitting}>
           Reset password
         </Button>
 

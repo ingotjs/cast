@@ -38,15 +38,7 @@ const emailSender = serverEnv.email
   : null;
 
 /** Send an email notification, falling back to console.log when email is disabled */
-const sendEmailNotification = ({
-  to,
-  subject,
-  html,
-}: {
-  to: string;
-  subject: string;
-  html: string;
-}) => {
+const sendEmailNotification = ({ to, subject, html }: { to: string; subject: string; html: string }) => {
   if (emailSender) {
     // Don't await send — prevents timing attacks
     emailSender.sendHtml({ to, subject, html });

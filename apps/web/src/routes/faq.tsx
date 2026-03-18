@@ -24,9 +24,7 @@ const FAQPage = () => {
         {faqs.map((faq) => (
           <section key={faq.question}>
             <h2 className="text-lg font-semibold">{faq.question}</h2>
-            <p className="mt-2 text-muted-foreground leading-relaxed">
-              {faq.answer}
-            </p>
+            <p className="mt-2 text-muted-foreground leading-relaxed">{faq.answer}</p>
           </section>
         ))}
       </div>

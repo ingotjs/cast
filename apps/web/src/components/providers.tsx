@@ -1,2 +1,1 @@
-export const Providers = ({ children }: { children: React.ReactNode }) =>
-  children;
+export const Providers = ({ children }: { children: React.ReactNode }) => children;

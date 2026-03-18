@@ -23,9 +23,7 @@ afterAll(() => {
 const findEmailLog = (toEmail: string, subjectContains: string): boolean =>
   consoleSpy.mock.calls.some(
     (call) =>
-      typeof call[0] === "string" &&
-      call[0].includes(`[auth] Email to ${toEmail}`) &&
-      call[0].includes(subjectContains)
+      typeof call[0] === "string" && call[0].includes(`[auth] Email to ${toEmail}`) && call[0].includes(subjectContains)
   );
 
 // --- Welcome email ---

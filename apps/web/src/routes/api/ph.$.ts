@@ -3,9 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 // Reference: https://posthog.com/docs/advanced/proxy
 
 // oxlint-disable-next-line node/no-process-env -- proxy needs PostHog host at request time
-const phRegion = (process.env.VITE_PUBLIC_POSTHOG_HOST ?? "").includes("eu")
-  ? "eu"
-  : "us";
+const phRegion = (process.env.VITE_PUBLIC_POSTHOG_HOST ?? "").includes("eu") ? "eu" : "us";
 
 const PH_API_HOST = `https://${phRegion}.i.posthog.com`;
 const PH_ASSET_HOST = `https://${phRegion}-assets.i.posthog.com`;
@@ -13,9 +11,7 @@ const PH_ASSET_HOST = `https://${phRegion}-assets.i.posthog.com`;
 const handler = async ({ request }: { request: Request }) => {
   const url = new URL(request.url);
 
-  const hostname = url.pathname.startsWith("/api/ph/static/")
-    ? PH_ASSET_HOST
-    : PH_API_HOST;
+  const hostname = url.pathname.startsWith("/api/ph/static/") ? PH_ASSET_HOST : PH_API_HOST;
 
   const targetPath = url.pathname.replace(/^\/api\/ph/, "");
   const targetUrl = `${hostname}${targetPath}${url.search}`;

@@ -362,7 +362,7 @@ posthog?.capture({ distinctId: userId, event: "event_name", properties: { ... } 
 
 ### Internationalization (i18n)
 
-[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n across the entire stack. **All user-facing text MUST be internationalized** — NEVER hardcode strings. Full details in the **i18n skill** (`.agents/skills/i18n/SKILL.md`).
+[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n across the entire stack. **All user-facing text MUST be internationalized** — NEVER hardcode strings. Full details in the **i18n skill** (`.agents/skills/_i18n/SKILL.md`).
 
 **CRITICAL — ZERO TOLERANCE for non-i18n strings.** Every text the user sees — browser, email, or API error — MUST come from a Paraglide message function.
 
@@ -441,7 +441,7 @@ const result = await client.admin.users.list({ limit: 10 });
 
 ### E2E Testing (Playwright)
 
-[Playwright](https://playwright.dev/) E2E tests in `apps/e2e/`. See `apps/e2e/FEATURES.md` for full coverage table. See `.agents/skills/e2e-testing/SKILL.md` for detailed guidance.
+[Playwright](https://playwright.dev/) E2E tests in `apps/e2e/`. See `apps/e2e/FEATURES.md` for full coverage table. See `.agents/skills/_e2e-testing/SKILL.md` for detailed guidance.
 
 - Run: `bun e2e` from project root, or `cd apps/e2e && bunx playwright test`
 - **Dev server auto-starts** — Playwright's `webServer` config in `playwright.config.ts` runs `bun dev` automatically and waits for `localhost:3000`. Reuses an existing server if already running.
@@ -459,6 +459,16 @@ const result = await client.admin.users.list({ limit: 10 });
 - `authenticatedPage` — auto-fixture that creates a user via API, then signs in through the UI. Returns `{ email, password, name }`. Test starts authenticated on the home page.
 - `getEmails(email)` — reads captured emails from `.email-captures/` for a given recipient.
 - `clearEmails()` — clears all captured emails.
+
+### Skills
+
+Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-testing`, `_i18n`). Installed skills from registries have no prefix. This makes it immediately obvious which skills are ours vs. third-party.
+
+**Auto-invoke skills:**
+
+- **`_frontend`** — MUST be invoked when writing or modifying any frontend code in `apps/web/` (components, routes, styles, layouts). See `.agents/skills/_frontend/SKILL.md`.
+- **`_i18n`** — MUST be invoked when adding/modifying user-facing text. See `.agents/skills/_i18n/SKILL.md`.
+- **`_e2e-testing`** — MUST be invoked when adding/modifying E2E tests. See `.agents/skills/_e2e-testing/SKILL.md`.
 
 ### General Rules
 

@@ -23,13 +23,7 @@ const extractCookieHeaders = (response: Response): Headers => {
 };
 
 /** Sign in via Better Auth HTTP handler and return session headers */
-const signIn = async ({
-  email,
-  password,
-}: {
-  email: string;
-  password: string;
-}) => {
+const signIn = async ({ email, password }: { email: string; password: string }) => {
   const response = await auth.handler(
     new Request("http://localhost/api/auth/sign-in/email", {
       method: "POST",

@@ -27,11 +27,7 @@ const AuthPage = () => {
     }
   })();
 
-  return (
-    <main className="container mx-auto my-auto flex flex-col items-center p-4 md:p-6">
-      {content}
-    </main>
-  );
+  return <main className="container mx-auto my-auto flex flex-col items-center p-4 md:p-6">{content}</main>;
 };
 
 export const Route = createFileRoute("/auth/$path")({

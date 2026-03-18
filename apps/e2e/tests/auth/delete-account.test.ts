@@ -20,11 +20,7 @@
 import { expect, test } from "../fixtures/auth";
 
 test.describe("Delete Account", () => {
-  test("should delete account and prevent further sign-in", async ({
-    page,
-    authenticatedPage,
-    getEmails,
-  }) => {
+  test("should delete account and prevent further sign-in", async ({ page, authenticatedPage, getEmails }) => {
     // Navigate to account settings
     await page.goto("/account");
 
@@ -54,9 +50,7 @@ test.describe("Delete Account", () => {
     // Verify account-deleted email was captured
     await page.waitForTimeout(500);
     const emails = getEmails(authenticatedPage.email);
-    const deletedEmail = emails.find((e) =>
-      e.subject.toLowerCase().includes("deleted")
-    );
+    const deletedEmail = emails.find((e) => e.subject.toLowerCase().includes("deleted"));
     expect(deletedEmail).toBeTruthy();
 
     // Verify the deleted user cannot sign in anymore

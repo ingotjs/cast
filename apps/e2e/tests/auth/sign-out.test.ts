@@ -16,10 +16,7 @@
 import { expect, test } from "../fixtures/auth";
 
 test.describe("Sign Out", () => {
-  test("should sign out via user menu and show unauthenticated state", async ({
-    page,
-    authenticatedPage: _setup,
-  }) => {
+  test("should sign out via user menu and show unauthenticated state", async ({ page, authenticatedPage: _setup }) => {
     // Verify authenticated state on home page (fixture already signed in)
     await expect(page.getByTestId("user-menu-trigger")).toBeVisible({
       timeout: 10_000,

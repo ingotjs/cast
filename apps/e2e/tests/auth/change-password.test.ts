@@ -25,11 +25,7 @@
 import { expect, test } from "../fixtures/auth";
 
 test.describe("Change Password", () => {
-  test("should change password and allow sign-in with new password", async ({
-    page,
-    authenticatedPage,
-    getEmails,
-  }) => {
+  test("should change password and allow sign-in with new password", async ({ page, authenticatedPage, getEmails }) => {
     const newPassword = "NewPassword456!";
 
     // Navigate to account settings
@@ -62,9 +58,7 @@ test.describe("Change Password", () => {
     await page.waitForTimeout(500);
     const emails = getEmails(authenticatedPage.email);
     const passwordChangedEmail = emails.find(
-      (e) =>
-        e.subject.toLowerCase().includes("password") &&
-        e.subject.toLowerCase().includes("change")
+      (e) => e.subject.toLowerCase().includes("password") && e.subject.toLowerCase().includes("change")
     );
     expect(passwordChangedEmail).toBeTruthy();
 
@@ -84,10 +78,7 @@ test.describe("Change Password", () => {
     await expect(page).toHaveURL("/", { timeout: 15_000 });
   });
 
-  test("should reject incorrect current password", async ({
-    page,
-    authenticatedPage: _setup,
-  }) => {
+  test("should reject incorrect current password", async ({ page, authenticatedPage: _setup }) => {
     await page.goto("/account");
     await expect(page.getByTestId("change-password-form")).toBeVisible({
       timeout: 10_000,
@@ -106,9 +97,7 @@ test.describe("Change Password", () => {
     await page.getByTestId("change-password-submit").click();
 
     // Should show an error, not success
-    await expect(
-      page.getByText("Password changed successfully")
-    ).not.toBeVisible({
+    await expect(page.getByText("Password changed successfully")).not.toBeVisible({
       timeout: 5000,
     });
 

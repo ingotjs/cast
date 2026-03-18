@@ -9,8 +9,7 @@ const BASE_URL = "http://localhost:3000";
 const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../../../.email-captures");
 const TEST_PASSWORD = "TestPassword123!";
 
-const generateEmail = (prefix: string) =>
-  `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e.test`;
+const generateEmail = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e.test`;
 
 type TestUser = { email: string; password: string; name: string };
 
@@ -79,8 +78,7 @@ export const test = base.extend<AuthFixtures>({
       if (!existsSync(filepath)) {
         return [];
       }
-      const data: Record<string, { subject: string; html: string }> =
-        JSON.parse(readFileSync(filepath, "utf8"));
+      const data: Record<string, { subject: string; html: string }> = JSON.parse(readFileSync(filepath, "utf8"));
       return Object.entries(data).map(([timestamp, content]) => ({
         timestamp,
         ...content,

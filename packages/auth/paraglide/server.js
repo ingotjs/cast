@@ -102,9 +102,8 @@ export async function paraglideMiddleware(request, resolve, callbacks) {
     /** @type {Set<string>} */
     const messageCalls = new Set();
     return /** @type {Response} */ (
-      await runtime.serverAsyncLocalStorage?.run(
-        { locale, origin, messageCalls },
-        () => resolve({ locale, request: newRequest })
+      await runtime.serverAsyncLocalStorage?.run({ locale, origin, messageCalls }, () =>
+        resolve({ locale, request: newRequest })
       )
     );
   }
@@ -114,11 +113,7 @@ export async function paraglideMiddleware(request, resolve, callbacks) {
   const origin = new URL(request.url).origin;
   // if the client makes a request to a URL that doesn't match
   // the localizedUrl, redirect the client to the localized URL
-  if (
-    request.headers.get("Sec-Fetch-Dest") === "document" &&
-    decision.shouldRedirect &&
-    decision.redirectUrl
-  ) {
+  if (request.headers.get("Sec-Fetch-Dest") === "document" && decision.shouldRedirect && decision.redirectUrl) {
     // Create headers object with Vary header if preferredLanguage strategy is used
     /** @type {Record<string, string>} */
     const headers = {};
@@ -150,30 +145,21 @@ export async function paraglideMiddleware(request, resolve, callbacks) {
   // the message functions that have been called in this request
   /** @type {Set<string>} */
   const messageCalls = new Set();
-  const response = await runtime.serverAsyncLocalStorage?.run(
-    { locale, origin, messageCalls },
-    () => resolve({ locale, request: newRequest })
+  const response = await runtime.serverAsyncLocalStorage?.run({ locale, origin, messageCalls }, () =>
+    resolve({ locale, request: newRequest })
   );
   // Only modify HTML responses
-  if (
-    runtime.experimentalMiddlewareLocaleSplitting &&
-    response.headers.get("Content-Type")?.includes("html")
-  ) {
+  if (runtime.experimentalMiddlewareLocaleSplitting && response.headers.get("Content-Type")?.includes("html")) {
     const body = await response.text();
     const messages = [];
     // using .values() to avoid polyfilling in older projects. else the following error is thrown
     // Type 'Set<string>' can only be iterated through when using the '--downlevelIteration' flag or with a '--target' of 'es2015' or higher.
     for (const messageCall of Array.from(messageCalls)) {
-      const [id, locale] =
-        /** @type {[string, import("./runtime.js").Locale]} */ (
-          messageCall.split(":")
-        );
+      const [id, locale] = /** @type {[string, import("./runtime.js").Locale]} */ (messageCall.split(":"));
       messages.push(`${id}: ${compiledBundles[id]?.[locale]}`);
     }
     // Prevent translated content from terminating the inline script tag.
-    const escapedMessages = messages
-      .join(",")
-      .replace(/<\/(script)/gi, "<\\/$1");
+    const escapedMessages = messages.join(",").replace(/<\/(script)/gi, "<\\/$1");
     const script = `<script>globalThis.__paraglide = globalThis.__paraglide ?? {}; globalThis.__paraglide.ssr = { ${escapedMessages} }</script>`;
     // Insert the script before the closing head tag
     const newBody = body.replace("</head>", `${script}</head>`);

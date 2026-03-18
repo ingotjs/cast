@@ -10,11 +10,7 @@ type AccountDeletedEmailProps = {
   locale?: string;
 };
 
-export const AccountDeletedEmail = ({
-  appName,
-  appUrl,
-  locale = "en",
-}: AccountDeletedEmailProps) => (
+export const AccountDeletedEmail = ({ appName, appUrl, locale = "en" }: AccountDeletedEmailProps) => (
   <EmailLayout
     locale={locale}
     previewText={m.email_account_deleted_preview({ appName }, loc(locale))}
@@ -24,12 +20,8 @@ export const AccountDeletedEmail = ({
     <Text className="mt-7 mb-0 font-bold text-3xl text-[#1d1c1d]">
       {m.email_account_deleted_heading({}, loc(locale))}
     </Text>
-    <Text className="mt-8 mb-6 text-black text-lg leading-7">
-      {m.email_account_deleted_body({}, loc(locale))}
-    </Text>
-    <Text className="mt-5 mb-0 text-[#444] text-sm">
-      {m.email_account_deleted_disclaimer({}, loc(locale))}
-    </Text>
+    <Text className="mt-8 mb-6 text-black text-lg leading-7">{m.email_account_deleted_body({}, loc(locale))}</Text>
+    <Text className="mt-5 mb-0 text-[#444] text-sm">{m.email_account_deleted_disclaimer({}, loc(locale))}</Text>
   </EmailLayout>
 );
 

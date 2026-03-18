@@ -17,17 +17,17 @@
     "dev:email": "vp run @packages/email#dev",
     "e2e": "bun run --cwd apps/e2e e2e",
     "e2e:ui": "bun run --cwd apps/e2e e2e:ui",
-    "knip": "knip",
     "ok": "syncpack fix --log-levels error && vp run ts -r && vp fmt --write && vp lint --fix && vp run test -r",
     "ok:ci": "syncpack lint --log-levels error && vp run ts -r && vp fmt --check && vp lint && vp run test -r",
     "prepare": "mkdir -p .alchemy/local && [ -f .alchemy/local/wrangler.jsonc ] || echo '{}' > .alchemy/local/wrangler.jsonc && vp config"
   },
   "devDependencies": {
     "@socketsecurity/bun-security-scanner": "1.1.2",
-    "@typescript/native-preview": "7.0.0-dev.20260316.1",
+    "@typescript/native-preview": "7.0.0-dev.20260317.1",
     "knip": "5.87.0",
     "syncpack": "14.2.0",
     "typescript": "catalog:",
+    "ultracite": "7.3.1",
     "vite-plus": "catalog:"
   },
   "overrides": {

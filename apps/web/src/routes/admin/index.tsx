@@ -4,9 +4,7 @@ const AdminDashboard = () => (
   <div className="flex min-h-[calc(100vh-97px)]">
     <aside className="w-56 border-r border-border p-4">
       <nav className="flex flex-col gap-1">
-        <span className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium">
-          Users
-        </span>
+        <span className="rounded-md bg-muted px-3 py-1.5 text-sm font-medium">Users</span>
       </nav>
     </aside>
     <main className="flex-1 p-6">

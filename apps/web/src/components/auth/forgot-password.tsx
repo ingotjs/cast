@@ -49,11 +49,7 @@ export const ForgotPassword = () => {
   return (
     <AuthCard
       title="Forgot Password"
-      description={
-        sent
-          ? "Check your email for a password reset link"
-          : "Enter your email to receive a reset link"
-      }
+      description={sent ? "Check your email for a password reset link" : "Enter your email to receive a reset link"}
     >
       {sent ? (
         <div className="text-center">
@@ -70,24 +66,11 @@ export const ForgotPassword = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              autoComplete="email"
-              {...register("email")}
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive">{errors.email.message}</p>
-            )}
+            <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" {...register("email")} />
+            {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
           </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            size="lg"
-            loading={isSubmitting}
-          >
+          <Button type="submit" className="w-full" size="lg" loading={isSubmitting}>
             Send reset link
           </Button>
 

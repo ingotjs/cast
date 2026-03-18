@@ -1,11 +1,5 @@
 import { adminProcedure, publicProcedure } from "./base";
-import {
-  banUser,
-  listUsers,
-  removeUser,
-  setRole,
-  unbanUser,
-} from "./procedures/admin/users";
+import { banUser, listUsers, removeUser, setRole, unbanUser } from "./procedures/admin/users";
 import { health } from "./procedures/health";
 
 export const router = publicProcedure.router({

@@ -25,18 +25,12 @@ const Avatar = ({
 const AvatarImage = ({ className, ...props }: AvatarPrimitive.Image.Props) => (
   <AvatarPrimitive.Image
     data-slot="avatar-image"
-    className={cn(
-      "aspect-square size-full rounded-full object-cover",
-      className
-    )}
+    className={cn("aspect-square size-full rounded-full object-cover", className)}
     {...props}
   />
 );
 
-const AvatarFallback = ({
-  className,
-  ...props
-}: AvatarPrimitive.Fallback.Props) => (
+const AvatarFallback = ({ className, ...props }: AvatarPrimitive.Fallback.Props) => (
   <AvatarPrimitive.Fallback
     data-slot="avatar-fallback"
     className={cn(
@@ -72,10 +66,7 @@ const AvatarGroup = ({ className, ...props }: React.ComponentProps<"div">) => (
   />
 );
 
-const AvatarGroupCount = ({
-  className,
-  ...props
-}: React.ComponentProps<"div">) => (
+const AvatarGroupCount = ({ className, ...props }: React.ComponentProps<"div">) => (
   <div
     data-slot="avatar-group-count"
     className={cn(
@@ -86,11 +77,4 @@ const AvatarGroupCount = ({
   />
 );
 
-export {
-  Avatar,
-  AvatarImage,
-  AvatarFallback,
-  AvatarGroup,
-  AvatarGroupCount,
-  AvatarBadge,
-};
+export { Avatar, AvatarImage, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarBadge };

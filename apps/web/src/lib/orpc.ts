@@ -28,8 +28,7 @@ const getORPCClient = createIsomorphicFn()
             onError((error) => {
               // oRPC sanitizes non-ORPCError exceptions to INTERNAL_SERVER_ERROR
               // so error.message is always safe to display
-              const message =
-                error instanceof Error ? error.message : "Something went wrong";
+              const message = error instanceof Error ? error.message : "Something went wrong";
               toast.error(message);
             }),
           ],

@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@packages/ui/components/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@packages/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,12 +57,8 @@ export const UserMenu = () => {
         <DropdownMenuGroup>
           <DropdownMenuLabel>
             <div className="flex flex-col gap-0.5">
-              <span className="font-medium text-foreground text-sm">
-                {user.name}
-              </span>
-              <span className="text-muted-foreground text-xs">
-                {user.email}
-              </span>
+              <span className="font-medium text-foreground text-sm">{user.name}</span>
+              <span className="text-muted-foreground text-xs">{user.email}</span>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />

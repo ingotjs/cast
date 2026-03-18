@@ -7,11 +7,7 @@
  */
 type KVNamespace = {
   get(key: string): Promise<string | null>;
-  put(
-    key: string,
-    value: string,
-    options?: { expirationTtl?: number }
-  ): Promise<void>;
+  put(key: string, value: string, options?: { expirationTtl?: number }): Promise<void>;
   delete(key: string): Promise<void>;
 };
 
@@ -42,11 +38,7 @@ export const kvSecondaryStorage = {
     if (!_kv) {
       return;
     }
-    await _kv.put(
-      key,
-      value,
-      ttl ? { expirationTtl: Math.max(ttl, KV_MIN_TTL) } : undefined
-    );
+    await _kv.put(key, value, ttl ? { expirationTtl: Math.max(ttl, KV_MIN_TTL) } : undefined);
   },
   delete: async (key: string) => {
     if (!_kv) {

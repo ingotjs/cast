@@ -96,11 +96,7 @@ function findMatchingRouteStrategy(url) {
  */
 export function getStrategyForUrl(url) {
   const routeStrategy = findMatchingRouteStrategy(url);
-  if (
-    routeStrategy &&
-    routeStrategy.exclude !== true &&
-    Array.isArray(routeStrategy.strategy)
-  ) {
+  if (routeStrategy && routeStrategy.exclude !== true && Array.isArray(routeStrategy.strategy)) {
     return routeStrategy.strategy;
   }
   return strategy;
@@ -159,10 +155,8 @@ const TREE_SHAKE_PREFERRED_LANGUAGE_STRATEGY_USED = false;
 const TREE_SHAKE_DEFAULT_URL_PATTERN_USED = true;
 const TREE_SHAKE_LOCAL_STORAGE_STRATEGY_USED = false;
 
-/** @type {any} */ (globalThis).__paraglide =
-  /** @type {any} */ (globalThis).__paraglide ?? {};
-/** @type {any} */ (globalThis).__paraglide.ssr =
-  /** @type {any} */ (globalThis).__paraglide.ssr ?? {};
+/** @type {any} */ (globalThis).__paraglide = /** @type {any} */ (globalThis).__paraglide ?? {};
+/** @type {any} */ (globalThis).__paraglide.ssr = /** @type {any} */ (globalThis).__paraglide.ssr ?? {};
 
 /**
  * This is a fallback to get started with a custom
@@ -237,10 +231,7 @@ export function getLocaleForUrl(url) {
     return experimentalStaticLocale;
   }
   const strategyToUse = getStrategyForUrl(url);
-  const resolved = resolveLocaleWithStrategies(
-    strategyToUse,
-    typeof url === "string" ? url : url.href
-  );
+  const resolved = resolveLocaleWithStrategies(strategyToUse, typeof url === "string" ? url : url.href);
   if (resolved) {
     return resolved;
   }
@@ -261,30 +252,13 @@ function resolveLocaleWithStrategies(strategyToUse, urlForUrlStrategy) {
       locale = extractLocaleFromCookie();
     } else if (strat === "baseLocale") {
       locale = baseLocale;
-    } else if (
-      TREE_SHAKE_URL_STRATEGY_USED &&
-      strat === "url" &&
-      !isServer &&
-      typeof urlForUrlStrategy === "string"
-    ) {
+    } else if (TREE_SHAKE_URL_STRATEGY_USED && strat === "url" && !isServer && typeof urlForUrlStrategy === "string") {
       locale = extractLocaleFromUrl(urlForUrlStrategy);
-    } else if (
-      TREE_SHAKE_GLOBAL_VARIABLE_STRATEGY_USED &&
-      strat === "globalVariable" &&
-      _locale !== undefined
-    ) {
+    } else if (TREE_SHAKE_GLOBAL_VARIABLE_STRATEGY_USED && strat === "globalVariable" && _locale !== undefined) {
       locale = _locale;
-    } else if (
-      TREE_SHAKE_PREFERRED_LANGUAGE_STRATEGY_USED &&
-      strat === "preferredLanguage" &&
-      !isServer
-    ) {
+    } else if (TREE_SHAKE_PREFERRED_LANGUAGE_STRATEGY_USED && strat === "preferredLanguage" && !isServer) {
       locale = extractLocaleFromNavigator();
-    } else if (
-      TREE_SHAKE_LOCAL_STORAGE_STRATEGY_USED &&
-      strat === "localStorage" &&
-      !isServer
-    ) {
+    } else if (TREE_SHAKE_LOCAL_STORAGE_STRATEGY_USED && strat === "localStorage" && !isServer) {
       locale = localStorage.getItem(localStorageKey) ?? undefined;
     } else if (isCustomStrategy(strat) && customClientStrategies.has(strat)) {
       const handler = customClientStrategies.get(strat);
@@ -326,19 +300,7 @@ export const overwriteGetLocale = (fn) => {
   getLocale = fn;
 };
 
-const rtlLanguages = new Set([
-  "ar",
-  "dv",
-  "fa",
-  "he",
-  "ks",
-  "ku",
-  "ps",
-  "sd",
-  "ug",
-  "ur",
-  "yi",
-]);
+const rtlLanguages = new Set(["ar", "dv", "fa", "he", "ks", "ku", "ps", "sd", "ug", "ur", "yi"]);
 /**
  * Get writing direction for a locale.
  *
@@ -359,8 +321,7 @@ export function getTextDirection(locale = getLocale()) {
             getTextInfo?: () => { direction?: string };
             textInfo?: { direction?: string };
         }} */ (new Intl.Locale(locale));
-    const direction =
-      intlLocale.getTextInfo?.().direction ?? intlLocale.textInfo?.direction;
+    const direction = intlLocale.getTextInfo?.().direction ?? intlLocale.textInfo?.direction;
     if (direction === "ltr" || direction === "rtl") {
       return direction;
     }
@@ -432,34 +393,21 @@ export let setLocale = (newLocale, options) => {
     strategyToUse = getStrategyForUrl(window.location.href);
   }
   for (const strat of strategyToUse) {
-    if (
-      TREE_SHAKE_GLOBAL_VARIABLE_STRATEGY_USED &&
-      strat === "globalVariable"
-    ) {
+    if (TREE_SHAKE_GLOBAL_VARIABLE_STRATEGY_USED && strat === "globalVariable") {
       // a default for a custom strategy to get started quickly
       // is likely overwritten by `defineSetLocale()`
       _locale = newLocale;
     } else if (TREE_SHAKE_COOKIE_STRATEGY_USED && strat === "cookie") {
-      if (
-        isServer ||
-        typeof document === "undefined" ||
-        typeof window === "undefined"
-      ) {
+      if (isServer || typeof document === "undefined" || typeof window === "undefined") {
         continue;
       }
       // set the cookie
       const cookieString = `${cookieName}=${newLocale}; path=/; max-age=${cookieMaxAge}`;
-      document.cookie = cookieDomain
-        ? `${cookieString}; domain=${cookieDomain}`
-        : cookieString;
+      document.cookie = cookieDomain ? `${cookieString}; domain=${cookieDomain}` : cookieString;
     } else if (strat === "baseLocale") {
       // nothing to be set here. baseLocale is only a fallback
       continue;
-    } else if (
-      TREE_SHAKE_URL_STRATEGY_USED &&
-      strat === "url" &&
-      typeof window !== "undefined"
-    ) {
+    } else if (TREE_SHAKE_URL_STRATEGY_USED && strat === "url" && typeof window !== "undefined") {
       // route to the new url
       //
       // this triggers a page reload but a user rarely
@@ -471,11 +419,7 @@ export let setLocale = (newLocale, options) => {
       newLocation = localizeUrl(window.location.href, {
         locale: newLocale,
       }).href;
-    } else if (
-      TREE_SHAKE_LOCAL_STORAGE_STRATEGY_USED &&
-      strat === "localStorage" &&
-      typeof window !== "undefined"
-    ) {
+    } else if (TREE_SHAKE_LOCAL_STORAGE_STRATEGY_USED && strat === "localStorage" && typeof window !== "undefined") {
       // set the localStorage
       localStorage.setItem(localStorageKey, newLocale);
     } else if (isCustomStrategy(strat) && customClientStrategies.has(strat)) {
@@ -495,12 +439,7 @@ export let setLocale = (newLocale, options) => {
     }
   }
   const runReload = () => {
-    if (
-      !isServer &&
-      optionsWithDefaults.reload &&
-      window.location &&
-      newLocale !== currentLocale
-    ) {
+    if (!isServer && optionsWithDefaults.reload && window.location && newLocale !== currentLocale) {
       navigateOrReload(newLocation);
     }
   };
@@ -605,9 +544,7 @@ export function isLocale(locale) {
 export function assertIsLocale(input) {
   const locale = toLocale(input);
   if (locale) return locale;
-  throw new Error(
-    `Invalid locale: ${input}. Expected one of: ${locales.join(", ")}`
-  );
+  throw new Error(`Invalid locale: ${input}. Expected one of: ${locales.join(", ")}`);
 }
 
 /**
@@ -630,10 +567,7 @@ export function assertIsLocale(input) {
  * @returns {Locale}
  */
 export const extractLocaleFromRequest = (request) => {
-  return extractLocaleFromRequestWithStrategies(
-    request,
-    getStrategyForUrl(request.url)
-  );
+  return extractLocaleFromRequestWithStrategies(request, getStrategyForUrl(request.url));
 };
 /**
  * Extracts a locale from a request using the provided strategy order.
@@ -654,10 +588,7 @@ export const extractLocaleFromRequestWithStrategies = (request, strategies) => {
         ?.split("=")[1];
     } else if (TREE_SHAKE_URL_STRATEGY_USED && strat === "url") {
       locale = extractLocaleFromUrl(request.url);
-    } else if (
-      TREE_SHAKE_PREFERRED_LANGUAGE_STRATEGY_USED &&
-      strat === "preferredLanguage"
-    ) {
+    } else if (TREE_SHAKE_PREFERRED_LANGUAGE_STRATEGY_USED && strat === "preferredLanguage") {
       locale = extractLocaleFromHeader(request);
     } else if (strat === "globalVariable") {
       locale = _locale;
@@ -860,9 +791,7 @@ export function extractLocaleFromUrl(url) {
     // Iterate over URL patterns
     for (const element of urlPatterns) {
       for (const [locale, localizedPattern] of element.localized) {
-        const match = new URLPattern(localizedPattern, urlObj.href).exec(
-          urlObj.href
-        );
+        const match = new URLPattern(localizedPattern, urlObj.href).exec(urlObj.href);
         if (match) {
           result = locale;
           break;
@@ -932,9 +861,7 @@ function defaultUrlPatternExtractLocale(url) {
  * @returns {URL} The localized URL, always absolute
  */
 export function localizeUrl(url, options) {
-  const targetLocale = options?.locale
-    ? assertIsLocale(options?.locale)
-    : getLocale();
+  const targetLocale = options?.locale ? assertIsLocale(options?.locale) : getLocale();
   if (TREE_SHAKE_DEFAULT_URL_PATTERN_USED) {
     return localizeUrlDefaultPattern(url, targetLocale);
   }
@@ -943,38 +870,22 @@ export function localizeUrl(url, options) {
   for (const element of urlPatterns) {
     // match localized patterns
     for (const [, localizedPattern] of element.localized) {
-      const match = new URLPattern(localizedPattern, urlObj.href).exec(
-        urlObj.href
-      );
+      const match = new URLPattern(localizedPattern, urlObj.href).exec(urlObj.href);
       if (!match) {
         continue;
       }
-      const targetPattern = element.localized.find(
-        ([locale]) => locale === targetLocale
-      )?.[1];
+      const targetPattern = element.localized.find(([locale]) => locale === targetLocale)?.[1];
       if (!targetPattern) {
         continue;
       }
-      const localizedUrl = fillPattern(
-        targetPattern,
-        aggregateGroups(match),
-        urlObj.origin
-      );
+      const localizedUrl = fillPattern(targetPattern, aggregateGroups(match), urlObj.origin);
       return fillMissingUrlParts(localizedUrl, match);
     }
-    const unlocalizedMatch = new URLPattern(element.pattern, urlObj.href).exec(
-      urlObj.href
-    );
+    const unlocalizedMatch = new URLPattern(element.pattern, urlObj.href).exec(urlObj.href);
     if (unlocalizedMatch) {
-      const targetPattern = element.localized.find(
-        ([locale]) => locale === targetLocale
-      )?.[1];
+      const targetPattern = element.localized.find(([locale]) => locale === targetLocale)?.[1];
       if (targetPattern) {
-        const localizedUrl = fillPattern(
-          targetPattern,
-          aggregateGroups(unlocalizedMatch),
-          urlObj.origin
-        );
+        const localizedUrl = fillPattern(targetPattern, aggregateGroups(unlocalizedMatch), urlObj.origin);
         return fillMissingUrlParts(localizedUrl, unlocalizedMatch);
       }
     }
@@ -990,8 +901,7 @@ export function localizeUrl(url, options) {
  * @returns {URL}
  */
 function localizeUrlDefaultPattern(url, locale) {
-  const urlObj =
-    typeof url === "string" ? new URL(url, getUrlOrigin()) : new URL(url);
+  const urlObj = typeof url === "string" ? new URL(url, getUrlOrigin()) : new URL(url);
   const currentLocale = extractLocaleFromUrl(urlObj);
   // If current locale matches target locale, no change needed
   if (currentLocale === locale) {
@@ -1059,9 +969,7 @@ export function deLocalizeUrl(url) {
   for (const element of urlPatterns) {
     // Iterate over localized versions
     for (const [, localizedPattern] of element.localized) {
-      const match = new URLPattern(localizedPattern, urlObj.href).exec(
-        urlObj.href
-      );
+      const match = new URLPattern(localizedPattern, urlObj.href).exec(urlObj.href);
       if (match) {
         // Convert localized URL back to the base pattern
         const groups = aggregateGroups(match);
@@ -1070,15 +978,9 @@ export function deLocalizeUrl(url) {
       }
     }
     // match unlocalized pattern
-    const unlocalizedMatch = new URLPattern(element.pattern, urlObj.href).exec(
-      urlObj.href
-    );
+    const unlocalizedMatch = new URLPattern(element.pattern, urlObj.href).exec(urlObj.href);
     if (unlocalizedMatch) {
-      const baseUrl = fillPattern(
-        element.pattern,
-        aggregateGroups(unlocalizedMatch),
-        urlObj.origin
-      );
+      const baseUrl = fillPattern(element.pattern, aggregateGroups(unlocalizedMatch), urlObj.origin);
       return fillMissingUrlParts(baseUrl, unlocalizedMatch);
     }
   }
@@ -1091,8 +993,7 @@ export function deLocalizeUrl(url) {
  * @returns {URL}
  */
 function deLocalizeUrlDefaultPattern(url) {
-  const urlObj =
-    typeof url === "string" ? new URL(url, getUrlOrigin()) : new URL(url);
+  const urlObj = typeof url === "string" ? new URL(url, getUrlOrigin()) : new URL(url);
   const pathSegments = urlObj.pathname.split("/").filter(Boolean);
   // If first segment is a locale, remove it
   if (pathSegments.length > 0 && toLocale(pathSegments[0])) {
@@ -1162,26 +1063,20 @@ function fillPattern(pattern, values, origin) {
   // Pre-process the pattern to handle explicit port numbers
   // This detects patterns like "http://localhost:5173" and protects the port number
   // from being interpreted as a parameter
-  let processedPattern = pattern.replace(
-    /(https?:\/\/[^:/]+):(\d+)(\/|$)/g,
-    (_, protocol, port, slash) => {
-      // Replace ":5173" with "#PORT-5173#" to protect it from parameter replacement
-      return `${protocol}#PORT-${port}#${slash}`;
-    }
-  );
+  let processedPattern = pattern.replace(/(https?:\/\/[^:/]+):(\d+)(\/|$)/g, (_, protocol, port, slash) => {
+    // Replace ":5173" with "#PORT-5173#" to protect it from parameter replacement
+    return `${protocol}#PORT-${port}#${slash}`;
+  });
   // First, handle group delimiters with curly braces
-  let processedGroupDelimiters = processedPattern.replace(
-    /\{([^{}]*)\}([?+*]?)/g,
-    (_, content, modifier) => {
-      // For optional group delimiters
-      if (modifier === "?") {
-        // For optional groups, we'll include the content
-        return content;
-      }
-      // For non-optional group delimiters, always include the content
+  let processedGroupDelimiters = processedPattern.replace(/\{([^{}]*)\}([?+*]?)/g, (_, content, modifier) => {
+    // For optional group delimiters
+    if (modifier === "?") {
+      // For optional groups, we'll include the content
       return content;
     }
-  );
+    // For non-optional group delimiters, always include the content
+    return content;
+  });
   // Then handle named groups
   let filled = processedGroupDelimiters.replace(
     /(\/?):([a-zA-Z0-9_]+)(\([^)]*\))?([?+*]?)/g,
@@ -1295,8 +1190,7 @@ export async function shouldRedirect(input = {}) {
     return { shouldRedirect: false, locale, redirectUrl: undefined };
   }
   const localizedUrl = localizeUrl(currentUrl.href, { locale });
-  const shouldRedirectToLocalizedUrl =
-    normalizeUrl(localizedUrl.href) !== normalizeUrl(currentUrl.href);
+  const shouldRedirectToLocalizedUrl = normalizeUrl(localizedUrl.href) !== normalizeUrl(currentUrl.href);
   return {
     shouldRedirect: shouldRedirectToLocalizedUrl,
     locale,
@@ -1342,9 +1236,7 @@ function resolveUrl(input) {
   if (typeof window !== "undefined" && window?.location?.href) {
     return new URL(window.location.href);
   }
-  throw new Error(
-    "shouldRedirect() requires either a request, an absolute URL, or must run in a browser environment."
-  );
+  throw new Error("shouldRedirect() requires either a request, an absolute URL, or must run in a browser environment.");
 }
 /**
  * Normalize url for comparison by stripping the trailing slash.
@@ -1531,10 +1423,7 @@ export function generateStaticLocalizedUrls(urls) {
   // For default URL pattern, we can optimize the generation
   if (TREE_SHAKE_DEFAULT_URL_PATTERN_USED) {
     for (const urlInput of urls) {
-      const url =
-        urlInput instanceof URL
-          ? urlInput
-          : new URL(urlInput, "http://localhost");
+      const url = urlInput instanceof URL ? urlInput : new URL(urlInput, "http://localhost");
       // Base locale doesn't get a prefix
       localizedUrls.add(url);
       // Other locales get their code as prefix
@@ -1550,18 +1439,13 @@ export function generateStaticLocalizedUrls(urls) {
   }
   // For custom URL patterns, we need to use localizeUrl for each URL and locale
   for (const urlInput of urls) {
-    const url =
-      urlInput instanceof URL
-        ? urlInput
-        : new URL(urlInput, "http://localhost");
+    const url = urlInput instanceof URL ? urlInput : new URL(urlInput, "http://localhost");
     // Try each URL pattern to find one that matches
     let patternFound = false;
     for (const pattern of urlPatterns) {
       try {
         // Try to match the unlocalized pattern
-        const unlocalizedMatch = new URLPattern(pattern.pattern, url.href).exec(
-          url.href
-        );
+        const unlocalizedMatch = new URLPattern(pattern.pattern, url.href).exec(url.href);
         if (!unlocalizedMatch) continue;
         patternFound = true;
         // Track unique localized URLs to avoid duplicates when patterns are the same
@@ -1625,9 +1509,7 @@ export const customClientStrategies = new Map();
  * @returns {boolean} Returns true if it is a custom strategy, false otherwise.
  */
 export function isCustomStrategy(strategy) {
-  return (
-    typeof strategy === "string" && /^custom-[A-Za-z0-9_-]+$/.test(strategy)
-  );
+  return typeof strategy === "string" && /^custom-[A-Za-z0-9_-]+$/.test(strategy);
 }
 /**
  * Defines a custom strategy that is executed on the server.

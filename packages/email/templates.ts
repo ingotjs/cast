@@ -16,27 +16,21 @@ type CommonProps = {
   locale?: string;
 };
 
-export const renderResetPasswordEmail = (
-  props: CommonProps & { resetLink: string }
-) => render(createElement(ResetPasswordEmail, props));
+export const renderResetPasswordEmail = (props: CommonProps & { resetLink: string }) =>
+  render(createElement(ResetPasswordEmail, props));
 
-export const renderMagicLinkEmail = (
-  props: CommonProps & { token: string; magicLink: string }
-) => render(createElement(MagicLinkEmail, props));
+export const renderMagicLinkEmail = (props: CommonProps & { token: string; magicLink: string }) =>
+  render(createElement(MagicLinkEmail, props));
 
-export const renderEmailVerificationEmail = (
-  props: CommonProps & { verificationLink: string }
-) => render(createElement(EmailVerificationEmail, props));
+export const renderEmailVerificationEmail = (props: CommonProps & { verificationLink: string }) =>
+  render(createElement(EmailVerificationEmail, props));
 
-export const renderPasswordChangedEmail = (
-  props: CommonProps & { resetPasswordLink: string }
-) => render(createElement(PasswordChangedEmail, props));
+export const renderPasswordChangedEmail = (props: CommonProps & { resetPasswordLink: string }) =>
+  render(createElement(PasswordChangedEmail, props));
 
-export const renderAccountDeletedEmail = (props: CommonProps) =>
-  render(createElement(AccountDeletedEmail, props));
+export const renderAccountDeletedEmail = (props: CommonProps) => render(createElement(AccountDeletedEmail, props));
 
-export const renderWelcomeEmail = (props: CommonProps) =>
-  render(createElement(WelcomeEmail, props));
+export const renderWelcomeEmail = (props: CommonProps) => render(createElement(WelcomeEmail, props));
 
 /** Localized email subject lines */
 export const getEmailSubject = {
@@ -46,13 +40,8 @@ export const getEmailSubject = {
     m.email_subject_magic_link({ appName }, loc(locale ?? "en")),
   verification: ({ appName, locale }: { appName: string; locale?: string }) =>
     m.email_subject_verification({ appName }, loc(locale ?? "en")),
-  passwordChanged: ({
-    appName,
-    locale,
-  }: {
-    appName: string;
-    locale?: string;
-  }) => m.email_subject_password_changed({ appName }, loc(locale ?? "en")),
+  passwordChanged: ({ appName, locale }: { appName: string; locale?: string }) =>
+    m.email_subject_password_changed({ appName }, loc(locale ?? "en")),
   accountDeleted: ({ appName, locale }: { appName: string; locale?: string }) =>
     m.email_subject_account_deleted({ appName }, loc(locale ?? "en")),
   welcome: ({ appName, locale }: { appName: string; locale?: string }) =>

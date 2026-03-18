@@ -7,9 +7,7 @@ const env = import.meta.env as Record<string, string | undefined>;
 const parseEnv = <T>(key: string, schema: z.ZodType<T>): T => {
   const result = schema.safeParse(env[key]);
   if (!result.success) {
-    throw new Error(
-      `Invalid env var "${key}": ${result.error.issues[0]?.message ?? "validation failed"}`
-    );
+    throw new Error(`Invalid env var "${key}": ${result.error.issues[0]?.message ?? "validation failed"}`);
   }
   return result.data;
 };
@@ -24,13 +22,8 @@ export const clientEnv = {
 
   posthog: env.VITE_PUBLIC_POSTHOG_KEY
     ? {
-        VITE_PUBLIC_POSTHOG_KEY: parseEnv(
-          "VITE_PUBLIC_POSTHOG_KEY",
-          z.string().min(1)
-        ),
-        VITE_PUBLIC_POSTHOG_HOST: z
-          .url()
-          .parse(env.VITE_PUBLIC_POSTHOG_HOST ?? "https://us.posthog.com"),
+        VITE_PUBLIC_POSTHOG_KEY: parseEnv("VITE_PUBLIC_POSTHOG_KEY", z.string().min(1)),
+        VITE_PUBLIC_POSTHOG_HOST: z.url().parse(env.VITE_PUBLIC_POSTHOG_HOST ?? "https://us.posthog.com"),
       }
     : undefined,
 };

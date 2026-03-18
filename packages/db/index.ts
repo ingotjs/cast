@@ -30,9 +30,7 @@ export const setDb = (instance: Database) => {
 export const db: Database = new Proxy({} as Database, {
   get(_, prop) {
     if (!_db) {
-      throw new Error(
-        "Database not initialized. Call initDb(env.DB) or setDb()."
-      );
+      throw new Error("Database not initialized. Call initDb(env.DB) or setDb().");
     }
     return Reflect.get(_db, prop);
   },

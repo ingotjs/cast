@@ -76,38 +76,22 @@ export const PasskeysCard = () => {
   };
 
   return (
-    <SettingsCard
-      title="Passkeys"
-      description="Manage passwordless sign-in with passkeys."
-    >
+    <SettingsCard title="Passkeys" description="Manage passwordless sign-in with passkeys.">
       <div className="space-y-3">
-        {loading && (
-          <p className="text-sm text-muted-foreground">Loading passkeys...</p>
-        )}
+        {loading && <p className="text-sm text-muted-foreground">Loading passkeys...</p>}
 
         {!loading && passkeys.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            No passkeys registered yet.
-          </p>
+          <p className="text-sm text-muted-foreground">No passkeys registered yet.</p>
         )}
 
         {!loading &&
           passkeys.map((pk) => (
-            <div
-              key={pk.id}
-              className="flex items-center justify-between gap-4 rounded-lg border border-border p-3"
-            >
+            <div key={pk.id} className="flex items-center justify-between gap-4 rounded-lg border border-border p-3">
               <div className="flex items-center gap-3">
                 <Fingerprint className="size-5 text-muted-foreground" />
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-medium">
-                    {pk.name ?? "Unnamed passkey"}
-                  </p>
-                  {pk.createdAt && (
-                    <p className="text-xs text-muted-foreground">
-                      Added {formatDate(pk.createdAt)}
-                    </p>
-                  )}
+                  <p className="truncate text-sm font-medium">{pk.name ?? "Unnamed passkey"}</p>
+                  {pk.createdAt && <p className="text-xs text-muted-foreground">Added {formatDate(pk.createdAt)}</p>}
                 </div>
               </div>
               <Button
