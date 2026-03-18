@@ -16,17 +16,18 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 
 ### Commands
 
-| Command                 | Description                                                |
-| :---------------------- | :--------------------------------------------------------- |
-| `bun dev`               | Start all apps in dev mode (auto-installs deps)            |
-| `bun dev:email`         | Email template preview (port 3002)                         |
-| `bun ok`                | Type check + lint + tests — **run after every task**       |
-| `bun ok:ci`             | Same without auto-fixes (CI)                               |
-| `bun db:generate`       | Generate migrations (**user MUST run manually**)           |
-| `bun db:migrate`        | Apply migrations locally (**user MUST run manually**)      |
-| `bun db:migrate:remote` | Apply migrations to remote D1 (**user MUST run manually**) |
-| `bun db:studio`         | Open Drizzle Studio                                        |
-| `bun e2e`               | Run Playwright E2E tests (from `apps/e2e`)                 |
+| Command                 | Description                                                      |
+| :---------------------- | :--------------------------------------------------------------- |
+| `bun dev`               | Start all apps in dev mode (auto-installs deps)                  |
+| `bun dev:email`         | Email template preview (port 3002)                               |
+| `bun ok`                | Type check + lint + tests — **run after every task**             |
+| `bun ok:ci`             | Same without auto-fixes (CI)                                     |
+| `bun db:generate`       | Generate migrations (**user MUST run manually**)                 |
+| `bun db:migrate`        | Apply migrations locally (**user MUST run manually**)            |
+| `bun db:migrate:remote` | Apply migrations to remote D1 (**user MUST run manually**)       |
+| `bun db:studio`         | Open Drizzle Studio                                              |
+| `bun e2e`               | Run Playwright E2E tests (from `apps/e2e`)                       |
+| `bun knip`              | Find unused files, deps, and exports ([Knip](https://knip.dev/)) |
 
 ### Quality Verification
 
@@ -362,6 +363,7 @@ Auth errors: [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i
 - Versions MUST be pinned (no `^` / `~`) — enforced by [syncpack](https://syncpack.dev/) + `bunfig.toml`
 - New packages blocked if published < 3 days ago (`install.minimumReleaseAge`)
 - [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) checks for vulnerabilities on `bun install`
+- [Knip](https://knip.dev/) finds unused files, dependencies, and exports — run `bun knip`. Config: `knip.json`
 
 ### Infrastructure & Deployment
 
@@ -582,6 +584,7 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `.oxlintrc.json`                         | Oxlint config                                                                          |
 | `.oxfmtrc.jsonc`                         | Oxfmt config                                                                           |
 | `.syncpackrc`                            | Syncpack config                                                                        |
+| `knip.json`                              | Knip config (unused files, deps, exports)                                              |
 | `apps/web/wrangler.jsonc`                | Fallback wrangler config (manual CLI use only — Alchemy generates its own)             |
 | `.github/workflows/ci.yml`               | CI pipeline                                                                            |
 | `packages/email/email-capture.ts`        | Email capture for E2E test verification (dev/test only)                                |

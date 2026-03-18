@@ -1,0 +1,68 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreFiles": [".agents/**", ".claude/**", "**/paraglide/**"],
+  "ignoreIssues": {
+    "**/paraglide/**": ["exports"]
+  },
+  "exclude": ["duplicates"],
+  "workspaces": {
+    ".": {
+      "entry": ["alchemy.run.ts"],
+      "ignoreDependencies": [
+        "@socketsecurity/bun-security-scanner",
+        "alchemy",
+        "oxfmt"
+      ],
+      "ignoreBinaries": ["wrangler"]
+    },
+    "apps/web": {
+      "entry": [
+        "vite.config.ts",
+        "src/server.ts",
+        "src/routes/**/*.{ts,tsx}",
+        "src/components/**/*.{ts,tsx}",
+        "src/lib/**/*.{ts,tsx}"
+      ],
+      "project": ["src/**/*.{ts,tsx}"],
+      "vite": { "config": [] },
+      "ignoreDependencies": [
+        "@tanstack/react-query",
+        "@tanstack/react-router-ssr-query",
+        "@tanstack/router-plugin",
+        "tailwindcss",
+        "@tailwindcss/typography",
+        "@inlang/plugin-m-function-matcher",
+        "@inlang/plugin-message-format",
+        "babel-plugin-react-compiler",
+        "cloudflare"
+      ]
+    },
+    "apps/e2e": {},
+    "packages/api": {},
+    "packages/auth": {
+      "ignoreDependencies": [
+        "@simplewebauthn/server",
+        "@inlang/plugin-m-function-matcher",
+        "@inlang/plugin-message-format"
+      ]
+    },
+    "packages/config": {
+      "entry": ["*.json"]
+    },
+    "packages/db": {},
+    "packages/email": {
+      "ignoreDependencies": [
+        "@react-email/tailwind",
+        "react-dom",
+        "@react-email/preview-server",
+        "@types/react-dom",
+        "@inlang/plugin-m-function-matcher",
+        "@inlang/plugin-message-format"
+      ]
+    },
+    "packages/ui": {
+      "ignoreDependencies": ["postcss-load-config"]
+    },
+    "packages/utils": {}
+  }
+}

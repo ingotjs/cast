@@ -45,6 +45,7 @@ Zero-config, zero-compromise. Every layer of the stack is guarded by automated t
 - **Type checking** — [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) via `@typescript/native-preview`. 10x faster type checking than standard `tsc`.
 - **Dependency management** — [syncpack](https://syncpack.dev/) enforces pinned versions (no `^` or `~`), consistent versions across all packages, and workspace protocol for internal packages. No version drift, no "works on my machine."
 - **Supply chain security** — [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) scans for known vulnerabilities on every `bun install`. Combined with Bun's `install.minimumReleaseAge` (3-day quarantine on new packages) to block supply chain attacks.
+- **Dead code detection** — [Knip](https://knip.dev/) finds unused files, dependencies, and exports across the entire monorepo. Run `bun knip`.
 - **Pre-commit enforcement** — [Husky](https://typicode.github.io/husky/) runs `bun ok` (type check + lint + test) on every commit. Nothing ships without passing the full pipeline.
 - **CI/CD** — GitHub Actions runs `bun ok:ci` on every push and PR. On `main`, also deploys via Alchemy (provisions D1, applies migrations, deploys Worker), uploads source maps to PostHog, and reports CI metrics.
 - **One command to rule them all** — `bun ok` runs syncpack + type check + lint + test in sequence. If it passes, your code is clean.
@@ -99,6 +100,7 @@ packages/config   → Shared TypeScript configs
 | `bun db:migrate`        | Apply migrations locally (D1)                                             |
 | `bun db:migrate:remote` | Apply migrations to remote D1                                             |
 | `bun db:studio`         | Open Drizzle Studio                                                       |
+| `bun knip`              | Find unused files, deps, and exports                                      |
 
 ## Environment Variables
 
