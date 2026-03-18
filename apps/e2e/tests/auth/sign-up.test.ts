@@ -36,11 +36,9 @@ test.describe("Sign Up", () => {
     const firstName = "Test";
     const lastName = "User";
 
-    // Navigate to the sign-up page and wait for React hydration.
-    // The header's Sign In link (data-testid="header-signin-link") only renders
-    // after hydration since UserMenu uses useSession hook.
+    // Navigate to the sign-up page and wait for form hydration
     await page.goto("/auth/sign-up");
-    await expect(page.getByTestId("header-signin-link")).toBeVisible({
+    await page.waitForSelector("[data-testid='signup-form'][data-hydrated]", {
       timeout: 10_000,
     });
 

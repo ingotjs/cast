@@ -48,8 +48,9 @@ const adminMiddleware = base.middleware(async ({ context, next }) => {
 });
 
 export const publicProcedure = base;
+/** @public */
 export const protectedProcedure = base.use(authMiddleware);
 export const adminProcedure = base.use(adminMiddleware);
 
-/** Get the Pino logger from procedure context (injected by LoggingHandlerPlugin) */
+/** @public Get the Pino logger from procedure context (injected by LoggingHandlerPlugin) */
 export { getLogger };

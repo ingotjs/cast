@@ -37,6 +37,7 @@ export const test = base.extend<AuthFixtures>({
 
     const res = await page.request.post(`${BASE_URL}/api/auth/sign-up/email`, {
       data: { email, password: TEST_PASSWORD, name },
+      headers: { Origin: BASE_URL },
     });
     expect(res.ok()).toBe(true);
 
@@ -53,14 +54,15 @@ export const test = base.extend<AuthFixtures>({
     // Create user via API
     const res = await page.request.post(`${BASE_URL}/api/auth/sign-up/email`, {
       data: { email, password: TEST_PASSWORD, name },
+      headers: { Origin: BASE_URL },
     });
     expect(res.ok()).toBe(true);
 
     // Clear cookies and sign in through the UI (like a real user)
-    // Wait for header-signin-link to confirm React hydration is complete
+    // Wait for form hydration (data-hydrated is set by useEffect after React hydrates)
     await page.context().clearCookies();
     await page.goto("/auth/sign-in");
-    await expect(page.getByTestId("header-signin-link")).toBeVisible({
+    await page.waitForSelector("[data-testid='signin-form'][data-hydrated]", {
       timeout: 10_000,
     });
     await page.getByLabel("Email").fill(email);

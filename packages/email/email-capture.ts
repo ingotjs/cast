@@ -1,10 +1,14 @@
 // Email capture for E2E test verification — dev/test only.
-// Uses node:fs which is not available in Cloudflare Workers.
-// Dynamic imports ensure fs/path are only loaded in dev.
+//
+// In Workers (miniflare), node:fs writes to a virtual filesystem — not the host disk.
+// So captureEmail() POSTs to the Vite dev server's /__email-capture endpoint (see
+// apps/web/vite-email-capture-plugin.ts) which runs in Node.js and writes to disk.
+// For unit tests (bun test), the Vite server isn't running, so we fall back to node:fs.
 
 // oxlint-disable-next-line node/no-process-env -- email capture needs to check environment
 const isDev = process.env.NODE_ENV !== "production";
 
+const CAPTURE_ENDPOINT = "http://localhost:3000/__email-capture";
 const DIR_SUFFIX = "../../.email-captures";
 
 /** Capture an email to a JSON file for E2E test verification */
@@ -13,24 +17,34 @@ export const captureEmail = async ({ to, subject, html }: { to: string; subject:
     return;
   }
 
-  const fs = await import("node:fs");
-  const path = await import("node:path");
-  const dir = path.join(import.meta.dirname, DIR_SUFFIX);
+  try {
+    // Post to the Vite dev server endpoint (works from miniflare)
+    await fetch(CAPTURE_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ to, subject, html }),
+    });
+  } catch {
+    // Fallback to node:fs for unit tests where the Vite server isn't running
+    const fs = await import("node:fs");
+    const path = await import("node:path");
+    const dir = path.join(import.meta.dirname, DIR_SUFFIX);
 
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir, { recursive: true });
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const filename = to.replaceAll(/[^a-zA-Z0-9@._-]/g, "_");
+    const filepath = path.join(dir, `${filename}.json`);
+
+    let existing: Record<string, { subject: string; html: string }> = {};
+    if (fs.existsSync(filepath)) {
+      existing = JSON.parse(fs.readFileSync(filepath, "utf8"));
+    }
+
+    existing[new Date().toISOString()] = { subject, html };
+    fs.writeFileSync(filepath, JSON.stringify(existing, null, 2));
   }
-
-  const filename = to.replaceAll(/[^a-zA-Z0-9@._-]/g, "_");
-  const filepath = path.join(dir, `${filename}.json`);
-
-  let existing: Record<string, { subject: string; html: string }> = {};
-  if (fs.existsSync(filepath)) {
-    existing = JSON.parse(fs.readFileSync(filepath, "utf8"));
-  }
-
-  existing[new Date().toISOString()] = { subject, html };
-  fs.writeFileSync(filepath, JSON.stringify(existing, null, 2));
 };
 
 /** Read captured emails for a recipient */

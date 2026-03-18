@@ -7,12 +7,12 @@
   "exclude": ["duplicates"],
   "workspaces": {
     ".": {
-      "ignoreDependencies": ["@socketsecurity/bun-security-scanner"],
+      "entry": ["vite.config.ts"],
+      "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "ultracite"],
       "ignoreBinaries": ["wrangler"]
     },
     "packages/infra": {
-      "entry": ["alchemy.run.ts"],
-      "ignoreDependencies": ["alchemy"]
+      "entry": ["alchemy.run.ts"]
     },
     "apps/web": {
       "entry": [
@@ -34,7 +34,8 @@
         "@inlang/plugin-message-format",
         "babel-plugin-react-compiler",
         "cloudflare"
-      ]
+      ],
+      "ignoreBinaries": ["vite"]
     },
     "apps/e2e": {},
     "packages/api": {},
@@ -60,6 +61,7 @@
       ]
     },
     "packages/ui": {
+      "ignore": ["src/svgs/omega-icon.tsx"],
       "ignoreDependencies": ["postcss-load-config"]
     },
     "packages/utils": {}

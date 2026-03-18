@@ -28,9 +28,9 @@ import { expect, test } from "../fixtures/auth";
 
 test.describe("Sign In", () => {
   test("should sign in with valid credentials and redirect to home", async ({ page, testUser }) => {
-    // Navigate to sign-in page and wait for hydration
+    // Navigate to sign-in page and wait for form hydration
     await page.goto("/auth/sign-in");
-    await expect(page.getByTestId("header-signin-link")).toBeVisible({
+    await page.waitForSelector("[data-testid='signin-form'][data-hydrated]", {
       timeout: 10_000,
     });
 

@@ -7,6 +7,8 @@ import alchemy from "alchemy/cloudflare/tanstack-start";
 import type { PluginOption } from "vite-plus";
 import { defineConfig } from "vite-plus";
 
+import { emailCapturePlugin } from "./vite-email-capture-plugin";
+
 // Reference: https://alchemy.run/guides/cloudflare-tanstack-start/
 
 const config = defineConfig({
@@ -25,6 +27,7 @@ const config = defineConfig({
       outdir: "./src/paraglide",
       strategy: ["cookie", "preferredLanguage", "url", "baseLocale"],
     }),
+    emailCapturePlugin(),
     devtools(),
     tailwindcss(),
     alchemy(),

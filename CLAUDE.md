@@ -94,62 +94,9 @@
 
 ## Stack
 
-### Environment Variables
+### Environment Variables & Feature Flags
 
-**NEVER use `process.env` or `import.meta.env` directly.** Enforced by oxlint. Only `**/env.ts` files may access them.
-
-| Context | Import                                                   | Example                                      |
-| :------ | :------------------------------------------------------- | :------------------------------------------- |
-| Server  | `import { serverEnv } from "@packages/utils/server/env"` | `serverEnv.email?.RESEND_API_KEY`            |
-| Client  | `import { clientEnv } from "@/lib/env"`                  | `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY` |
-
-### Service Features & Capability Flags
-
-Two types of features, two obvious places:
-
-**Service features** — external services toggled by env var presence. Set the env vars → service is on. Leave them out → off. No code changes needed.
-
-| Service       | Primary env var           | Env group                                 |
-| :------------ | :------------------------ | :---------------------------------------- |
-| `posthog`     | `VITE_PUBLIC_POSTHOG_KEY` | `serverEnv.posthog` / `clientEnv.posthog` |
-| `email`       | `RESEND_API_KEY`          | `serverEnv.email`                         |
-| `googleOAuth` | `GOOGLE_CLIENT_ID`        | `serverEnv.googleOAuth`                   |
-
-**Capability flags** — product decisions in `consts.auth` (`packages/utils/src/shared/consts.ts`). Always the same regardless of environment.
-
-| Capability | Default | Access                 |
-| :--------- | :-----: | :--------------------- |
-| `password` |  true   | `consts.auth.password` |
-| `passkey`  |  true   | `consts.auth.passkey`  |
-
-**UI-toggle env vars** — show/hide auth UI elements per environment:
-
-| Env var                    | Effect                                                             |
-| :------------------------- | :----------------------------------------------------------------- |
-| `VITE_PUBLIC_GOOGLE_OAUTH` | Show Google sign-in button (requires server Google OAuth env vars) |
-| `VITE_PUBLIC_MAGIC_LINK`   | Show magic link sign-in option (requires email env vars)           |
-
-**Usage:**
-
-```ts
-serverEnv.email?.RESEND_API_KEY; // string if email env vars set, undefined if not
-consts.auth.password; // true | false (product decision)
-clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
-```
-
-<details>
-<summary><strong>Adding a new service feature</strong></summary>
-
-1. Add an env group in the appropriate env file (`packages/utils/src/server/env.ts` and/or `apps/web/src/lib/env.ts`):
-   ```ts
-   myService: env.MY_SERVICE_KEY
-     ? { MY_SERVICE_KEY: parseEnv("MY_SERVICE_KEY", z.string().min(1)) }
-     : undefined,
-   ```
-2. Access via `serverEnv.myService?.MY_SERVICE_KEY` or `clientEnv.myService?.MY_SERVICE_KEY`
-3. Add env vars to `.env.example`
-
-</details>
+**NEVER use `process.env` or `import.meta.env` directly.** Enforced by oxlint. Only `**/env.ts` files may access them. Service features toggled by env var presence, capability flags in `consts.auth`. Full details in **`_env` skill**.
 
 ### Authentication
 
@@ -182,7 +129,6 @@ Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap +
 ### Dependency Management
 
 - Versions MUST be pinned (no `^` / `~`) — enforced by [syncpack](https://syncpack.dev/) + `bunfig.toml`
-- New packages blocked if published < 3 days ago (`install.minimumReleaseAge`)
 - [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) checks for vulnerabilities on `bun install`
 - [Knip](https://knip.dev/) finds unused files, dependencies, and exports — run `bun knip`. Config: `knip.json`
 
@@ -196,52 +142,11 @@ Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap +
 
 ### Testing
 
-- **Tests are REQUIRED** when adding/modifying endpoints, server functions, utilities, or business logic
-- **ALL oRPC endpoints MUST have extensive tests** — auth middleware, input validation, happy paths, edge cases
-- NEVER ship backend changes without test coverage
-- Test files colocated: `{name}.test.ts` or `__tests__/` directory
-- Runner: `bun:test`
-
-**Test utilities** (`packages/auth/__tests__/test-utils.ts`, exported as `@packages/auth/test-utils`):
-
-| Utility                                            | Purpose                                                      |
-| :------------------------------------------------- | :----------------------------------------------------------- |
-| `createTestUser({ email, name, password, role? })` | Creates user via auth handler, returns `{ userId, headers }` |
-| `cleanupTestUser(userId)`                          | Deletes user + cascaded data                                 |
-| `uniqueEmail(prefix)`                              | Generates unique email for test isolation                    |
-
-**oRPC test pattern:**
-
-```ts
-import { createRouterClient } from "@orpc/server";
-import { router } from "../router";
-
-const client = createRouterClient(router, {
-  context: { headers: adminHeaders },
-});
-const result = await client.admin.users.list({ limit: 10 });
-```
+Tests are REQUIRED when adding/modifying endpoints, server functions, utilities, or business logic. NEVER ship backend changes without test coverage. Full details in **`_testing` skill**.
 
 ### E2E Testing (Playwright)
 
-[Playwright](https://playwright.dev/) E2E tests in `apps/e2e/`. See `apps/e2e/FEATURES.md` for full coverage table. See `.agents/skills/_e2e-testing/SKILL.md` for detailed guidance.
-
-- Run: `bun e2e` from project root, or `cd apps/e2e && bunx playwright test`
-- **Dev server auto-starts** — Playwright's `webServer` config in `playwright.config.ts` runs `bun dev` automatically and waits for `localhost:3000`. Reuses an existing server if already running.
-- **MUST use `data-testid` selectors** for buttons/forms — NEVER text-based selectors (i18n breaks them)
-- **MUST use `page.locator('#id')` for password fields** — `getByLabel` matches both input + toggle button
-- **NEVER call API endpoints directly in E2E tests** for user actions — only use the API for test setup (`testUser` fixture). All user actions (sign in, sign out, change password, delete account) MUST go through the UI like a real user would.
-- **Each test MUST have extensive JSDoc** at the file top explaining step-by-step what the test does
-- **MUST wait for `/account` page to settle** before interacting (session data loading causes re-renders)
-- Email verification: captured to `.email-captures/` as JSON, read via `getEmails` fixture
-- Auth guards use isomorphic `getSession()` from `apps/web/src/lib/auth-client.ts` (works during SSR + CSR)
-
-**Test fixtures** (`apps/e2e/tests/fixtures/auth.ts`):
-
-- `testUser` — auto-fixture that creates a unique user via API and clears cookies. Returns `{ email, password, name }`. Test starts unauthenticated.
-- `authenticatedPage` — auto-fixture that creates a user via API, then signs in through the UI. Returns `{ email, password, name }`. Test starts authenticated on the home page.
-- `getEmails(email)` — reads captured emails from `.email-captures/` for a given recipient.
-- `clearEmails()` — clears all captured emails.
+[Playwright](https://playwright.dev/) E2E tests in `apps/e2e/`. Full details in **`_e2e-testing` skill**.
 
 ### Skills
 
@@ -258,8 +163,11 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `_email`          | Email templates, triggers in `packages/email/`                                    |
 | `_seo`            | New public routes, meta tags, SEO files                                           |
 | `_analytics`      | PostHog events, error tracking, logging                                           |
+| `_env`            | Adding env vars, toggling service features or capability flags                    |
 | `_database`       | Schema, migrations, queries, oRPC procedures in `packages/db/` or `packages/api/` |
 | `_infra`          | Alchemy IaC, deployment, CI/CD pipeline                                           |
+| `_testing`        | Writing/modifying unit or integration tests                                       |
+| `_linear`         | Working on Linear tickets or given a Linear link                                  |
 | `_skill-creation` | Creating or modifying custom `_` skills                                           |
 
 ### General Rules
@@ -289,12 +197,6 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 - GitHub ops: ALWAYS use `gh` CLI
 - **When given a GitHub PR link**, checkout its branch as the **ABSOLUTE FIRST ACTION** — before reading code, before analyzing. Use `gh pr view <number> --json headRefName --jq '.headRefName'` to get the branch name, then checkout.
 - **When committing: MUST update CLAUDE.md AND README.md**
-
-### Linear Workflow
-
-- **When given a Linear ticket**, create/checkout a dedicated branch as the **ABSOLUTE FIRST ACTION** — before reading any code, before analyzing anything. The instant the user says "work on XXX" or shares a Linear link, create the branch first.
-- **When creating a branch for a Linear ticket**, create the Linear ticket FIRST so the branch name includes the ticket ID (e.g., `STO-1234-feature-name`). This ensures traceability between branches, PRs, and Linear tickets.
-- **MUST extract and view ALL images** embedded in the ticket description AND comments using `extract_images`. Screenshots, mockups, and annotated images contain critical context that text alone does not convey. Do this as one of the first actions when picking up a ticket.
 
 ---
 

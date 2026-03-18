@@ -5,6 +5,7 @@ import { cn } from "@packages/ui/lib/utils";
 import { usePostHog } from "@posthog/react";
 import { useNavigate } from "@tanstack/react-router";
 import { Check, X } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -76,10 +77,18 @@ export const SignUp = () => {
     navigate({ to: "/" });
   };
 
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+
   return (
     <AuthCard title="Sign Up" description="Enter your email below to create an account" showTabs showLegal>
       <SocialAuth />
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-testid="signup-form">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-4"
+        data-testid="signup-form"
+        data-hydrated={hydrated || undefined}
+      >
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="firstName">First name</Label>
