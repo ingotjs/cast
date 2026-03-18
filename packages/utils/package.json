@@ -15,12 +15,12 @@
   },
   "dependencies": {
     "posthog-node": "5.28.2",
-    "zod": "4.3.6"
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@packages/config": "*",
-    "@types/bun": "1.3.10",
-    "@types/node": "22.19.7",
-    "typescript": "5.9.3"
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
   }
 }

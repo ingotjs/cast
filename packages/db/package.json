@@ -16,14 +16,14 @@
     "ts": "tsgo --noEmit"
   },
   "dependencies": {
-    "drizzle-orm": "0.45.1",
+    "drizzle-orm": "catalog:",
     "ulid": "3.0.2"
   },
   "devDependencies": {
     "@packages/config": "*",
-    "@types/bun": "1.3.10",
-    "@types/node": "22.19.7",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
     "drizzle-kit": "0.31.9",
-    "typescript": "5.9.3"
+    "typescript": "catalog:"
   }
 }
