@@ -6,6 +6,7 @@
     "**/routeTree.gen.ts",
     "**/worker-configuration.d.ts",
     "**/auth-schema.ts",
+    "**/paraglide/**",
     "**/*.md"
   ],
   "extends": [

@@ -4,7 +4,7 @@
 >
 > **Keep docs in sync — THIS IS CRITICAL:** CLAUDE.md and README.md MUST ALWAYS be updated when making ANY change to: project structure, packages, features, config, scripts, commands, hosting, env vars, or anything a developer would want to know. **Failing to update these files is unacceptable.** If in doubt, update them.
 >
-> **README.md tone — THIS IS A PUBLIC REPO:** This is the best starter out there and the README MUST reflect that energy. Hype users, highlight what's exceptional, sell the DX. No boring corporate tone.
+> **README.md tone — THIS IS A PUBLIC REPO:** Written for smart developers — respect their intelligence. Be direct and factual, not salesy. NEVER pad with obvious filler ("changes reflect instantly", "TypeScript catches every broken consumer") or implementation details no one asked for ("simulated locally via miniflare"). State what matters, skip what's obvious. Highlight what's genuinely exceptional about the DX — but earn it with substance, not buzzwords.
 >
 > **Prefer CLAUDE.md over memory:** Save instructions and feedback here, not in `~/.claude/projects/.../memory/`. CLAUDE.md is committed to the repo and persists across machines. NEVER use the memory system.
 
@@ -43,12 +43,16 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 | Package           | Alias              | Description                                                                |
 | :---------------- | :----------------- | :------------------------------------------------------------------------- |
 | `apps/web`        | —                  | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
-| `packages/server` | `@packages/server` | oRPC router, Drizzle + D1, Better Auth, structured logging                 |
+| `packages/db`     | `@packages/db`     | Drizzle ORM + D1 schema, migrations, database client                       |
+| `packages/auth`   | `@packages/auth`   | Better Auth config, env, logger, PostHog, i18n                             |
+| `packages/api`    | `@packages/api`    | oRPC router + procedures (public/protected/admin)                          |
 | `packages/shared` | `@packages/shared` | Constants, capability flags, error handling                                |
 | `packages/email`  | `@packages/email`  | React Email templates + Resend                                             |
 | `packages/ui`     | `@packages/ui`     | shadcn v4 + Tailwind CSS + Base UI                                         |
 | `apps/e2e`        | —                  | Playwright E2E tests (auth flows, email verification)                      |
 | `packages/config` | `@packages/config` | Shared TypeScript configs                                                  |
+
+**Dependency graph:** `@packages/db` (leaf) ← `@packages/auth` (+ `@packages/email`, `@packages/shared`) ← `@packages/api` (+ `@packages/shared`)
 
 ### Type Checking
 
@@ -69,7 +73,7 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 | `react-perf/jsx-no-new-function-as-prop` | off             | React Compiler handles memoization                 |
 | `typescript/consistent-type-definitions` | error, `"type"` | NEVER use `interface` (except module augmentation) |
 
-**Ignored paths:** `.agents`, `.claude`, `**/routeTree.gen.ts`, `**/*.md`
+**Ignored paths:** `.agents`, `.claude`, `**/routeTree.gen.ts`, `**/paraglide/**`, `**/*.md`
 
 </details>
 
@@ -81,10 +85,10 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 
 **NEVER use `process.env` or `import.meta.env` directly.** Enforced by oxlint. Only `**/env.ts` files may access them.
 
-| Context | Import                                             | Example                                      |
-| :------ | :------------------------------------------------- | :------------------------------------------- |
-| Server  | `import { serverEnv } from "@packages/server/env"` | `serverEnv.email?.RESEND_API_KEY`            |
-| Client  | `import { clientEnv } from "@/lib/env"`            | `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY` |
+| Context | Import                                           | Example                                      |
+| :------ | :----------------------------------------------- | :------------------------------------------- |
+| Server  | `import { serverEnv } from "@packages/auth/env"` | `serverEnv.email?.RESEND_API_KEY`            |
+| Client  | `import { clientEnv } from "@/lib/env"`          | `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY` |
 
 ### Service Features & Capability Flags
 
@@ -123,7 +127,7 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 <details>
 <summary><strong>Adding a new service feature</strong></summary>
 
-1. Add an env group in the appropriate env file (`packages/server/src/env.ts` and/or `apps/web/src/lib/env.ts`):
+1. Add an env group in the appropriate env file (`packages/auth/env.ts` and/or `apps/web/src/lib/env.ts`):
    ```ts
    myService: env.MY_SERVICE_KEY
      ? { MY_SERVICE_KEY: parseEnv("MY_SERVICE_KEY", z.string().min(1)) }
@@ -140,14 +144,14 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 
 | What              | Where                                                                                                            |
 | :---------------- | :--------------------------------------------------------------------------------------------------------------- |
-| Auth config       | `packages/server/src/auth.ts`                                                                                    |
-| Auth i18n builder | `packages/server/src/auth-i18n.ts` — builds translations dict from Paraglide messages                            |
+| Auth config       | `packages/auth/auth.ts`                                                                                          |
+| Auth i18n builder | `packages/auth/auth-i18n.ts` — builds translations dict from Paraglide messages                                  |
 | Auth client       | `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`, `authClient` |
 | Auth API route    | `apps/web/src/routes/api/auth.$.ts`                                                                              |
 | Auth forms        | `apps/web/src/components/auth/` — sign-in, sign-up, forgot/reset password, social OAuth, magic link              |
 | Account settings  | `apps/web/src/components/settings/` — profile, password, sessions, passkeys, delete                              |
 | Password schema   | `apps/web/src/lib/schemas.ts` — shared across sign-up, reset-password, change-password                           |
-| Auth error msgs   | `packages/server/messages/en.json` — all Better Auth error codes as Paraglide messages                           |
+| Auth error msgs   | `packages/auth/messages/en.json` — all Better Auth error codes as Paraglide messages                             |
 
 - Auth routes at `/auth/$path`, account at `/account` (redirects to sign-in if unauthenticated)
 - Admin role guard on `/admin` via `beforeLoad` (`user.role === "admin"`)
@@ -157,7 +161,7 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 - User `locale` field stored in DB (default `"en"`, updatable via `input: true` in additionalFields)
 - `user.deleteUser` enabled — users can delete their own account with password confirmation
 - Email verification enabled (`sendOnSignUp: true`, `autoSignInAfterVerification: true`)
-- **Auth error i18n** — [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) translates base + passkey [error codes](https://better-auth.com/docs/reference/errors) via Paraglide. English skipped (Better Auth defaults). Detection: session locale → Accept-Language. See `packages/server/src/auth-i18n.ts`.
+- **Auth error i18n** — [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) translates base + passkey [error codes](https://better-auth.com/docs/reference/errors) via Paraglide. English skipped (Better Auth defaults). Detection: session locale → Accept-Language. See `packages/auth/auth-i18n.ts`.
 
 ### Transactional Emails
 
@@ -178,7 +182,7 @@ All transactional emails are in `packages/email/`. Emails are fully i18n via Par
 - `packages/email/locale.ts` — `loc()` helper to bridge string locale → Paraglide's narrow locale literal types
 - `packages/email/templates.ts` — Render functions (`renderXxxEmail`) + localized subject helpers (`getEmailSubject.xxx`)
 - `packages/email/send.ts` — `createEmailSender` factory (Resend API)
-- `packages/server/src/auth.ts` — All email triggers configured here (hooks, databaseHooks, emailVerification, deleteUser)
+- `packages/auth/auth.ts` — All email triggers configured here (hooks, databaseHooks, emailVerification, deleteUser)
 
 **Email i18n pattern:** All email text uses `m.email_xxx({...}, loc(locale))` where `loc()` casts the string locale to Paraglide's type.
 
@@ -190,8 +194,8 @@ All transactional emails are in `packages/email/`. Emails are fully i18n via Par
 2. Create template in `packages/email/emails/` using `EmailLayout` + `loc()` + `m.email_xxx()`
 3. Add render function to `packages/email/templates.ts`
 4. Add subject to `getEmailSubject` in `packages/email/templates.ts`
-5. Wire trigger in `packages/server/src/auth.ts`
-6. Add tests to `packages/server/src/__tests__/email-notifications.test.ts`
+5. Wire trigger in `packages/auth/auth.ts`
+6. Add tests to `packages/auth/__tests__/email-notifications.test.ts`
 
 ### API (oRPC)
 
@@ -205,8 +209,8 @@ All transactional emails are in `packages/email/`. Emails are fully i18n via Par
 
 | What                   | Where                                                                        |
 | :--------------------- | :--------------------------------------------------------------------------- |
-| Base procedures        | `packages/server/src/orpc/base.ts`                                           |
-| Router                 | `packages/server/src/orpc/router.ts`                                         |
+| Base procedures        | `packages/api/base.ts`                                                       |
+| Router                 | `packages/api/router.ts`                                                     |
 | API route              | `apps/web/src/routes/api/rpc.$.ts`                                           |
 | Client (SSR + browser) | `apps/web/src/lib/orpc.ts` — server calls bypass HTTP, client uses `RPCLink` |
 
@@ -218,20 +222,20 @@ Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
 
 [Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite). Chosen for zero-effort setup — native Worker binding, no connection strings, no external DB service. Global read replication at no extra cost. If approaching the 10GB D1 limit, migration to [Turso](https://turso.tech/) (same SQLite dialect) is straightforward.
 
-| What        | Where                                                                      |
-| :---------- | :------------------------------------------------------------------------- |
-| DB client   | `packages/server/src/db/index.ts` — `initDb(env.DB)` called from server.ts |
-| Schema      | `packages/server/src/db/schema.ts` — Better Auth tables (SQLite) + indexes |
-| UUID helper | `packages/server/src/db/utils.ts` — `uuidPrimaryKey` (text + randomUUID)   |
-| D1 types    | `packages/server/src/db/d1.d.ts` — minimal D1Database type declaration     |
-| Migrations  | `packages/server/drizzle/` — applied via `wrangler d1 migrations apply`    |
-| Local data  | `.wrangler/` (gitignored) — miniflare simulates D1 locally                 |
-| Test DB     | `packages/server/src/__tests__/setup.ts` — in-memory bun:sqlite for tests  |
+| What        | Where                                                               |
+| :---------- | :------------------------------------------------------------------ |
+| DB client   | `packages/db/index.ts` — `initDb(env.DB)` called from server.ts     |
+| Schema      | `packages/db/schema.ts` — Better Auth tables (SQLite) + indexes     |
+| ULID helper | `packages/db/utils.ts` — `ulidPrimaryKey` (text + ULID)             |
+| D1 types    | `packages/db/d1.d.ts` — minimal D1Database type declaration         |
+| Migrations  | `packages/db/drizzle/` — applied via `wrangler d1 migrations apply` |
+| Local data  | `.wrangler/` (gitignored) — miniflare simulates D1 locally          |
+| Test DB     | `packages/db/__tests__/setup.ts` — in-memory bun:sqlite for tests   |
 
 - D1 binding `DB` configured in `apps/web/wrangler.jsonc`, initialized in `apps/web/src/server.ts`
 - No `DATABASE_URL` — D1 is accessed via native Worker binding, not a connection string
 - Local dev: D1 simulated by miniflare via `@cloudflare/vite-plugin`
-- Tests: in-memory `bun:sqlite` via preload setup (`packages/server/bunfig.toml`)
+- Tests: in-memory `bun:sqlite` via preload setup (`packages/db/bunfig.toml`)
 - NEVER run `bun db:generate` or `bun db:migrate` via Claude Code — requires interactive input
 
 ### SEO, Open Graph & LLMO
@@ -296,7 +300,7 @@ Structured console logger — Cloudflare Workers compatible. JSON in prod (Cloud
 
 | What            | Where                                              |
 | :-------------- | :------------------------------------------------- |
-| Logger instance | `packages/server/src/logger.ts`                    |
+| Logger instance | `packages/auth/logger.ts`                          |
 | Methods         | `logger.info()`, `.warn()`, `.error()`, `.debug()` |
 
 Cloudflare Workers observability is enabled in `wrangler.jsonc` (`"observability": { "enabled": true }`).
@@ -309,8 +313,8 @@ Cloudflare Workers observability is enabled in `wrangler.jsonc` (`"observability
 | :------------------ | :---------------------------------------------------------------------------------------- |
 | Client provider     | `apps/web/src/routes/__root.tsx` — `PostHogProvider` + `PostHogErrorBoundary`             |
 | Client env          | `apps/web/src/lib/env.ts` — `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`         |
-| Server client       | `packages/server/src/posthog.ts` — `posthog-node` with `enableExceptionAutocapture`       |
-| Server env          | `packages/server/src/env.ts` — same `VITE_PUBLIC_POSTHOG_*` env vars as client            |
+| Server client       | `packages/auth/posthog.ts` — `posthog-node` with `enableExceptionAutocapture`             |
+| Server env          | `packages/auth/env.ts` — same `VITE_PUBLIC_POSTHOG_*` env vars as client                  |
 | Reverse proxy       | `apps/web/vite.config.ts` — Nitro `routeRules` proxies `/api/ph/**` to `us.i.posthog.com` |
 | Event tracking plan | `.posthog-events.json` — all tracked events with descriptions and source files            |
 
@@ -325,7 +329,7 @@ Cloudflare Workers observability is enabled in `wrangler.jsonc` (`"observability
 **Event capture:**
 
 - **Client-side** (via `usePostHog()` hook): `user_signed_in`, `user_signed_up`, `user_signed_out`, `password_reset_requested`, `password_reset_completed`, `password_changed`, `profile_updated`, `passkey_added`, `passkey_deleted`, `session_revoked`, `account_deleted`
-- **Server-side** (via `posthog?.capture()`): `user_created`, `user_deleted` — fired in Better Auth database hooks (`packages/server/src/auth.ts`)
+- **Server-side** (via `posthog?.capture()`): `user_created`, `user_deleted` — fired in Better Auth database hooks (`packages/auth/auth.ts`)
 - **User identification:** `posthog.identify(userId, { email, name })` called on sign-in and sign-up
 
 **Usage pattern:**
@@ -345,9 +349,9 @@ posthog?.capture({ distinctId: userId, event: "event_name", properties: { ... } 
 
 **CRITICAL — ZERO TOLERANCE for non-i18n strings.** Every text the user sees — browser, email, or API error — MUST come from a Paraglide message function.
 
-Three Paraglide projects: Frontend (`apps/web/messages/`), Backend (`packages/server/messages/`), Email (`packages/email/messages/`). Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`).
+Three Paraglide projects: Frontend (`apps/web/messages/`), Backend (`packages/auth/messages/`), Email (`packages/email/messages/`). Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`).
 
-Auth errors: [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) maps `auth_*` Paraglide keys to error codes. Covers base + passkey codes (55 total). English skipped at runtime (Better Auth handles defaults). See `packages/server/src/auth-i18n.ts`.
+Auth errors: [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) maps `auth_*` Paraglide keys to error codes. Covers base + passkey codes (55 total). English skipped at runtime (Better Auth handles defaults). See `packages/auth/auth-i18n.ts`.
 
 ### Dependency Management
 
@@ -388,7 +392,7 @@ On push to `main`: deploys to Cloudflare Workers, applies D1 migrations, uploads
 - Test files colocated: `{name}.test.ts` or `__tests__/` directory
 - Runner: `bun:test`
 
-**Test utilities** (`packages/server/src/__tests__/test-utils.ts`):
+**Test utilities** (`packages/auth/__tests__/test-utils.ts`, exported as `@packages/auth/test-utils`):
 
 | Utility                                            | Purpose                                                      |
 | :------------------------------------------------- | :----------------------------------------------------------- |
@@ -537,16 +541,16 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | File                                     | Purpose                                                                                |
 | :--------------------------------------- | :------------------------------------------------------------------------------------- |
 | `packages/shared/src/consts.ts`          | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink)   |
-| `packages/server/src/env.ts`             | Server env vars + feature-gated groups                                                 |
-| `packages/server/src/auth.ts`            | Better Auth config + i18n plugin + all email triggers                                  |
-| `packages/server/src/auth-i18n.ts`       | `buildAuthTranslations()` — Paraglide → Better Auth error codes (null if English-only) |
-| `packages/server/src/logger.ts`          | Structured console logger (Workers-compatible)                                         |
-| `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                                     |
-| `packages/server/src/db/index.ts`        | Database client (D1 via `initDb()` + proxy)                                            |
-| `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                                               |
-| `packages/server/src/db/utils.ts`        | `uuidPrimaryKey` helper                                                                |
-| `packages/server/src/orpc/base.ts`       | Procedure definitions (public/protected/admin)                                         |
-| `packages/server/src/orpc/router.ts`     | oRPC router                                                                            |
+| `packages/db/index.ts`                   | Database client (D1 via `initDb()` + proxy)                                            |
+| `packages/db/schema.ts`                  | Drizzle schema + indexes                                                               |
+| `packages/db/utils.ts`                   | `ulidPrimaryKey` helper                                                                |
+| `packages/auth/auth.ts`                  | Better Auth config + i18n plugin + all email triggers                                  |
+| `packages/auth/auth-i18n.ts`             | `buildAuthTranslations()` — Paraglide → Better Auth error codes (null if English-only) |
+| `packages/auth/env.ts`                   | Server env vars + feature-gated groups                                                 |
+| `packages/auth/logger.ts`                | Structured console logger (Workers-compatible)                                         |
+| `packages/auth/posthog.ts`               | PostHog server client (error tracking + analytics)                                     |
+| `packages/api/base.ts`                   | Procedure definitions (public/protected/admin)                                         |
+| `packages/api/router.ts`                 | oRPC router                                                                            |
 | `apps/web/src/lib/env.ts`                | Client features + env groups                                                           |
 | `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                                            |
 | `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                                               |
@@ -568,6 +572,6 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `packages/email/templates.ts`            | Email render functions + localized subject helpers                                     |
 | `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                        |
 | `packages/email/emails/email-layout.tsx` | Shared email layout component                                                          |
-| `packages/server/messages/en.json`       | Server i18n strings (auth error messages with `auth_` prefix)                          |
+| `packages/auth/messages/en.json`         | Server i18n strings (auth error messages with `auth_` prefix)                          |
 | `packages/email/messages/en.json`        | Email i18n strings                                                                     |
 | `bunfig.toml`                            | Bun config (exact versions, min release age)                                           |

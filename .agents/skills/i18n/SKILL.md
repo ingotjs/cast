@@ -16,7 +16,7 @@ i18n covers frontend UI, backend API responses, Zod validation errors, auth erro
 | Project  | Path                        | Covers                                                                        |
 | :------- | :-------------------------- | :---------------------------------------------------------------------------- |
 | Frontend | `apps/web/messages/`        | UI labels, buttons, placeholders, toasts, auth forms, settings, admin         |
-| Backend  | `packages/server/messages/` | Auth error messages (`auth_*`), oRPC errors, API responses, validation errors |
+| Backend  | `packages/auth/messages/` | Auth error messages (`auth_*`), oRPC errors, API responses, validation errors |
 | Email    | `packages/email/messages/`  | Subject lines, body copy, CTAs, transactional email content                   |
 
 Each has its own `project.inlang/settings.json` and generates its own `paraglide/messages`. Server strings never leak to client bundle.
@@ -38,7 +38,7 @@ ALL user-facing strings MUST use Paraglide. This includes UI text, Zod validatio
 
 1. Add to the appropriate `messages/en.json`:
    - Frontend → `apps/web/messages/en.json`
-   - Backend → `packages/server/messages/en.json`
+   - Backend → `packages/auth/messages/en.json`
    - Email → `packages/email/messages/en.json`
 2. Import: `import { m } from "@/paraglide/messages"`
 3. Use:
@@ -76,10 +76,10 @@ All Better Auth error codes are translated via the [`@better-auth/i18n` plugin](
 
 | File                                   | Purpose                                                            |
 | :------------------------------------- | :----------------------------------------------------------------- |
-| `packages/server/messages/en.json`     | `auth_*` keys — canonical key list and translation reference       |
-| `packages/server/src/auth-i18n.ts`     | `buildAuthTranslations()` — maps Paraglide messages to error codes |
-| `packages/server/src/auth.ts`          | Conditionally adds plugin when non-default locales exist           |
-| `packages/server/src/__tests__/auth-i18n.test.ts` | Coverage + integration tests                            |
+| `packages/auth/messages/en.json`     | `auth_*` keys — canonical key list and translation reference       |
+| `packages/auth/auth-i18n.ts`     | `buildAuthTranslations()` — maps Paraglide messages to error codes |
+| `packages/auth/auth.ts`          | Conditionally adds plugin when non-default locales exist           |
+| `packages/auth/__tests__/auth-i18n.test.ts` | Coverage + integration tests                            |
 
 **Key pattern:** Paraglide key `auth_USER_NOT_FOUND` → Better Auth error code `USER_NOT_FOUND`. The `auth_` prefix is stripped at runtime by the builder.
 
@@ -97,8 +97,8 @@ This file covers **base** error codes (`BASE_ERROR_CODES` from `better-auth`) an
 
 To add error codes from another Better Auth plugin:
 1. Check the plugin's `$ERROR_CODES` export (e.g., `myPlugin().$ERROR_CODES`)
-2. Add `auth_{ERROR_CODE}` keys to `packages/server/messages/en.json` matching each code
-3. Compile Paraglide: `cd packages/server && bun run build`
+2. Add `auth_{ERROR_CODE}` keys to `packages/auth/messages/en.json` matching each code
+3. Compile Paraglide: `cd packages/auth && bun run build`
 4. The test `"Paraglide messages cover all BASE_ERROR_CODES"` validates base coverage — add a similar test for the new plugin
 
 ### Typesafety
@@ -109,10 +109,10 @@ The test suite (`auth-i18n.test.ts`) imports `BASE_ERROR_CODES` from `better-aut
 
 1. Add the locale code to **all three** `project.inlang/settings.json` `locales` arrays:
    - `apps/web/project.inlang/settings.json`
-   - `packages/server/project.inlang/settings.json`
+   - `packages/auth/project.inlang/settings.json`
    - `packages/email/project.inlang/settings.json`
 2. Create `messages/{locale}.json` in each project with translated strings
-3. For auth errors: add `auth_*` keys to `packages/server/messages/{locale}.json` — the builder automatically includes non-default locale translations
+3. For auth errors: add `auth_*` keys to `packages/auth/messages/{locale}.json` — the builder automatically includes non-default locale translations
 4. Compile Paraglide in each package (`bun run build`) or run `bun ok` from root
 5. Auth error translations flow through automatically — no code changes needed
 

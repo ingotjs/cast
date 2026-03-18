@@ -1,0 +1,43 @@
+{
+  "name": "@packages/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./auth.ts",
+    "./env": "./env.ts",
+    "./logger": "./logger.ts",
+    "./posthog": "./posthog.ts",
+    "./email-capture": "./email-capture.ts",
+    "./test-utils": "./__tests__/test-utils.ts"
+  },
+  "scripts": {
+    "db:auth": "better-auth generate --output ../db/auth-schema.ts -y",
+    "build": "paraglide-js compile --project ./project.inlang --outdir ./paraglide",
+    "test": "bun test",
+    "ts": "tsgo --noEmit"
+  },
+  "dependencies": {
+    "@better-auth/i18n": "1.5.5",
+    "@better-auth/passkey": "1.5.5",
+    "@packages/db": "*",
+    "@packages/email": "*",
+    "@packages/shared": "*",
+    "@simplewebauthn/server": "13.3.0",
+    "better-auth": "1.5.5",
+    "drizzle-orm": "0.45.1",
+    "posthog-node": "5.28.2",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@better-auth/cli": "1.4.21",
+    "@inlang/paraglide-js": "2.15.0",
+    "@inlang/plugin-m-function-matcher": "2.2.2",
+    "@inlang/plugin-message-format": "4.4.0",
+    "@packages/config": "*",
+    "@types/bun": "1.3.10",
+    "@types/node": "22.19.7",
+    "bun-types": "1.3.10",
+    "typescript": "5.9.3"
+  }
+}

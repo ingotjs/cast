@@ -1,4 +1,4 @@
-import { auth } from "@packages/server/auth";
+import { auth } from "@packages/auth";
 import { createFileRoute } from "@tanstack/react-router";
 
 // Reference: https://better-auth.com/docs

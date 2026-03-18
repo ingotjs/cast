@@ -1,0 +1,12 @@
+{
+  "extends": "@packages/config/base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "types": ["bun-types"],
+    "allowJs": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "**/__tests__"]
+}

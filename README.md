@@ -8,26 +8,48 @@ Built on [TanStack Start](https://tanstack.com/start) + [Bun](https://bun.sh/) +
 
 Most starters give you a skeleton. OmegaStart gives you a **production-ready foundation** — auth, API, database, email, i18n, logging, CI/CD, and deployment are all wired up and working together. No glue code, no boilerplate, no "figure it out yourself."
 
-### Blazingly Fast Development
+# Pillars
 
-- **Zero-config local database** — [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) simulated locally via miniflare. No Docker, no services, no connection strings. `bun dev` and you're coding.
-- **Edge-native database** — D1 runs on the same Cloudflare edge as your Workers. Native binding, global read replication, zero egress fees. If you outgrow D1's 10GB limit, migrate to [Turso](https://turso.tech/) (same SQLite dialect).
-- **Hot reload everything** — Vite + React Compiler + Nitro. Changes reflect instantly.
-- **Type-safe from DB to UI** — Drizzle schema types flow through oRPC procedures to TanStack Query hooks. Change a column, TypeScript catches every broken consumer.
+### 1. Blazingly Fast Development
 
-### Production-Ready from Day One
+- **Zero-config local database** — [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) works locally out of the box. No Docker, no services, no connection strings. `bun dev` and you're coding.
+- **Edge-native database** — D1 runs on the same Cloudflare edge as your Workers. Global read replication, zero egress fees. If you outgrow D1's 10GB limit, migrate to [Turso](https://turso.tech/) (same SQLite dialect).
+
+### 2. Production-Ready from Day One
 
 - **Auth** — Email/password + passkeys (WebAuthn) + Google OAuth + magic link via [Better Auth](https://better-auth.com/). Email verification on signup, custom sign-in/sign-up/forgot-password forms. Account settings with session management and account deletion. OAuth and magic link toggle via env vars.
 - **API** — Type-safe RPC via [oRPC](https://orpc.dev/) with TanStack Query integration. Public, protected, and admin procedure levels.
 - **Database** — [Drizzle ORM](https://orm.drizzle.team/) with [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite). Native Worker binding, global read replication, zero config.
 - **Email** — [React Email](https://react.email/) templates + [Resend](https://resend.com/) delivery. Email verification, password reset, password changed notification, account deleted confirmation, and welcome emails — all i18n-ready and sent in the user's preferred locale.
-- **i18n** — [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) across the entire stack — frontend, backend, emails, and auth errors. Type-safe, locale-aware, zero runtime cost. See [Internationalization](#internationalization-i18n) for the full story.
 - **Service toggles** — External services (PostHog, Resend, Google OAuth) activate by env var presence. No code changes — set the env vars and the feature turns on.
 - **SEO & LLMO** — Per-page meta tags (OG + Twitter), JSON-LD structured data, `sitemap.xml`, `llms.txt`, `robots.txt`, dynamic favicon + OG image via `@vercel/og`. FAQ page with FAQPage schema for AI discoverability.
 - **Admin** — Role-guarded dashboard with user management (ban, roles, sessions).
 - **Observability** — Full-stack observability out of the box. See [Observability](#observability) for details.
 
-### Deploy in 60 Seconds
+### 3. Internationalization (i18n)
+
+[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) across the entire stack — frontend, backend, emails, and auth errors. Type-safe, locale-aware, zero runtime cost. Every user-facing string is internationalized from day one. Adding a new language is a JSON file, not a refactor. See [Internationalization](#internationalization-i18n-1) for the full story.
+
+### 4. Testing
+
+- **Unit & integration tests** via `bun:test` with in-memory SQLite — tests run against a real database engine, not mocks
+- **Test utilities** for creating authenticated users and calling oRPC procedures directly
+- **E2E tests** via [Playwright](https://playwright.dev/) — full auth flow coverage (sign-up, sign-in, sign-out, change password, delete account) with email capture verification
+- **Pre-commit hook** via [Husky](https://typicode.github.io/husky/) — runs the full `bun ok` pipeline (type check + lint + test) before every commit. Broken code doesn't get committed.
+
+### 5. Code Quality & Reliability
+
+Zero-config, zero-compromise. Every layer of the stack is guarded by automated tooling that catches issues before they reach production.
+
+- **Linting & formatting** — [Ultracite](https://github.com/haydenbleasel/ultracite) wraps [Oxlint](https://oxc.rs/docs/guide/usage/linter) + [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) into a single zero-config preset. Blazingly fast Rust-based linting and formatting — no ESLint, no Prettier, no config files to maintain.
+- **Type checking** — [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) via `@typescript/native-preview`. 10x faster type checking than standard `tsc`.
+- **Dependency management** — [syncpack](https://syncpack.dev/) enforces pinned versions (no `^` or `~`), consistent versions across all packages, and workspace protocol for internal packages. No version drift, no "works on my machine."
+- **Supply chain security** — [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) scans for known vulnerabilities on every `bun install`. Combined with Bun's `install.minimumReleaseAge` (3-day quarantine on new packages) to block supply chain attacks.
+- **Pre-commit enforcement** — [Husky](https://typicode.github.io/husky/) runs `bun ok` (type check + lint + test) on every commit. Nothing ships without passing the full pipeline.
+- **CI/CD** — GitHub Actions runs `bun ok:ci` on every push and PR. On `main`, also deploys to Cloudflare Workers, runs D1 migrations, uploads source maps to PostHog, and reports CI metrics.
+- **One command to rule them all** — `bun ok` runs syncpack + type check + lint + test in sequence. If it passes, your code is clean.
+
+### 6. Deploy in 60 Seconds
 
 **[Cloudflare Workers](https://workers.cloudflare.com/)** + **[Cloudflare D1](https://developers.cloudflare.com/d1/)** — everything on the edge, zero external dependencies:
 
@@ -38,10 +60,6 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 5. Deploy: `cd apps/web && bun run deploy`
 
 CI auto-deploys on push to `main` — applies D1 migrations, then deploys to Cloudflare. Pre-configured in `.github/workflows/ci.yml`.
-
-### CI/CD Included
-
-GitHub Actions runs `bun ok:ci` on every push and PR. On `main`, also deploys to Cloudflare Workers, runs DB migrations, uploads source maps to PostHog, and reports CI metrics.
 
 ## Quick Start
 
@@ -59,12 +77,16 @@ bun dev
 
 ```
 apps/web          → TanStack Start (Vite + Router + Nitro)
-packages/server   → oRPC + Drizzle + Better Auth + Pino
+packages/db       → Drizzle ORM + Cloudflare D1 (schema, migrations, client)
+packages/auth     → Better Auth + env + logger + PostHog
+packages/api      → oRPC router + procedures
 packages/shared   → Constants + capability flags
 packages/email    → React Email + Resend
 packages/ui       → shadcn v4 + Tailwind CSS + Base UI
 packages/config   → Shared TypeScript configs
 ```
+
+`@packages/db` (leaf) ← `@packages/auth` ← `@packages/api`
 
 ## Commands
 
@@ -98,12 +120,6 @@ Services activate when their env vars are set. Leave them out and the service is
 | Google OAuth | `VITE_PUBLIC_GOOGLE_OAUTH`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
 | Magic Link   | `VITE_PUBLIC_MAGIC_LINK` (requires Email env vars)                     |
 | PostHog      | `VITE_PUBLIC_POSTHOG_KEY` (host defaults to US Cloud)                  |
-
-## Testing
-
-- **Unit & integration tests** via `bun:test` with in-memory SQLite — tests run against a real database engine, not mocks
-- **Test utilities** for creating authenticated users and calling oRPC procedures
-- **E2E tests** via [Playwright](https://playwright.dev/) — full auth flow coverage (sign-up, sign-in, sign-out, change password, delete account) with email capture verification. Run `cd apps/e2e && bunx playwright test`
 
 ## Observability
 
@@ -141,11 +157,11 @@ OmegaStart is **i18n-ready from day one** — every user-facing string flows thr
 
 Three separate Paraglide projects keep bundles lean and concerns separated:
 
-| Project  | Path                        | Covers                                                          |
-| -------- | --------------------------- | --------------------------------------------------------------- |
-| Frontend | `apps/web/messages/`        | UI labels, buttons, forms, toasts, meta tags, validation errors |
-| Backend  | `packages/server/messages/` | Auth error messages, API responses, validation errors           |
-| Email    | `packages/email/messages/`  | Subject lines, body copy, CTAs, transactional email content     |
+| Project  | Path                       | Covers                                                          |
+| -------- | -------------------------- | --------------------------------------------------------------- |
+| Frontend | `apps/web/messages/`       | UI labels, buttons, forms, toasts, meta tags, validation errors |
+| Backend  | `packages/auth/messages/`  | Auth error messages, API responses, validation errors           |
+| Email    | `packages/email/messages/` | Subject lines, body copy, CTAs, transactional email content     |
 
 Each project generates its own type-safe message functions. Server strings never leak into the client bundle.
 
@@ -166,9 +182,9 @@ Each project generates its own type-safe message functions. Server strings never
 
 ### How Auth Error i18n Works
 
-The [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) is conditionally added in `packages/server/src/auth.ts`. English uses Better Auth's built-in defaults — no duplication. The `auth_*` keys in `en.json` serve as Paraglide's canonical key list and translation reference for future locales.
+The [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) is conditionally added in `packages/auth/auth.ts`. English uses Better Auth's built-in defaults — no duplication. The `auth_*` keys in `en.json` serve as Paraglide's canonical key list and translation reference for future locales.
 
-When a non-English locale is added, `buildAuthTranslations()` (`packages/server/src/auth-i18n.ts`) dynamically maps `auth_*` Paraglide messages to error codes. The plugin activates automatically — no code changes needed.
+When a non-English locale is added, `buildAuthTranslations()` (`packages/auth/auth-i18n.ts`) dynamically maps `auth_*` Paraglide messages to error codes. The plugin activates automatically — no code changes needed.
 
 ```
 English only:     i18n plugin NOT added (zero overhead)
