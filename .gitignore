@@ -28,8 +28,8 @@ out/
 build
 dist
 
-# Local database
-.pglite
+# Local D1 database (miniflare)
+.wrangler
 
 # E2E email captures
 .email-captures

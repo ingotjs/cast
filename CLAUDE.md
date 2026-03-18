@@ -16,16 +16,17 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 
 ### Commands
 
-| Command           | Description                                          |
-| :---------------- | :--------------------------------------------------- |
-| `bun dev`         | Start all apps in dev mode (auto-installs deps)      |
-| `bun dev:email`   | Email template preview (port 3002)                   |
-| `bun ok`          | Type check + lint + tests — **run after every task** |
-| `bun ok:ci`       | Same without auto-fixes (CI)                         |
-| `bun db:generate` | Generate migrations (**user MUST run manually**)     |
-| `bun db:migrate`  | Apply migrations (**user MUST run manually**)        |
-| `bun db:studio`   | Open Drizzle Studio                                  |
-| `bun e2e`         | Run Playwright E2E tests (from `apps/e2e`)           |
+| Command                 | Description                                                |
+| :---------------------- | :--------------------------------------------------------- |
+| `bun dev`               | Start all apps in dev mode (auto-installs deps)            |
+| `bun dev:email`         | Email template preview (port 3002)                         |
+| `bun ok`                | Type check + lint + tests — **run after every task**       |
+| `bun ok:ci`             | Same without auto-fixes (CI)                               |
+| `bun db:generate`       | Generate migrations (**user MUST run manually**)           |
+| `bun db:migrate`        | Apply migrations locally (**user MUST run manually**)      |
+| `bun db:migrate:remote` | Apply migrations to remote D1 (**user MUST run manually**) |
+| `bun db:studio`         | Open Drizzle Studio                                        |
+| `bun e2e`               | Run Playwright E2E tests (from `apps/e2e`)                 |
 
 ### Quality Verification
 
@@ -42,7 +43,7 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 | Package           | Alias              | Description                                                                |
 | :---------------- | :----------------- | :------------------------------------------------------------------------- |
 | `apps/web`        | —                  | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
-| `packages/server` | `@packages/server` | oRPC router, Drizzle + PGlite/Neon, Better Auth, structured logging        |
+| `packages/server` | `@packages/server` | oRPC router, Drizzle + D1, Better Auth, structured logging                 |
 | `packages/shared` | `@packages/shared` | Constants, capability flags, error handling                                |
 | `packages/email`  | `@packages/email`  | React Email templates + Resend                                             |
 | `packages/ui`     | `@packages/ui`     | shadcn v4 + Tailwind CSS + Base UI                                         |
@@ -215,17 +216,22 @@ Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
 
 ### Database
 
-[Drizzle ORM](https://orm.drizzle.team/) — auto-switches PGlite (dev) / [Neon](https://neon.tech/) (prod).
+[Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite). Chosen for zero-effort setup — native Worker binding, no connection strings, no external DB service. Global read replication at no extra cost. If approaching the 10GB D1 limit, migration to [Turso](https://turso.tech/) (same SQLite dialect) is straightforward.
 
-| What        | Where                                                             |
-| :---------- | :---------------------------------------------------------------- |
-| DB client   | `packages/server/src/db/index.ts`                                 |
-| Schema      | `packages/server/src/db/schema.ts` — Better Auth tables + indexes |
-| UUID helper | `packages/server/src/db/utils.ts` — `uuidPrimaryKey`              |
-| Migrations  | `packages/server/drizzle/` — applied via CI or `bun db:migrate`   |
-| Local data  | `.pglite/` (gitignored)                                           |
+| What        | Where                                                                      |
+| :---------- | :------------------------------------------------------------------------- |
+| DB client   | `packages/server/src/db/index.ts` — `initDb(env.DB)` called from server.ts |
+| Schema      | `packages/server/src/db/schema.ts` — Better Auth tables (SQLite) + indexes |
+| UUID helper | `packages/server/src/db/utils.ts` — `uuidPrimaryKey` (text + randomUUID)   |
+| D1 types    | `packages/server/src/db/d1.d.ts` — minimal D1Database type declaration     |
+| Migrations  | `packages/server/drizzle/` — applied via `wrangler d1 migrations apply`    |
+| Local data  | `.wrangler/` (gitignored) — miniflare simulates D1 locally                 |
+| Test DB     | `packages/server/src/__tests__/setup.ts` — in-memory bun:sqlite for tests  |
 
-- `DATABASE_URL` optional in dev (uses PGlite), required in prod
+- D1 binding `DB` configured in `apps/web/wrangler.jsonc`, initialized in `apps/web/src/server.ts`
+- No `DATABASE_URL` — D1 is accessed via native Worker binding, not a connection string
+- Local dev: D1 simulated by miniflare via `@cloudflare/vite-plugin`
+- Tests: in-memory `bun:sqlite` via preload setup (`packages/server/bunfig.toml`)
 - NEVER run `bun db:generate` or `bun db:migrate` via Claude Code — requires interactive input
 
 ### SEO, Open Graph & LLMO
@@ -351,15 +357,16 @@ Auth errors: [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i
 
 ### Hosting & Deployment
 
-[Cloudflare Workers](https://workers.cloudflare.com/) via `@cloudflare/vite-plugin` + [Neon](https://neon.tech/) serverless PostgreSQL.
+[Cloudflare Workers](https://workers.cloudflare.com/) via `@cloudflare/vite-plugin` + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite).
 
-| What         | Config                                                                        |
-| :----------- | :---------------------------------------------------------------------------- |
-| Build/Deploy | `cd apps/web && bun run deploy` (Vite build + `wrangler deploy`)              |
-| Wrangler     | `apps/web/wrangler.jsonc` — Workers config, `nodejs_compat`, observability    |
-| Migrations   | `bun db:migrate` with `DATABASE_URL` pointing to Neon (run in CI or manually) |
-| Health check | `/api/auth/ok`                                                                |
-| Secrets      | `wrangler secret put DATABASE_URL`, `BETTER_AUTH_SECRET`, etc.                |
+| What         | Config                                                                                         |
+| :----------- | :--------------------------------------------------------------------------------------------- |
+| Build/Deploy | `cd apps/web && bun run deploy` (Vite build + `wrangler deploy`)                               |
+| Wrangler     | `apps/web/wrangler.jsonc` — Workers config, D1 binding, `nodejs_compat`, observability         |
+| Migrations   | `bun db:migrate` (local) / `bun db:migrate:remote` (prod) via `wrangler d1 migrations apply`   |
+| Health check | `/api/auth/ok`                                                                                 |
+| Secrets      | `wrangler secret put BETTER_AUTH_SECRET`, etc.                                                 |
+| D1 setup     | `cd apps/web && npx wrangler d1 create omegastart-db` — update `database_id` in wrangler.jsonc |
 
 Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#cloudflare-workers--official-partner
 
@@ -367,7 +374,7 @@ Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#
 
 GitHub Actions (`.github/workflows/ci.yml`) — runs `bun ok:ci` on push to `main` and PRs. Uses `oven-sh/setup-bun@v2`.
 
-On push to `main`: deploys to Cloudflare Workers, runs DB migrations against Neon, uploads source maps to PostHog, reports CI metrics. Requires GitHub secrets: `CLOUDFLARE_API_TOKEN`, `DATABASE_URL`, `POSTHOG_PROJECT_ID`, `POSTHOG_CLI_API_KEY`, `POSTHOG_PROJECT_API_KEY`.
+On push to `main`: deploys to Cloudflare Workers, applies D1 migrations, uploads source maps to PostHog, reports CI metrics. Requires GitHub secrets: `CLOUDFLARE_API_TOKEN`, `POSTHOG_PROJECT_ID`, `POSTHOG_CLI_API_KEY`, `POSTHOG_PROJECT_API_KEY`.
 
 ---
 
@@ -535,7 +542,7 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `packages/server/src/auth-i18n.ts`       | `buildAuthTranslations()` — Paraglide → Better Auth error codes (null if English-only) |
 | `packages/server/src/logger.ts`          | Structured console logger (Workers-compatible)                                         |
 | `packages/server/src/posthog.ts`         | PostHog server client (error tracking + analytics)                                     |
-| `packages/server/src/db/index.ts`        | Database client (PGlite/PostgreSQL)                                                    |
+| `packages/server/src/db/index.ts`        | Database client (D1 via `initDb()` + proxy)                                            |
 | `packages/server/src/db/schema.ts`       | Drizzle schema + indexes                                                               |
 | `packages/server/src/db/utils.ts`        | `uuidPrimaryKey` helper                                                                |
 | `packages/server/src/orpc/base.ts`       | Procedure definitions (public/protected/admin)                                         |

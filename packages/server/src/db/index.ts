@@ -1,49 +1,37 @@
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { drizzle } from "drizzle-orm/d1";
 
-import { PGlite } from "@electric-sql/pglite";
-import { neon } from "@neondatabase/serverless";
-import { drizzle as drizzleNeonHttp } from "drizzle-orm/neon-http";
-import { drizzle as drizzlePglite } from "drizzle-orm/pglite";
-import { migrate } from "drizzle-orm/pglite/migrator";
-
-import { isDevelopment, serverEnv } from "../env";
 import * as schema from "./schema";
 
-// Reference: https://orm.drizzle.team/docs/connect-neon
-// Reference: https://orm.drizzle.team/docs/connect-pglite
+// Reference: https://orm.drizzle.team/docs/connect-d1
 
-/** Whether the database is using PGlite (local development mode) */
-export const isPglite = isDevelopment && !serverEnv.DATABASE_URL;
-
-export type Database =
-  | ReturnType<typeof drizzleNeonHttp<typeof schema>>
-  | ReturnType<typeof drizzlePglite<typeof schema>>;
+export type Database = ReturnType<typeof drizzle<typeof schema>>;
 
 /**
- * Database client that automatically switches between:
- * - PGlite (local development): when DATABASE_URL is not set in dev
- * - Neon (production/Cloudflare): when DATABASE_URL is set (required in prod)
+ * Global database instance.
+ *
+ * In Workers: initialized via `initDb(env.DB)` from the app entry point (server.ts).
+ * In tests: initialized via `setDb()` with a bun:sqlite-backed instance.
  */
-const createDb = (): Database => {
-  if (serverEnv.DATABASE_URL) {
-    const client = neon(serverEnv.DATABASE_URL);
-    return drizzleNeonHttp({ client, schema });
-  }
+let _db: Database | undefined;
 
-  const client = new PGlite(".pglite");
-  return drizzlePglite({ client, schema });
+/** Initialize the database with a D1 binding (called from server.ts) */
+export const initDb = (d1: D1Database) => {
+  _db = drizzle(d1, { schema });
 };
 
-export const db = createDb();
+/** Set the database instance directly (used by test setup) */
+export const setDb = (instance: Database) => {
+  _db = instance;
+};
 
-// Auto-apply migrations for PGlite (local dev only) — in production, migrations
-// are applied via CI (`bun db:migrate` with DATABASE_URL pointing to Neon).
-// This code path never runs in Workers (isPglite requires isDevelopment).
-if (isPglite) {
-  const currentDir = dirname(fileURLToPath(import.meta.url));
-  const migrationsFolder = resolve(currentDir, "../../drizzle");
-  await migrate(db as ReturnType<typeof drizzlePglite<typeof schema>>, {
-    migrationsFolder,
-  });
-}
+/** Lazily-accessed database — throws if not initialized */
+export const db: Database = new Proxy({} as Database, {
+  get(_, prop) {
+    if (!_db) {
+      throw new Error(
+        "Database not initialized. Call initDb(env.DB) or setDb()."
+      );
+    }
+    return Reflect.get(_db, prop);
+  },
+});

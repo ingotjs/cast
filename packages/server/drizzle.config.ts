@@ -1,28 +1,16 @@
 import { defineConfig } from "drizzle-kit";
 
-import { serverEnv } from "./src/env";
-
-// Reference: https://orm.drizzle.team/docs/connect-pglite
+// Reference: https://orm.drizzle.team/docs/connect-d1
 
 /**
- * Drizzle Kit configuration that supports both:
- * - PGlite (local development): when DATABASE_URL is not set
- * - PostgreSQL (production/Railway): when DATABASE_URL is set
+ * Drizzle Kit configuration for Cloudflare D1 (SQLite).
+ *
+ * Generate migrations: `bun db:generate`
+ * Apply locally:       `cd apps/web && npx wrangler d1 migrations apply omegastart-db --local`
+ * Apply remotely:      `cd apps/web && npx wrangler d1 migrations apply omegastart-db --remote`
  */
 export default defineConfig({
   out: "./drizzle",
   schema: "./src/db/schema.ts",
-  dialect: "postgresql",
-  ...(serverEnv.DATABASE_URL
-    ? {
-        dbCredentials: {
-          url: serverEnv.DATABASE_URL,
-        },
-      }
-    : {
-        driver: "pglite",
-        dbCredentials: {
-          url: ".pglite",
-        },
-      }),
+  dialect: "sqlite",
 });

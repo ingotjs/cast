@@ -9,9 +9,11 @@
   "scripts": {
     "build": "turbo build",
     "dev": "bun install --silent && turbo dev",
-    "db:studio": "bun run --cwd packages/server db:studio",
+    "db:auth": "bun run --cwd packages/server db:auth",
     "db:generate": "bun run --cwd packages/server db:generate",
-    "db:migrate": "bun run --cwd packages/server db:migrate",
+    "db:migrate": "cd apps/web && npx wrangler d1 migrations apply omegastart-db --local",
+    "db:migrate:remote": "cd apps/web && npx wrangler d1 migrations apply omegastart-db --remote",
+    "db:studio": "bun run --cwd packages/server db:studio",
     "dev:email": "turbo dev --filter @packages/email",
     "e2e": "bun run --cwd apps/e2e e2e",
     "e2e:ui": "bun run --cwd apps/e2e e2e:ui",

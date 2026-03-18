@@ -18,6 +18,7 @@ import { admin, magicLink } from "better-auth/plugins";
 
 import { buildAuthTranslations } from "./auth-i18n";
 import { db } from "./db";
+import { generateId } from "./db/utils";
 import { captureEmail } from "./email-capture";
 import { serverEnv } from "./env";
 import { posthog } from "./posthog";
@@ -60,10 +61,13 @@ const getUserLocale = (user: Record<string, unknown>): string =>
   typeof user.locale === "string" ? user.locale : consts.defaultLocale;
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, { provider: "pg", usePlural: true }),
-  // Reference: https://better-auth.com/docs/adapters/postgresql#joins-experimental
-  // Joins reduce DB round-trips (2-3x perf boost) — only works with real PostgreSQL, not PGlite
-  ...(serverEnv.DATABASE_URL ? { experimental: { joins: true } } : {}),
+  database: drizzleAdapter(db, { provider: "sqlite", usePlural: true }),
+  // Reference: https://better-auth.com/docs/reference/options
+  advanced: {
+    database: {
+      generateId: generateId,
+    },
+  },
   secret: serverEnv.BETTER_AUTH_SECRET,
   baseURL: serverEnv.BETTER_AUTH_URL ?? serverEnv.URL,
   trustedOrigins: [serverEnv.URL],

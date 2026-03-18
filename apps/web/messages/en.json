@@ -25,7 +25,7 @@
   "faq_q_open_source": "Is OmegaStart free and open source?",
   "faq_a_open_source": "Yes, OmegaStart is completely free and open source. You can use it for personal projects, commercial applications, or anything in between.",
   "faq_q_deploy": "How do I deploy OmegaStart?",
-  "faq_a_deploy": "Railway is the recommended deployment target — connect your repo, set DATABASE_URL and BETTER_AUTH_SECRET environment variables, and deploy. Migrations run automatically. The deployment is pre-configured in railway.json.",
+  "faq_a_deploy": "Cloudflare Workers is the deployment target. Create a D1 database, set your BETTER_AUTH_SECRET, and deploy with wrangler. Migrations are applied via `wrangler d1 migrations apply`. The deployment is pre-configured in wrangler.jsonc.",
   "footer_faq": "FAQ",
   "footer_privacy": "Privacy",
   "footer_terms": "Terms",

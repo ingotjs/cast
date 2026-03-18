@@ -10,8 +10,8 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 
 ### Blazingly Fast Development
 
-- **Zero-config local database** — [PGlite](https://electric-sql.com/product/pglite) runs PostgreSQL in-process. No Docker, no services, no setup. `bun dev` and you're coding.
-- **Auto-migrations** — PGlite applies Drizzle migrations automatically on startup. Production migrations auto-run on deploy via Railway's pre-deploy command.
+- **Zero-config local database** — [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) simulated locally via miniflare. No Docker, no services, no connection strings. `bun dev` and you're coding.
+- **Edge-native database** — D1 runs on the same Cloudflare edge as your Workers. Native binding, global read replication, zero egress fees. If you outgrow D1's 10GB limit, migrate to [Turso](https://turso.tech/) (same SQLite dialect).
 - **Hot reload everything** — Vite + React Compiler + Nitro. Changes reflect instantly.
 - **Type-safe from DB to UI** — Drizzle schema types flow through oRPC procedures to TanStack Query hooks. Change a column, TypeScript catches every broken consumer.
 
@@ -19,7 +19,7 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 
 - **Auth** — Email/password + passkeys (WebAuthn) + Google OAuth + magic link via [Better Auth](https://better-auth.com/). Email verification on signup, custom sign-in/sign-up/forgot-password forms. Account settings with session management and account deletion. OAuth and magic link toggle via env vars.
 - **API** — Type-safe RPC via [oRPC](https://orpc.dev/) with TanStack Query integration. Public, protected, and admin procedure levels.
-- **Database** — [Drizzle ORM](https://orm.drizzle.team/) with PGlite (dev) / PostgreSQL (prod) auto-switching. Migrations, studio, the works.
+- **Database** — [Drizzle ORM](https://orm.drizzle.team/) with [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite). Native Worker binding, global read replication, zero config.
 - **Email** — [React Email](https://react.email/) templates + [Resend](https://resend.com/) delivery. Email verification, password reset, password changed notification, account deleted confirmation, and welcome emails — all i18n-ready and sent in the user's preferred locale.
 - **i18n** — [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) across the entire stack — frontend, backend, emails, and auth errors. Type-safe, locale-aware, zero runtime cost. See [Internationalization](#internationalization-i18n) for the full story.
 - **Service toggles** — External services (PostHog, Resend, Google OAuth) activate by env var presence. No code changes — set the env vars and the feature turns on.
@@ -29,13 +29,15 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 
 ### Deploy in 60 Seconds
 
-**[Cloudflare Workers](https://workers.cloudflare.com/)** + **[Neon](https://neon.tech/)** — serverless edge deployment with serverless Postgres:
+**[Cloudflare Workers](https://workers.cloudflare.com/)** + **[Cloudflare D1](https://developers.cloudflare.com/d1/)** — everything on the edge, zero external dependencies:
 
-1. Create a Neon database, copy the connection string
-2. Set secrets: `wrangler secret put DATABASE_URL`, `wrangler secret put BETTER_AUTH_SECRET`
-3. Deploy: `cd apps/web && bun run deploy`
+1. Create a D1 database: `cd apps/web && npx wrangler d1 create omegastart-db`
+2. Update `database_id` in `apps/web/wrangler.jsonc`
+3. Set secrets: `wrangler secret put BETTER_AUTH_SECRET`
+4. Apply migrations: `bun db:migrate:remote`
+5. Deploy: `cd apps/web && bun run deploy`
 
-CI auto-deploys on push to `main` — runs migrations against Neon, then deploys to Cloudflare. Pre-configured in `.github/workflows/ci.yml`.
+CI auto-deploys on push to `main` — applies D1 migrations, then deploys to Cloudflare. Pre-configured in `.github/workflows/ci.yml`.
 
 ### CI/CD Included
 
@@ -49,7 +51,7 @@ bun install
 bun dev
 ```
 
-`bun dev` auto-installs deps and starts all apps. PGlite creates a local database with migrations applied automatically. Open `http://localhost:3000`.
+`bun dev` auto-installs deps and starts all apps. D1 is simulated locally via miniflare — run `bun db:migrate` once to apply migrations, then open `http://localhost:3000`.
 
 > **Note:** The `.env` file is only needed for feature-flagged services (PostHog, Resend, Google OAuth). The app runs without it — disabled features are simply skipped.
 
@@ -66,15 +68,16 @@ packages/config   → Shared TypeScript configs
 
 ## Commands
 
-| Command           | Description                                      |
-| ----------------- | ------------------------------------------------ |
-| `bun dev`         | Start all apps in dev mode                       |
-| `bun dev:email`   | Email template preview (port 3002)               |
-| `bun ok`          | Type check + lint + test (run before committing) |
-| `bun ok:ci`       | Same without auto-fixes (CI)                     |
-| `bun db:generate` | Generate database migrations                     |
-| `bun db:migrate`  | Apply migrations                                 |
-| `bun db:studio`   | Open Drizzle Studio                              |
+| Command                 | Description                                      |
+| ----------------------- | ------------------------------------------------ |
+| `bun dev`               | Start all apps in dev mode                       |
+| `bun dev:email`         | Email template preview (port 3002)               |
+| `bun ok`                | Type check + lint + test (run before committing) |
+| `bun ok:ci`             | Same without auto-fixes (CI)                     |
+| `bun db:generate`       | Generate database migrations                     |
+| `bun db:migrate`        | Apply migrations locally (D1)                    |
+| `bun db:migrate:remote` | Apply migrations to remote D1                    |
+| `bun db:studio`         | Open Drizzle Studio                              |
 
 ## Environment Variables
 
@@ -82,7 +85,6 @@ packages/config   → Shared TypeScript configs
 
 | Variable             | Description                             |
 | -------------------- | --------------------------------------- |
-| `DATABASE_URL`       | Neon PostgreSQL connection string       |
 | `BETTER_AUTH_SECRET` | Auth encryption secret (min 32 chars)   |
 | `URL`                | Production URL (e.g. https://myapp.com) |
 
@@ -99,7 +101,7 @@ Services activate when their env vars are set. Leave them out and the service is
 
 ## Testing
 
-- **Unit & integration tests** via `bun:test` with PGlite — tests run against a real PostgreSQL engine, not mocks
+- **Unit & integration tests** via `bun:test` with in-memory SQLite — tests run against a real database engine, not mocks
 - **Test utilities** for creating authenticated users and calling oRPC procedures
 - **E2E tests** via [Playwright](https://playwright.dev/) — full auth flow coverage (sign-up, sign-in, sign-out, change password, delete account) with email capture verification. Run `cd apps/e2e && bunx playwright test`
 
@@ -109,7 +111,7 @@ OmegaStart ships with a complete observability stack — all centralized in [Pos
 
 ### Structured Logging — [Pino](https://getpino.io/) + [PostHog Logs](https://posthog.com/docs/logs)
 
-- [Pino](https://getpino.io/) for local dev (pretty-printed) and stdout (Railway/any log aggregator)
+- [Pino](https://getpino.io/) for local dev (pretty-printed) and stdout (Cloudflare Logpush/any log aggregator)
 - [OpenTelemetry](https://opentelemetry.io/) exports server logs to PostHog Logs when enabled — view them alongside analytics and session replays
 - oRPC integration via [`@orpc/experimental-pino`](https://orpc.dev/docs/integrations/pino) — every API request gets a unique ID and automatic request/response logging
 
@@ -177,23 +179,23 @@ With new locale:  Paraglide fr.json auth_* keys  →  buildAuthTranslations()  �
 
 ## Tech Stack
 
-| Layer           | Technology                                                                                  |
-| --------------- | ------------------------------------------------------------------------------------------- |
-| Framework       | [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router + Cloudflare Workers)  |
-| Language        | TypeScript 5.9 (type-checked via [tsgo](https://github.com/microsoft/typescript-go))        |
-| API             | [oRPC](https://orpc.dev/) + [TanStack Query](https://tanstack.com/query)                    |
-| Database        | [Drizzle ORM](https://orm.drizzle.team/) + PGlite (dev) / [Neon](https://neon.tech/) (prod) |
-| Auth            | [Better Auth](https://better-auth.com/) (email/password, passkeys, admin)                   |
-| UI              | [shadcn v4](https://ui.shadcn.com/) + Tailwind CSS 4 + [Base UI](https://base-ui.com/)      |
-| Email           | [React Email](https://react.email/) + [Resend](https://resend.com/)                         |
-| i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)       |
-| Logging         | Structured console logger (Cloudflare Logpush compatible)                                   |
-| Analytics       | [PostHog](https://posthog.com/) (client + server, error tracking)                           |
-| Linting         | [Ultracite](https://github.com/haydenbleasel/ultracite) (Oxlint + Oxfmt)                    |
-| Package Manager | [Bun](https://bun.sh/)                                                                      |
-| Monorepo        | [Turborepo](https://turborepo.dev/)                                                         |
-| Deployment      | [Cloudflare Workers](https://workers.cloudflare.com/) + [Neon](https://neon.tech/)          |
-| CI/CD           | GitHub Actions                                                                              |
+| Layer           | Technology                                                                                                     |
+| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| Framework       | [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router + Cloudflare Workers)                     |
+| Language        | TypeScript 5.9 (type-checked via [tsgo](https://github.com/microsoft/typescript-go))                           |
+| API             | [oRPC](https://orpc.dev/) + [TanStack Query](https://tanstack.com/query)                                       |
+| Database        | [Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite)     |
+| Auth            | [Better Auth](https://better-auth.com/) (email/password, passkeys, admin)                                      |
+| UI              | [shadcn v4](https://ui.shadcn.com/) + Tailwind CSS 4 + [Base UI](https://base-ui.com/)                         |
+| Email           | [React Email](https://react.email/) + [Resend](https://resend.com/)                                            |
+| i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)                          |
+| Logging         | Structured console logger (Cloudflare Logpush compatible)                                                      |
+| Analytics       | [PostHog](https://posthog.com/) (client + server, error tracking)                                              |
+| Linting         | [Ultracite](https://github.com/haydenbleasel/ultracite) (Oxlint + Oxfmt)                                       |
+| Package Manager | [Bun](https://bun.sh/)                                                                                         |
+| Monorepo        | [Turborepo](https://turborepo.dev/)                                                                            |
+| Deployment      | [Cloudflare Workers](https://workers.cloudflare.com/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) |
+| CI/CD           | GitHub Actions                                                                                                 |
 
 <details>
 <summary>Claude Code Skills</summary>

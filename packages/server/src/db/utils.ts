@@ -1,7 +1,10 @@
-import { sql } from "drizzle-orm";
-import { uuid } from "drizzle-orm/pg-core";
+import { text } from "drizzle-orm/sqlite-core";
+import { ulid } from "ulid";
 
-export const uuidPrimaryKey = uuid()
+/** Generate a ULID — used for all primary keys (auth tables + custom tables) */
+export const generateId = () => ulid();
+
+export const ulidPrimaryKey = text("id")
   .notNull()
   .primaryKey()
-  .$defaultFn(() => sql`uuidv7()`);
+  .$defaultFn(generateId);

@@ -29,9 +29,6 @@ export const serverEnv = {
     | "development"
     | "test"
     | "production",
-  DATABASE_URL: isDev
-    ? env.DATABASE_URL
-    : parseEnv("DATABASE_URL", z.string().url()),
   BETTER_AUTH_SECRET:
     env.BETTER_AUTH_SECRET ??
     (isDev
