@@ -249,17 +249,18 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 
 **Auto-invoke skills** — MUST activate the relevant skill when working in its domain:
 
-| Skill          | Trigger                                                                           |
-| :------------- | :-------------------------------------------------------------------------------- |
-| `_frontend`    | Writing/modifying frontend code in `apps/web/`                                    |
-| `_i18n`        | Adding/modifying user-facing text                                                 |
-| `_e2e-testing` | Adding/modifying E2E tests                                                        |
-| `_auth`        | Auth flows, sessions, Better Auth config in `packages/auth/`                      |
-| `_email`       | Email templates, triggers in `packages/email/`                                    |
-| `_seo`         | New public routes, meta tags, SEO files                                           |
-| `_analytics`   | PostHog events, error tracking, logging                                           |
-| `_database`    | Schema, migrations, queries, oRPC procedures in `packages/db/` or `packages/api/` |
-| `_infra`       | Alchemy IaC, deployment, CI/CD pipeline                                           |
+| Skill             | Trigger                                                                           |
+| :---------------- | :-------------------------------------------------------------------------------- |
+| `_frontend`       | Writing/modifying frontend code in `apps/web/`                                    |
+| `_i18n`           | Adding/modifying user-facing text                                                 |
+| `_e2e-testing`    | Adding/modifying E2E tests                                                        |
+| `_auth`           | Auth flows, sessions, Better Auth config in `packages/auth/`                      |
+| `_email`          | Email templates, triggers in `packages/email/`                                    |
+| `_seo`            | New public routes, meta tags, SEO files                                           |
+| `_analytics`      | PostHog events, error tracking, logging                                           |
+| `_database`       | Schema, migrations, queries, oRPC procedures in `packages/db/` or `packages/api/` |
+| `_infra`          | Alchemy IaC, deployment, CI/CD pipeline                                           |
+| `_skill-creation` | Creating or modifying custom `_` skills                                           |
 
 ### General Rules
 

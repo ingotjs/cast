@@ -3,6 +3,10 @@ name: frontend
 description: Frontend development guidelines for this project — React components, Tailwind CSS, shadcn/ui, mobile-first responsive design, i18n-safe layouts, SEO patterns, forms, and route creation. MUST be activated when writing or modifying any frontend code in apps/web/ (components, routes, styles, layouts).
 ---
 
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
+>
+> **Keep this skill in sync:** When making changes to frontend patterns, component conventions, UI guidelines, or route structure, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+
 # Frontend Development Guide
 
 This project uses **TanStack Start** + **React** + **Tailwind CSS v4** + **shadcn/ui v4** + **Paraglide JS** for the frontend. All code lives in `apps/web/`.

@@ -3,6 +3,10 @@ name: database
 description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), schema, migrations, ULID helpers, and test setup. Use when modifying schema, adding tables/indexes, working with migrations, or writing database queries in packages/db/.
 ---
 
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
+>
+> **Keep this skill in sync:** When making changes to schema, migrations, ORM config, D1/KV setup, or oRPC procedures, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+
 # Database
 
 [Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) + [Cloudflare KV](https://developers.cloudflare.com/kv/) (session/rate-limit storage). D1 for relational data, KV for fast key-value lookups.
@@ -31,8 +35,8 @@ description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), schema, mig
 ## CRITICAL
 
 - **NEVER run `bun db:generate` or `bun db:migrate` via Claude Code** — requires interactive input
-- Schema uses SQLite types (text, integer, blob) — NOT Postgres types
-- Use `ulidPrimaryKey` from `packages/db/utils.ts` for primary keys
+- Schema MUST use SQLite types (text, integer, blob) — NEVER use Postgres types
+- MUST use `ulidPrimaryKey` from `packages/db/utils.ts` for primary keys
 
 ## API (oRPC)
 

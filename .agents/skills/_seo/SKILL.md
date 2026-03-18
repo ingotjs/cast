@@ -3,6 +3,10 @@ name: seo
 description: SEO, Open Graph, LLMO, and structured data patterns — per-page meta tags, dynamic OG images, JSON-LD schemas, sitemap, robots.txt, and llms.txt. Use when creating new public routes, modifying meta tags, or working with SEO-related files.
 ---
 
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
+>
+> **Keep this skill in sync:** When making changes to SEO patterns, OG image generation, JSON-LD schemas, or sitemap/robots config, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+
 # SEO, Open Graph & LLMO
 
 **References:** [TanStack Start SEO guide](https://tanstack.com/start/latest/docs/framework/react/guide/seo) · [TanStack Start LLMO guide](https://tanstack.com/start/latest/docs/framework/react/guide/llmo)
@@ -11,7 +15,7 @@ description: SEO, Open Graph, LLMO, and structured data patterns — per-page me
 
 - `consts.siteUrl` in `packages/utils/src/shared/consts.ts` — **MUST update before deploying** (used in sitemap, robots.txt, JSON-LD)
 - SSR enabled by default — crawlers receive fully rendered HTML
-- Per-page `head()` on every public route — title, description, OG tags (i18n via Paraglide)
+- Every public route MUST have `head()` with title, description, and OG tags (i18n via Paraglide)
 - Dynamic favicon at `/api/icon?theme=light|dark` — renders via `@vercel/og`, adapts to dark/light mode
 - Dynamic OG image at `/api/og?title=...&description=...` — branded 1200×630 image, 1-hour cache
 
@@ -59,7 +63,7 @@ export const Route = createFileRoute("/my-page")({
 
 ## i18n for Meta Tags
 
-All meta tag values MUST use Paraglide message functions (e.g., `m.meta_home_title()`). Keys are in `apps/web/messages/en.json`.
+All meta tag values MUST use Paraglide message functions (e.g., `m.meta_home_title()`). NEVER hardcode meta tag strings. Keys are in `apps/web/messages/en.json`.
 
 ## Key Files
 

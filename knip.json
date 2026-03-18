@@ -8,7 +8,7 @@
   "workspaces": {
     ".": {
       "entry": ["alchemy.run.ts"],
-      "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "alchemy", "oxfmt"],
+      "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "alchemy"],
       "ignoreBinaries": ["wrangler"]
     },
     "apps/web": {

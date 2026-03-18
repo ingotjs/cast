@@ -3,6 +3,10 @@ name: i18n
 description: Internationalization with Paraglide JS across the full stack — frontend UI, backend auth errors, Zod validation, and email templates. Use when adding i18n strings, creating new locales, working with Better Auth error translations, or any task involving user-facing text.
 ---
 
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
+>
+> **Keep this skill in sync:** When making changes to i18n architecture, Paraglide config, locale handling, or auth error translations, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+
 # Internationalization (i18n)
 
 [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n across the entire stack. **All user-facing text MUST be internationalized** — NEVER hardcode strings.

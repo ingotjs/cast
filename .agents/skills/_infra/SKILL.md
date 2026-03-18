@@ -3,6 +3,10 @@ name: infra
 description: Infrastructure and deployment — Alchemy IaC, Cloudflare Workers, D1 provisioning, CI/CD pipeline, and deployment workflow. Use when modifying alchemy.run.ts, deployment config, CI pipeline, or infrastructure-related settings.
 ---
 
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
+>
+> **Keep this skill in sync:** When making changes to Alchemy config, Cloudflare Workers setup, CI/CD pipeline, or deployment workflow, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+
 # Infrastructure & Deployment
 
 [Alchemy](https://alchemy.run/) — TypeScript-native IaC for [Cloudflare Workers](https://workers.cloudflare.com/) + [D1](https://developers.cloudflare.com/d1/) (SQLite). Alchemy wraps `@cloudflare/vite-plugin` and `wrangler`, providing typed infrastructure definitions in pure TypeScript.

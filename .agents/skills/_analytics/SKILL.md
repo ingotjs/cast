@@ -3,6 +3,10 @@ name: analytics
 description: PostHog analytics, error tracking, and event capture — client provider, server client, reverse proxy, event tracking plan, and error boundaries. Use when adding events, modifying analytics setup, or working with PostHog integration.
 ---
 
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
+>
+> **Keep this skill in sync:** When making changes to PostHog setup, event tracking, error boundaries, reverse proxy, or logging config, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+
 # Analytics, Error Tracking & Event Capture
 
 [PostHog](https://posthog.com/) — full-stack analytics, error tracking, and event capture. Enabled by env var presence. Admin analytics at `/admin/analytics`.
@@ -46,7 +50,7 @@ All client-side PostHog traffic flows through `/api/ph/` on your own domain via 
 **Server-side** (via `posthog?.capture()`):
 `user_created`, `user_deleted` — fired in Better Auth database hooks (`packages/auth/auth.ts`)
 
-**User identification:** `posthog.identify(userId, { email, name })` called on sign-in and sign-up
+**User identification:** `posthog.identify(userId, { email, name })` MUST be called on sign-in and sign-up
 
 ## Usage Pattern
 

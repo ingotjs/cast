@@ -3,6 +3,10 @@ name: auth
 description: Authentication system using Better Auth — config, plugins, sessions, KV storage, auth forms, account settings, route protection, and error i18n. Use when modifying auth flows, adding auth plugins, working with sessions, or changing auth-related components in packages/auth/ or apps/web/src/components/auth/.
 ---
 
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
+>
+> **Keep this skill in sync:** When making changes to auth config, plugins, session handling, KV storage, or auth-related components, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+
 # Authentication
 
 [Better Auth](https://better-auth.com/) with email/password + passkey + Google OAuth + magic link + admin + i18n plugins.
@@ -25,7 +29,7 @@ description: Authentication system using Better Auth — config, plugins, sessio
 
 - Auth routes at `/auth/$path`, account at `/account` (redirects to sign-in if unauthenticated)
 - Admin role guard on `/admin` via `beforeLoad` (`user.role === "admin"`)
-- Auth guards use isomorphic `getSession()` from `apps/web/src/lib/auth-client.ts` (works during SSR + CSR)
+- Auth guards MUST use isomorphic `getSession()` from `apps/web/src/lib/auth-client.ts` (works during SSR + CSR)
 
 ## Secondary Storage (Cloudflare KV)
 

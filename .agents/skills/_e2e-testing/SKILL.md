@@ -3,6 +3,10 @@ name: e2e-testing
 description: Write and debug Playwright E2E tests for this project. Use when adding new E2E tests, debugging test failures, or working with the apps/e2e package. Covers test structure, fixtures, selectors, email verification, and best practices specific to this codebase.
 ---
 
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
+>
+> **Keep this skill in sync:** When making changes to E2E test fixtures, selectors, config, or test patterns, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+
 # E2E Testing Guide
 
 This project uses **Playwright** for E2E tests in `apps/e2e/`.

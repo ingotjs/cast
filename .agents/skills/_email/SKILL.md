@@ -3,9 +3,13 @@ name: email
 description: Transactional email system — React Email templates, Resend integration, email i18n via Paraglide, email triggers in Better Auth, and email capture for E2E tests. Use when adding/modifying email templates, changing email triggers, or working with packages/email/.
 ---
 
+> **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
+>
+> **Keep this skill in sync:** When making changes to email templates, triggers, Resend config, or email i18n patterns, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+
 # Transactional Emails
 
-All transactional emails are in `packages/email/`. Emails are fully i18n via Paraglide — text is NEVER hardcoded. Emails are sent in the user's preferred `locale` (stored in the users table).
+All transactional emails are in `packages/email/`. Emails are fully i18n via Paraglide — text is NEVER hardcoded. Emails MUST be sent in the user's preferred `locale` (stored in the users table).
 
 ## Current Templates
 
@@ -31,7 +35,7 @@ All transactional emails are in `packages/email/`. Emails are fully i18n via Par
 
 ## Email i18n Pattern
 
-All email text uses `m.email_xxx({...}, loc(locale))` where `loc()` casts the string locale to Paraglide's type.
+All email text MUST use `m.email_xxx({...}, loc(locale))` where `loc()` casts the string locale to Paraglide's type. NEVER hardcode text in email templates.
 
 ## Welcome Email Config
 

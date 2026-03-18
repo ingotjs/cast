@@ -8,8 +8,6 @@
     "dev": "alchemy dev ../../alchemy.run.ts",
     "preview": "vite preview",
     "deploy": "alchemy deploy ../../alchemy.run.ts",
-    "destroy": "alchemy destroy ../../alchemy.run.ts",
-    "cf-typegen": "wrangler types",
     "ts": "tsgo --noEmit"
   },
   "dependencies": {
