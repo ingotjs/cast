@@ -5,4 +5,4 @@ exact = true
 
 [test]
 onlyFailures = true
-preload = ["./packages/db/__tests__/setup.ts"]
+preload = ["./packages/config/test-setup.ts", "./packages/db/__tests__/setup.ts"]

@@ -5,18 +5,13 @@ import { cleanupTestUser, createTestUser, uniqueEmail } from "./test-utils";
 
 // Spy on console.log to verify email notifications (emailSender is null in test)
 const consoleSpy = mock(() => {});
-const originalLog = console.log;
 
 beforeAll(() => {
-  console.log = (...args: unknown[]) => {
-    consoleSpy(...args);
-    // Still log to see output during test development
-    originalLog(...args);
-  };
+  console.log = consoleSpy;
 });
 
 afterAll(() => {
-  console.log = originalLog;
+  console.log = () => {};
 });
 
 /** Helper to check if a console.log call contains a specific email notification */
