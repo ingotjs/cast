@@ -19,7 +19,7 @@
   "faq_q_tech_stack": "What tech stack does OmegaStart use?",
   "faq_a_tech_stack": "TanStack Start (Vite + TanStack Router + Nitro) for the framework, Drizzle ORM with PGlite/PostgreSQL for the database, Better Auth for authentication, oRPC for type-safe APIs, React Email + Resend for transactional emails, Paraglide JS for i18n, and Tailwind CSS + shadcn for the UI.",
   "faq_q_get_started": "How do I get started?",
-  "faq_a_get_started": "Run 'bun install' and 'bun dev'. PGlite creates a local PostgreSQL database automatically — no Docker or external services needed. Your app will be running at localhost:3000 in seconds.",
+  "faq_a_get_started": "Run 'bun install' and 'bun dev'. PGlite creates a local PostgreSQL database automatically — no Docker or external services needed. Your app will be running at localhost:2000 in seconds.",
   "faq_q_auth": "What authentication methods are supported?",
   "faq_a_auth": "Email/password authentication and passkeys (WebAuthn) out of the box, powered by Better Auth. Additional providers like Google OAuth and magic links are available via feature flags.",
   "faq_q_open_source": "Is OmegaStart free and open source?",

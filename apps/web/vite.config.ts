@@ -12,7 +12,7 @@ import { emailCapturePlugin } from "./vite-email-capture-plugin";
 // Reference: https://alchemy.run/guides/cloudflare-tanstack-start/
 
 const config = defineConfig({
-  server: { port: 3000 },
+  server: { port: 2000 },
   resolve: {
     tsconfigPaths: true,
   },

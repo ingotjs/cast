@@ -5,7 +5,7 @@ import { test as base, expect } from "@playwright/test";
 
 // Reference: https://playwright.dev/docs/test-fixtures
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://localhost:2000";
 const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../../../.email-captures");
 const TEST_PASSWORD = "TestPassword123!";
 

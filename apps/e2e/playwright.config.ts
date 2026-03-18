@@ -10,13 +10,13 @@ export default defineConfig({
   retries: 0,
   reporter: [["list"]],
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: "http://localhost:2000",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
   webServer: {
     command: "bun dev",
-    url: "http://localhost:3000",
+    url: "http://localhost:2000",
     reuseExistingServer: true,
     cwd: "../..",
     timeout: 60_000,

@@ -71,7 +71,7 @@ bun dev
 bunx alchemy configure # Sets up Alchemy & CloudFlare
 ```
 
-`bun dev` auto-installs deps and starts all apps. Alchemy generates the wrangler config and runs Vite with D1 simulated locally via miniflare. Migrations are applied automatically. Open `http://localhost:3000`.
+`bun dev` auto-installs deps and starts all apps. Alchemy generates the wrangler config and runs Vite with D1 simulated locally via miniflare. Migrations are applied automatically. Open `http://localhost:2000`.
 
 > **Note:** The `.env` file is only needed for feature-flagged services (PostHog, Resend, Google OAuth). The app runs without it — disabled features are simply skipped.
 

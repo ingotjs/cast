@@ -22,7 +22,7 @@ const parseEnv = <T>(key: string, schema: z.ZodType<T>): T => {
  * - Leave it unset → group is `undefined` (service disabled)
  */
 export const serverEnv = {
-  URL: env.URL ?? "http://localhost:3000",
+  URL: env.URL ?? "http://localhost:2000",
   NODE_ENV: (env.NODE_ENV ?? "development") as "development" | "test" | "production",
   BETTER_AUTH_SECRET:
     env.BETTER_AUTH_SECRET ??
