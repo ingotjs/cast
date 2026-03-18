@@ -1,6 +1,6 @@
 ---
 name: database
-description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), schema, migrations, ULID helpers, and test setup. Use when modifying schema, adding tables/indexes, working with migrations, or writing database queries in packages/db/.
+description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), Drizzle-Zod schema validation, migrations, ULID helpers, and test setup. Use when modifying schema, adding tables/indexes, working with migrations, or writing database queries in packages/db/.
 ---
 
 > **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
@@ -18,6 +18,7 @@ description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), schema, mig
 | DB client   | `packages/db/index.ts` — `initDb(env.DB)` called from server.ts         |
 | KV storage  | `packages/auth/kv-storage.ts` — `initKv(env.SESSION_KV)` from server.ts |
 | Schema      | `packages/db/schema.ts` — Better Auth tables (SQLite) + indexes         |
+| Zod schemas | `packages/db/zod-schema.ts` — Drizzle-Zod select/insert/update schemas |
 | ULID helper | `packages/db/utils.ts` — `ulidPrimaryKey` (text + ULID)                 |
 | D1 types    | `packages/db/d1.d.ts` — minimal D1Database type declaration             |
 | Migrations  | `packages/db/drizzle/` — applied automatically by Alchemy on dev/deploy |
@@ -37,6 +38,47 @@ description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), schema, mig
 - **NEVER run `bun db:generate` or `bun db:migrate` via Claude Code** — requires interactive input
 - Schema MUST use SQLite types (text, integer, blob) — NEVER use Postgres types
 - MUST use `ulidPrimaryKey` from `packages/db/utils.ts` for primary keys
+
+## Drizzle-Zod (Schema Validation)
+
+Reference: https://orm.drizzle.team/docs/zod
+
+[`drizzle-zod`](https://orm.drizzle.team/docs/zod) generates Zod schemas directly from Drizzle table definitions. Pre-built schemas are exported from `@packages/db/zod-schema`.
+
+```ts
+import { selectUserSchema, insertUserSchema, updateUserSchema } from "@packages/db/zod-schema";
+
+// Validate a select result
+const user = selectUserSchema.parse(row);
+
+// Validate insert data
+const data = insertUserSchema.parse(input);
+
+// Validate update data (all fields optional, generated columns excluded)
+const patch = updateUserSchema.parse(input);
+```
+
+**When adding a new table**, MUST also add corresponding Zod schemas to `packages/db/zod-schema.ts`:
+
+```ts
+import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
+import { myTable } from "./schema";
+
+export const selectMyTableSchema = createSelectSchema(myTable);
+export const insertMyTableSchema = createInsertSchema(myTable);
+export const updateMyTableSchema = createUpdateSchema(myTable);
+```
+
+**Refinements** — extend generated schemas with custom validations:
+
+```ts
+const insertUserSchema = createInsertSchema(users, {
+  name: (schema) => schema.max(100),
+  email: (schema) => schema.email(),
+});
+```
+
+MUST prefer Drizzle-Zod schemas over manually written Zod schemas when validating data that maps to a database table. This ensures validation stays in sync with the schema automatically.
 
 ## API (oRPC)
 

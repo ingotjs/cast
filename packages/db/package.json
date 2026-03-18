@@ -6,7 +6,8 @@
   "exports": {
     ".": "./index.ts",
     "./schema": "./schema.ts",
-    "./utils": "./utils.ts"
+    "./utils": "./utils.ts",
+    "./zod-schema": "./zod-schema.ts"
   },
   "scripts": {
     "db:generate": "drizzle-kit generate",
@@ -17,7 +18,9 @@
   },
   "dependencies": {
     "drizzle-orm": "catalog:",
-    "ulid": "3.0.2"
+    "drizzle-zod": "0.8.3",
+    "ulid": "3.0.2",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@packages/config": "*",

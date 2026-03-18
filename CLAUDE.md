@@ -165,7 +165,7 @@ React Email + Resend in `packages/email/`. All templates i18n via Paraglide. Ful
 
 ### Database
 
-[Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) + KV. Schema: `packages/db/schema.ts`. NEVER run `bun db:generate` or `bun db:migrate` via Claude Code. Full details in **`_database` skill**.
+[Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) + KV + [Drizzle-Zod](https://orm.drizzle.team/docs/zod) for schema-derived validation. Schema: `packages/db/schema.ts`. Zod schemas: `packages/db/zod-schema.ts`. NEVER run `bun db:generate` or `bun db:migrate` via Claude Code. Full details in **`_database` skill**.
 
 ### SEO, Open Graph & LLMO
 
@@ -340,6 +340,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `packages/utils/src/server/posthog.ts`   | PostHog server client (error tracking + analytics)                                     |
 | `packages/db/index.ts`                   | Database client (D1 via `initDb()` + proxy)                                            |
 | `packages/db/schema.ts`                  | Drizzle schema + indexes                                                               |
+| `packages/db/zod-schema.ts`              | Drizzle-Zod select/insert/update schemas for all tables                                |
 | `packages/db/utils.ts`                   | `ulidPrimaryKey` helper                                                                |
 | `packages/auth/auth.ts`                  | Better Auth config + i18n plugin + all email triggers                                  |
 | `packages/auth/kv-storage.ts`            | Cloudflare KV adapter for Better Auth secondary storage (sessions + rate limiting)     |
@@ -365,7 +366,6 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `.oxfmtrc.jsonc`                         | Oxfmt config                                                                           |
 | `.syncpackrc`                            | Syncpack config                                                                        |
 | `knip.json`                              | Knip config (unused files, deps, exports)                                              |
-| `apps/web/wrangler.jsonc`                | Fallback wrangler config (manual CLI use only — Alchemy generates its own)             |
 | `.github/workflows/ci.yml`               | CI pipeline                                                                            |
 | `packages/email/email-capture.ts`        | Email capture for E2E test verification (dev/test only)                                |
 | `packages/email/templates.ts`            | Email render functions + localized subject helpers                                     |
