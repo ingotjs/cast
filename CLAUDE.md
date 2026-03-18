@@ -265,7 +265,9 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 ### General Rules
 
 - **NEVER remove features, UI, or existing code unless explicitly asked.** Broken? FIX IT — don't delete it.
-- **MUST ask at decision points.** Considering removing/replacing/restructuring code? STOP and ask.
+- **NEVER discard unstaged changes** (`git checkout .`, `git restore .`, `git clean`, `git reset --hard`) to "start fresh" when debugging. Fix the problem — don't nuke the work.
+- **NEVER remove or rewrite code as a first attempt to fix something.** Diagnose first, then apply the minimal targeted fix. Deleting code you don't understand is not debugging.
+- **MUST ask before making unrequested changes.** If a fix involves modifying code outside the immediate scope, or removing/replacing/restructuring anything, STOP and ask. The user decides what changes are acceptable.
 - **NEVER use placeholder values when refactoring.** No `0`, `null`, `""` — compute every field properly.
 - MUST reference code as `file_path:line_number`
 - NEVER run dev servers or call API endpoints — they're already running in watch mode
@@ -277,14 +279,22 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 
 ### Git Workflow
 
-- **NEVER commit or push unless explicitly instructed.** Show changes, wait for instruction.
+- **NEVER commit or push unless explicitly instructed.** Show changes, wait for instruction. **NEVER commit/push automatically as part of a workflow** — even if a skill or workflow says "commit and push", STOP, show what changed, and wait for explicit instruction.
 - `"commit"` = commit EVERYTHING + push. `git add -A && git commit -m "..." && git push`
 - `"commit staged only"` = commit only staged files + `--no-verify` + push
+- When on a non-main branch: after the final commit + push for a task, **MUST auto-create a PR** without waiting to be asked
 - **Review changes:** `git diff HEAD --stat` for summary, `git diff HEAD -- '*.ts' '*.tsx' '*.json' ':!bun.lock'` for code. NEVER read unfiltered diff.
 - New branches: `git fetch origin && git checkout -b <name> origin/main` (always from remote)
 - First push: `git push -u origin <branch-name>`
 - GitHub ops: ALWAYS use `gh` CLI
+- **When given a GitHub PR link**, checkout its branch as the **ABSOLUTE FIRST ACTION** — before reading code, before analyzing. Use `gh pr view <number> --json headRefName --jq '.headRefName'` to get the branch name, then checkout.
 - **When committing: MUST update CLAUDE.md AND README.md**
+
+### Linear Workflow
+
+- **When given a Linear ticket**, create/checkout a dedicated branch as the **ABSOLUTE FIRST ACTION** — before reading any code, before analyzing anything. The instant the user says "work on XXX" or shares a Linear link, create the branch first.
+- **When creating a branch for a Linear ticket**, create the Linear ticket FIRST so the branch name includes the ticket ID (e.g., `STO-1234-feature-name`). This ensures traceability between branches, PRs, and Linear tickets.
+- **MUST extract and view ALL images** embedded in the ticket description AND comments using `extract_images`. Screenshots, mockups, and annotated images contain critical context that text alone does not convey. Do this as one of the first actions when picking up a ticket.
 
 ---
 
@@ -315,7 +325,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 
 - NEVER assume the cause — add targeted debugging
 - Trace data flow backwards from the error
-- `console.log('DEBUG:', JSON.stringify(data, null, 2))` — MUST clean up after
+- `console.log('DEBUG:', JSON.stringify(data, null, 2))` — MUST clean up after. Use a common keyword prefix (e.g., `'DEBUG_AUTH:'`) so logs are easy to filter in the browser console
 - MUST try solutions before suggesting them
 
 ### React & Frontend

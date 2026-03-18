@@ -5,9 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "alchemy dev ../../alchemy.run.ts",
-    "preview": "vite preview",
-    "deploy": "alchemy deploy ../../alchemy.run.ts",
+    "vite": "vp",
     "ts": "tsgo --noEmit"
   },
   "dependencies": {

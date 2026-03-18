@@ -64,6 +64,22 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 - `"use client"` only when genuinely needed (hooks, event handlers, browser APIs)
 - React Compiler handles memoization — no manual `useMemo`/`useCallback` needed
 
+### Dark Mode — Theme-Aware Colors
+
+MUST use Tailwind's semantic color tokens — NEVER hardcode colors like `bg-white`, `text-black`, or `bg-gray-100`.
+
+```tsx
+// Correct — adapts to light/dark mode
+<div className="bg-card text-card-foreground" />
+<p className="text-muted-foreground" />
+<div className="border-border" />
+
+// WRONG — breaks in dark mode
+<div className="bg-white text-black" />
+```
+
+Common tokens: `bg-background`, `bg-card`, `bg-muted`, `text-foreground`, `text-muted-foreground`, `border-border`, `bg-destructive`, `text-destructive-foreground`.
+
 ## Spacing, Layout & Typography
 
 - Use consistent spacing via Tailwind's scale: `gap-2`, `p-4`, `space-y-3`

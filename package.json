@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "build": "vp run build -r",
-    "dev": "bun install --silent && vp run dev -r",
+    "dev": "bun install --silent && bun run --cwd packages/infra dev",
+    "deploy": "bun run --cwd packages/infra deploy",
     "db:auth": "bun run --cwd packages/auth db:auth",
     "db:generate": "bun run --cwd packages/db db:generate && bun db:migrate",
     "db:migrate": "cd apps/web && npx wrangler d1 migrations apply omegastart-db --local",
@@ -19,12 +20,12 @@
     "e2e:ui": "bun run --cwd apps/e2e e2e:ui",
     "ok": "syncpack fix --log-levels error && vp run ts -r && vp fmt --write && vp lint --fix && vp run test -r",
     "ok:ci": "syncpack lint --log-levels error && vp run ts -r && vp fmt --check && vp lint && vp run test -r",
-    "prepare": "mkdir -p .alchemy/local && [ -f .alchemy/local/wrangler.jsonc ] || echo '{}' > .alchemy/local/wrangler.jsonc && vp config"
+    "ok:full": "bun knip && bun ok && bun e2e",
+    "prepare": "vp config"
   },
   "devDependencies": {
     "@socketsecurity/bun-security-scanner": "1.1.2",
     "@typescript/native-preview": "7.0.0-dev.20260317.1",
-    "alchemy": "0.89.0",
     "knip": "5.87.0",
     "syncpack": "14.2.0",
     "typescript": "catalog:",

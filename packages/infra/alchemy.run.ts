@@ -7,7 +7,7 @@ const app = await alchemy("omegastart");
 
 const db = await D1Database("omegastart-db", {
   name: "omegastart-db",
-  migrationsDir: "./packages/db/drizzle",
+  migrationsDir: `${import.meta.dirname}/../db/drizzle`,
   adopt: true,
 });
 
@@ -17,7 +17,7 @@ const kv = await KVNamespace("omegastart-kv", {
 
 export const website = await TanStackStart("website", {
   name: "omegastart",
-  cwd: "apps/web",
+  cwd: `${import.meta.dirname}/../../apps/web`,
   bindings: {
     DB: db,
     SESSION_KV: kv,

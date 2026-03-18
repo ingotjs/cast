@@ -7,9 +7,12 @@
   "exclude": ["duplicates"],
   "workspaces": {
     ".": {
-      "entry": ["alchemy.run.ts"],
-      "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "alchemy"],
+      "ignoreDependencies": ["@socketsecurity/bun-security-scanner"],
       "ignoreBinaries": ["wrangler"]
+    },
+    "packages/infra": {
+      "entry": ["alchemy.run.ts"],
+      "ignoreDependencies": ["alchemy"]
     },
     "apps/web": {
       "entry": [
