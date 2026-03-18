@@ -1,14 +1,15 @@
-# Ultracite Code Standards
+# Vite+ Code Standards
 
-This project uses **Ultracite**, a zero-config preset that enforces strict code quality standards through automated formatting and linting.
+This project uses **Vite+** (`vite-plus`) for linting and formatting via Oxlint + Oxfmt. Vite+ is used **only for lint/fmt** — Bun remains the package manager, Turborepo the task runner.
 
 ## Quick Reference
 
-- **Format code**: `bun x ultracite fix`
-- **Check for issues**: `bun x ultracite check`
-- **Diagnose setup**: `bun x ultracite doctor`
+- **Format code**: `vp fmt --write`
+- **Lint code**: `vp lint --fix`
+- **Check both**: `vp fmt --check && vp lint`
+- **Pre-commit**: `vp staged` (runs automatically via `.vite-hooks/pre-commit`)
 
-Oxlint + Oxfmt (the underlying engine) provides robust linting and formatting. Most issues are automatically fixable.
+Most issues are automatically fixable.
 
 ---
 
@@ -120,4 +121,4 @@ Oxlint + Oxfmt's linter will catch most issues automatically. Focus your attenti
 
 ---
 
-Most formatting and common issues are automatically fixed by Oxlint + Oxfmt. Run `bun x ultracite fix` before committing to ensure compliance.
+Most formatting and common issues are automatically fixed by Oxlint + Oxfmt. Run `vp fmt --write && vp lint --fix` before committing to ensure compliance.

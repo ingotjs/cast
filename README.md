@@ -2,7 +2,7 @@
 
 **The full-stack TypeScript starter that actually works.** Ship production apps in minutes, not weeks.
 
-Built on [TanStack Start](https://tanstack.com/start) + [Bun](https://bun.sh/) + [Turborepo](https://turborepo.dev/). Everything is type-safe, everything is fast, everything just works.
+Built on [TanStack Start](https://tanstack.com/start) + [Bun](https://bun.sh/) + [Vite+](https://vite.dev/plus/). Everything is type-safe, everything is fast, everything just works.
 
 ## Why OmegaStart?
 
@@ -35,18 +35,18 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 - **Unit & integration tests** via `bun:test` with in-memory SQLite — tests run against a real database engine, not mocks
 - **Test utilities** for creating authenticated users and calling oRPC procedures directly
 - **E2E tests** via [Playwright](https://playwright.dev/) — full auth flow coverage (sign-up, sign-in, sign-out, change password, delete account) with email capture verification
-- **Pre-commit hook** via [Husky](https://typicode.github.io/husky/) — runs the full `bun ok` pipeline (type check + lint + test) before every commit. Broken code doesn't get committed.
+- **Pre-commit hook** via [Vite+](https://vite.dev/plus/) — `vp staged` runs format + lint on staged files before every commit. Broken code doesn't get committed.
 
 ### 5. Code Quality & Reliability
 
 Zero-config, zero-compromise. Every layer of the stack is guarded by automated tooling that catches issues before they reach production.
 
-- **Linting & formatting** — [Ultracite](https://github.com/haydenbleasel/ultracite) wraps [Oxlint](https://oxc.rs/docs/guide/usage/linter) + [Oxfmt](https://oxc.rs/docs/guide/usage/formatter) into a single zero-config preset. Blazingly fast Rust-based linting and formatting — no ESLint, no Prettier, no config files to maintain.
+- **Linting & formatting** — [Vite+](https://vite.dev/plus/) bundles [Oxlint](https://oxc.rs/docs/guide/usage/linter) + [Oxfmt](https://oxc.rs/docs/guide/usage/formatter). Rust-based linting and formatting — no ESLint, no Prettier.
 - **Type checking** — [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) via `@typescript/native-preview`. 10x faster type checking than standard `tsc`.
 - **Dependency management** — [syncpack](https://syncpack.dev/) enforces pinned versions (no `^` or `~`), consistent versions across all packages, and workspace protocol for internal packages. No version drift, no "works on my machine."
 - **Supply chain security** — [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) scans for known vulnerabilities on every `bun install`. Combined with Bun's `install.minimumReleaseAge` (3-day quarantine on new packages) to block supply chain attacks.
 - **Dead code detection** — [Knip](https://knip.dev/) finds unused files, dependencies, and exports across the entire monorepo. Run `bun knip`.
-- **Pre-commit enforcement** — [Husky](https://typicode.github.io/husky/) runs `bun ok` (type check + lint + test) on every commit. Nothing ships without passing the full pipeline.
+- **Pre-commit enforcement** — [Vite+](https://vite.dev/plus/) `vp staged` runs format + lint on staged files on every commit.
 - **CI/CD** — GitHub Actions runs `bun ok:ci` on every push and PR. On `main`, also deploys via Alchemy (provisions D1, applies migrations, deploys Worker), uploads source maps to PostHog, and reports CI metrics.
 - **One command to rule them all** — `bun ok` runs syncpack + type check + lint + test in sequence. If it passes, your code is clean.
 
@@ -211,9 +211,9 @@ With new locale:  Paraglide fr.json auth_* keys  →  buildAuthTranslations()  �
 | i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)                                                                    |
 | Logging         | Structured console logger (Cloudflare Logpush compatible)                                                                                                |
 | Analytics       | [PostHog](https://posthog.com/) (client + server, error tracking)                                                                                        |
-| Linting         | [Ultracite](https://github.com/haydenbleasel/ultracite) (Oxlint + Oxfmt)                                                                                 |
+| Linting         | [Vite+](https://vite.dev/plus/) (Oxlint + Oxfmt)                                                                                                         |
 | Package Manager | [Bun](https://bun.sh/)                                                                                                                                   |
-| Monorepo        | [Turborepo](https://turborepo.dev/)                                                                                                                      |
+| Monorepo        | [Vite+](https://vite.dev/plus/) (`vp run -r`)                                                                                                            |
 | IaC             | [Alchemy](https://alchemy.run/) (TypeScript-native, wraps Cloudflare APIs directly)                                                                      |
 | Deployment      | [Cloudflare Workers](https://workers.cloudflare.com/) + [Cloudflare D1](https://developers.cloudflare.com/d1/)                                           |
 | CI/CD           | GitHub Actions                                                                                                                                           |
@@ -224,7 +224,7 @@ With new locale:  Paraglide fr.json auth_* keys  →  buildAuthTranslations()  �
 This project includes 42 [Claude Code skills](https://skills.sh) for AI-assisted development:
 
 - [shadcn](https://skills.sh/shadcn/ui) — Manages shadcn components: adding, styling, composing UI
-- [ultracite](https://skills.sh/haydenbleasel/ultracite) — Linting and formatting with Oxlint + Oxfmt
+- [vite-plus](https://vite.dev/plus/) — Linting and formatting with Oxlint + Oxfmt
 - [vercel-react-best-practices](https://skills.sh/vercel-labs/agent-skills) — React and Next.js performance patterns from Vercel
 - [better-auth-best-practices](https://skills.sh/better-auth/skills) — Better Auth documentation and best practices
 - [react-email](https://skills.sh/resend/react-email) — Building HTML email templates with React components

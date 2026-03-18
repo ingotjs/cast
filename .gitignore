@@ -31,6 +31,7 @@ dist
 # Local D1 database (miniflare)
 .wrangler
 .alchemy/miniflare
+.alchemy/local
 
 # E2E email captures
 .email-captures
