@@ -5,9 +5,10 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite dev --port 3000",
+    "dev": "alchemy dev ../../alchemy.run.ts",
     "preview": "vite preview",
-    "deploy": "vite build && wrangler deploy",
+    "deploy": "alchemy deploy ../../alchemy.run.ts",
+    "destroy": "alchemy destroy ../../alchemy.run.ts",
     "cf-typegen": "wrangler types",
     "ts": "tsgo --noEmit"
   },
@@ -54,6 +55,7 @@
     "@types/react": "19.2.13",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "5.1.4",
+    "alchemy": "0.89.0",
     "babel-plugin-react-compiler": "1.0.0",
     "jsdom": "28.1.0",
     "typescript": "5.9.3",

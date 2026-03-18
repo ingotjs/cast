@@ -73,7 +73,7 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 | `react-perf/jsx-no-new-function-as-prop` | off             | React Compiler handles memoization                 |
 | `typescript/consistent-type-definitions` | error, `"type"` | NEVER use `interface` (except module augmentation) |
 
-**Ignored paths:** `.agents`, `.claude`, `**/routeTree.gen.ts`, `**/paraglide/**`, `**/*.md`
+**Ignored paths:** `.agents`, `.alchemy`, `.claude`, `**/alchemy.run.ts`, `**/routeTree.gen.ts`, `**/paraglide/**`, `**/*.md`
 
 </details>
 
@@ -145,6 +145,7 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 | What              | Where                                                                                                            |
 | :---------------- | :--------------------------------------------------------------------------------------------------------------- |
 | Auth config       | `packages/auth/auth.ts`                                                                                          |
+| KV storage        | `packages/auth/kv-storage.ts` — Cloudflare KV adapter for Better Auth secondary storage                          |
 | Auth i18n builder | `packages/auth/auth-i18n.ts` — builds translations dict from Paraglide messages                                  |
 | Auth client       | `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`, `authClient` |
 | Auth API route    | `apps/web/src/routes/api/auth.$.ts`                                                                              |
@@ -155,6 +156,7 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 
 - Auth routes at `/auth/$path`, account at `/account` (redirects to sign-in if unauthenticated)
 - Admin role guard on `/admin` via `beforeLoad` (`user.role === "admin"`)
+- **Secondary storage** — [Cloudflare KV](https://developers.cloudflare.com/kv/) via `packages/auth/kv-storage.ts`. Sessions and rate limiting stored in KV for fast globally-replicated reads (<10ms). Sessions also stored in D1 (`storeSessionInDatabase: true`) for admin queries. Rate limiting uses KV (`storage: "secondary-storage"`) instead of in-memory (required for Workers — each isolate has separate memory).
 - Session: cookie caching (5 min), 30-day expiry, daily refresh, `trustedOrigins` for CSRF
 - `BETTER_AUTH_SECRET` required in prod, auto-generated static fallback in dev
 - Sonner `<Toaster />` in root layout for auth notifications
@@ -220,22 +222,24 @@ Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
 
 ### Database
 
-[Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite). Chosen for zero-effort setup — native Worker binding, no connection strings, no external DB service. Global read replication at no extra cost. If approaching the 10GB D1 limit, migration to [Turso](https://turso.tech/) (same SQLite dialect) is straightforward.
+[Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) + [Cloudflare KV](https://developers.cloudflare.com/kv/) (session/rate-limit storage). D1 for relational data, KV for fast key-value lookups.
 
-| What        | Where                                                               |
-| :---------- | :------------------------------------------------------------------ |
-| DB client   | `packages/db/index.ts` — `initDb(env.DB)` called from server.ts     |
-| Schema      | `packages/db/schema.ts` — Better Auth tables (SQLite) + indexes     |
-| ULID helper | `packages/db/utils.ts` — `ulidPrimaryKey` (text + ULID)             |
-| D1 types    | `packages/db/d1.d.ts` — minimal D1Database type declaration         |
-| Migrations  | `packages/db/drizzle/` — applied via `wrangler d1 migrations apply` |
-| Local data  | `.wrangler/` (gitignored) — miniflare simulates D1 locally          |
-| Test DB     | `packages/db/__tests__/setup.ts` — in-memory bun:sqlite for tests   |
+| What        | Where                                                                   |
+| :---------- | :---------------------------------------------------------------------- |
+| DB client   | `packages/db/index.ts` — `initDb(env.DB)` called from server.ts         |
+| KV storage  | `packages/auth/kv-storage.ts` — `initKv(env.SESSION_KV)` from server.ts |
+| Schema      | `packages/db/schema.ts` — Better Auth tables (SQLite) + indexes         |
+| ULID helper | `packages/db/utils.ts` — `ulidPrimaryKey` (text + ULID)                 |
+| D1 types    | `packages/db/d1.d.ts` — minimal D1Database type declaration             |
+| Migrations  | `packages/db/drizzle/` — applied automatically by Alchemy on dev/deploy |
+| Local data  | `.alchemy/miniflare/` (gitignored) — miniflare simulates D1+KV locally  |
+| Test DB     | `packages/db/__tests__/setup.ts` — in-memory bun:sqlite for tests       |
 
-- D1 binding `DB` configured in `apps/web/wrangler.jsonc`, initialized in `apps/web/src/server.ts`
+- D1 binding `DB` + KV binding `SESSION_KV` defined in `alchemy.run.ts`, initialized in `apps/web/src/server.ts`
 - No `DATABASE_URL` — D1 is accessed via native Worker binding, not a connection string
-- Local dev: D1 simulated by miniflare via `@cloudflare/vite-plugin`
-- Tests: in-memory `bun:sqlite` via preload setup (`packages/db/bunfig.toml`)
+- KV used as Better Auth secondary storage (sessions + rate limiting) for globally-replicated sub-10ms reads
+- Local dev: D1 + KV simulated by miniflare via Alchemy's Vite plugin (wraps `@cloudflare/vite-plugin`)
+- Tests: in-memory `bun:sqlite` via preload setup (`packages/db/bunfig.toml`). KV no-ops gracefully when uninitialized.
 - NEVER run `bun db:generate` or `bun db:migrate` via Claude Code — requires interactive input
 
 ### SEO, Open Graph & LLMO
@@ -303,7 +307,7 @@ Structured console logger — Cloudflare Workers compatible. JSON in prod (Cloud
 | Logger instance | `packages/auth/logger.ts`                          |
 | Methods         | `logger.info()`, `.warn()`, `.error()`, `.debug()` |
 
-Cloudflare Workers observability is enabled in `wrangler.jsonc` (`"observability": { "enabled": true }`).
+Cloudflare Workers observability is enabled via `alchemy.run.ts` wrangler transform (`"observability": { "enabled": true }`).
 
 ### Analytics, Error Tracking & Event Capture
 
@@ -359,26 +363,35 @@ Auth errors: [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i
 - New packages blocked if published < 3 days ago (`install.minimumReleaseAge`)
 - [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) checks for vulnerabilities on `bun install`
 
-### Hosting & Deployment
+### Infrastructure & Deployment
 
-[Cloudflare Workers](https://workers.cloudflare.com/) via `@cloudflare/vite-plugin` + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite).
+[Alchemy](https://alchemy.run/) — TypeScript-native IaC for [Cloudflare Workers](https://workers.cloudflare.com/) + [D1](https://developers.cloudflare.com/d1/) (SQLite). Alchemy wraps `@cloudflare/vite-plugin` and `wrangler`, providing typed infrastructure definitions in pure TypeScript.
 
-| What         | Config                                                                                         |
-| :----------- | :--------------------------------------------------------------------------------------------- |
-| Build/Deploy | `cd apps/web && bun run deploy` (Vite build + `wrangler deploy`)                               |
-| Wrangler     | `apps/web/wrangler.jsonc` — Workers config, D1 binding, `nodejs_compat`, observability         |
-| Migrations   | `bun db:migrate` (local) / `bun db:migrate:remote` (prod) via `wrangler d1 migrations apply`   |
-| Health check | `/api/auth/ok`                                                                                 |
-| Secrets      | `wrangler secret put BETTER_AUTH_SECRET`, etc.                                                 |
-| D1 setup     | `cd apps/web && npx wrangler d1 create omegastart-db` — update `database_id` in wrangler.jsonc |
+| What           | Config                                                                                                      |
+| :------------- | :---------------------------------------------------------------------------------------------------------- |
+| IaC definition | `alchemy.run.ts` — D1 database + TanStack Start worker                                                      |
+| Build/Deploy   | `cd apps/web && bun run deploy` (`alchemy deploy` — builds, provisions D1, applies migrations, deploys)     |
+| Dev server     | `bun dev` → `alchemy dev` → generates wrangler config → runs `vite dev`                                     |
+| Migrations     | Applied automatically by Alchemy on `dev`/`deploy` via `migrationsDir` in D1Database                        |
+| Health check   | `/api/auth/ok`                                                                                              |
+| State          | `.alchemy/omegastart/` — encrypted resource state (committed). `.alchemy/miniflare/` — local data (ignored) |
+| Wrangler       | `apps/web/wrangler.jsonc` — kept for manual wrangler CLI use (db:studio, db:migrate)                        |
 
-Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#cloudflare-workers--official-partner
+**How it works:**
+
+- `alchemy dev` evaluates `alchemy.run.ts`, generates `.alchemy/local/wrangler.jsonc`, then runs `vite dev`
+- `alchemy deploy` evaluates `alchemy.run.ts`, provisions/updates D1 + Worker, applies migrations, deploys
+- The Alchemy Vite plugin (`alchemy/cloudflare/tanstack-start`) wraps `@cloudflare/vite-plugin`, pointing it at the generated wrangler config
+- `ALCHEMY_PASSWORD` env var required for state encryption (generate with `openssl rand -base64 32`)
+- `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` required for deploy (not needed for local dev)
+
+Reference: https://alchemy.run/guides/cloudflare-tanstack-start/
 
 ### CI/CD
 
 GitHub Actions (`.github/workflows/ci.yml`) — runs `bun ok:ci` on push to `main` and PRs. Uses `oven-sh/setup-bun@v2`.
 
-On push to `main`: deploys to Cloudflare Workers, applies D1 migrations, uploads source maps to PostHog, reports CI metrics. Requires GitHub secrets: `CLOUDFLARE_API_TOKEN`, `POSTHOG_PROJECT_ID`, `POSTHOG_CLI_API_KEY`, `POSTHOG_PROJECT_API_KEY`.
+On push to `main`: deploys via `alchemy deploy` (provisions D1, applies migrations, deploys Worker), uploads source maps to PostHog, reports CI metrics. Requires GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ALCHEMY_PASSWORD`, `POSTHOG_PROJECT_ID`, `POSTHOG_CLI_API_KEY`, `POSTHOG_PROJECT_API_KEY`.
 
 ---
 
@@ -545,6 +558,7 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `packages/db/schema.ts`                  | Drizzle schema + indexes                                                               |
 | `packages/db/utils.ts`                   | `ulidPrimaryKey` helper                                                                |
 | `packages/auth/auth.ts`                  | Better Auth config + i18n plugin + all email triggers                                  |
+| `packages/auth/kv-storage.ts`            | Cloudflare KV adapter for Better Auth secondary storage (sessions + rate limiting)     |
 | `packages/auth/auth-i18n.ts`             | `buildAuthTranslations()` — Paraglide → Better Auth error codes (null if English-only) |
 | `packages/auth/env.ts`                   | Server env vars + feature-gated groups                                                 |
 | `packages/auth/logger.ts`                | Structured console logger (Workers-compatible)                                         |
@@ -563,11 +577,12 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `apps/web/src/components/settings/`      | Account settings cards                                                                 |
 | `apps/web/src/server.ts`                 | Server entry — paraglide middleware for per-request locale                             |
 | `apps/web/src/router.tsx`                | TanStack Router config — rewrite with locale URL support                               |
-| `apps/web/vite.config.ts`                | Vite config (paraglide, tailwind, tanstack, nitro, react compiler)                     |
+| `apps/web/vite.config.ts`                | Vite config (paraglide, tailwind, tanstack, alchemy, react compiler)                   |
+| `alchemy.run.ts`                         | Alchemy IaC — D1 + KV + TanStack Start worker definition                               |
 | `.oxlintrc.json`                         | Oxlint config                                                                          |
 | `.oxfmtrc.jsonc`                         | Oxfmt config                                                                           |
 | `.syncpackrc`                            | Syncpack config                                                                        |
-| `apps/web/wrangler.jsonc`                | Cloudflare Workers config (compat flags, observability)                                |
+| `apps/web/wrangler.jsonc`                | Fallback wrangler config (manual CLI use only — Alchemy generates its own)             |
 | `.github/workflows/ci.yml`               | CI pipeline                                                                            |
 | `packages/email/templates.ts`            | Email render functions + localized subject helpers                                     |
 | `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                        |

@@ -21,6 +21,7 @@ import { admin, magicLink } from "better-auth/plugins";
 import { buildAuthTranslations } from "./auth-i18n";
 import { captureEmail } from "./email-capture";
 import { serverEnv } from "./env";
+import { kvSecondaryStorage } from "./kv-storage";
 import { posthog } from "./posthog";
 
 // Reference: https://better-auth.com/docs
@@ -62,6 +63,8 @@ const getUserLocale = (user: Record<string, unknown>): string =>
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, { provider: "sqlite", usePlural: true }),
+  // Reference: https://www.better-auth.com/docs/concepts/database#secondary-storage
+  secondaryStorage: kvSecondaryStorage,
   // Reference: https://better-auth.com/docs/reference/options
   advanced: {
     database: {
@@ -172,6 +175,15 @@ export const auth = betterAuth({
       // 5 minutes
       maxAge: 5 * 60,
     },
+    // Keep sessions in D1 for admin queries (list/revoke) even though
+    // session lookups go through KV secondary storage
+    storeSessionInDatabase: true,
+  },
+  // Reference: https://better-auth.com/docs/concepts/rate-limit
+  rateLimit: {
+    storage: "secondary-storage",
+    window: 60,
+    max: 100,
   },
   // Reference: https://better-auth.com/docs/concepts/typescript#additional-fields
   user: {

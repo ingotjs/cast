@@ -6,6 +6,7 @@
   "exports": {
     ".": "./auth.ts",
     "./env": "./env.ts",
+    "./kv-storage": "./kv-storage.ts",
     "./logger": "./logger.ts",
     "./posthog": "./posthog.ts",
     "./email-capture": "./email-capture.ts",

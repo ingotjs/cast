@@ -1,14 +1,14 @@
-import { cloudflare } from "@cloudflare/vite-plugin";
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
+import alchemy from "alchemy/cloudflare/tanstack-start";
 import type { PluginOption } from "vite";
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-// Reference: https://tanstack.com/start/latest/docs/framework/react/guide/hosting#cloudflare-workers--official-partner
+// Reference: https://alchemy.run/guides/cloudflare-tanstack-start/
 
 const config = defineConfig({
   server: { port: 3000 },
@@ -25,7 +25,7 @@ const config = defineConfig({
     devtools(),
     tsconfigPaths({ projects: ["./tsconfig.json"] }),
     tailwindcss(),
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    alchemy(),
     tanstackStart(),
     viteReact({
       babel: {

@@ -14,4 +14,10 @@
       "migrations_dir": "../../packages/db/drizzle",
     },
   ],
+  "kv_namespaces": [
+    {
+      "binding": "SESSION_KV",
+      "id": "<your-kv-namespace-id>",
+    },
+  ],
 }

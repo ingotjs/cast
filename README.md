@@ -19,7 +19,7 @@ Most starters give you a skeleton. OmegaStart gives you a **production-ready fou
 
 - **Auth** — Email/password + passkeys (WebAuthn) + Google OAuth + magic link via [Better Auth](https://better-auth.com/). Email verification on signup, custom sign-in/sign-up/forgot-password forms. Account settings with session management and account deletion. OAuth and magic link toggle via env vars.
 - **API** — Type-safe RPC via [oRPC](https://orpc.dev/) with TanStack Query integration. Public, protected, and admin procedure levels.
-- **Database** — [Drizzle ORM](https://orm.drizzle.team/) with [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite). Native Worker binding, global read replication, zero config.
+- **Database** — [Drizzle ORM](https://orm.drizzle.team/) with [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) + [Cloudflare KV](https://developers.cloudflare.com/kv/) for session/rate-limit storage. D1 for relational data, KV for globally-replicated sub-10ms reads.
 - **Email** — [React Email](https://react.email/) templates + [Resend](https://resend.com/) delivery. Email verification, password reset, password changed notification, account deleted confirmation, and welcome emails — all i18n-ready and sent in the user's preferred locale.
 - **Service toggles** — External services (PostHog, Resend, Google OAuth) activate by env var presence. No code changes — set the env vars and the feature turns on.
 - **SEO & LLMO** — Per-page meta tags (OG + Twitter), JSON-LD structured data, `sitemap.xml`, `llms.txt`, `robots.txt`, dynamic favicon + OG image via `@vercel/og`. FAQ page with FAQPage schema for AI discoverability.
@@ -46,20 +46,19 @@ Zero-config, zero-compromise. Every layer of the stack is guarded by automated t
 - **Dependency management** — [syncpack](https://syncpack.dev/) enforces pinned versions (no `^` or `~`), consistent versions across all packages, and workspace protocol for internal packages. No version drift, no "works on my machine."
 - **Supply chain security** — [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) scans for known vulnerabilities on every `bun install`. Combined with Bun's `install.minimumReleaseAge` (3-day quarantine on new packages) to block supply chain attacks.
 - **Pre-commit enforcement** — [Husky](https://typicode.github.io/husky/) runs `bun ok` (type check + lint + test) on every commit. Nothing ships without passing the full pipeline.
-- **CI/CD** — GitHub Actions runs `bun ok:ci` on every push and PR. On `main`, also deploys to Cloudflare Workers, runs D1 migrations, uploads source maps to PostHog, and reports CI metrics.
+- **CI/CD** — GitHub Actions runs `bun ok:ci` on every push and PR. On `main`, also deploys via Alchemy (provisions D1, applies migrations, deploys Worker), uploads source maps to PostHog, and reports CI metrics.
 - **One command to rule them all** — `bun ok` runs syncpack + type check + lint + test in sequence. If it passes, your code is clean.
 
 ### 6. Deploy in 60 Seconds
 
-**[Cloudflare Workers](https://workers.cloudflare.com/)** + **[Cloudflare D1](https://developers.cloudflare.com/d1/)** — everything on the edge, zero external dependencies:
+**[Cloudflare Workers](https://workers.cloudflare.com/)** + **[Cloudflare D1](https://developers.cloudflare.com/d1/)** via **[Alchemy](https://alchemy.run/)** — TypeScript-native IaC, everything on the edge:
 
-1. Create a D1 database: `cd apps/web && npx wrangler d1 create omegastart-db`
-2. Update `database_id` in `apps/web/wrangler.jsonc`
-3. Set secrets: `wrangler secret put BETTER_AUTH_SECRET`
-4. Apply migrations: `bun db:migrate:remote`
-5. Deploy: `cd apps/web && bun run deploy`
+1. Set env vars: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ALCHEMY_PASSWORD`
+2. Deploy: `cd apps/web && bun run deploy`
 
-CI auto-deploys on push to `main` — applies D1 migrations, then deploys to Cloudflare. Pre-configured in `.github/workflows/ci.yml`.
+That's it. Alchemy provisions the D1 database, applies migrations, and deploys the Worker — all from `alchemy.run.ts`.
+
+CI auto-deploys on push to `main`. Pre-configured in `.github/workflows/ci.yml`.
 
 ## Quick Start
 
@@ -69,7 +68,7 @@ bun install
 bun dev
 ```
 
-`bun dev` auto-installs deps and starts all apps. D1 is simulated locally via miniflare — run `bun db:migrate` once to apply migrations, then open `http://localhost:3000`.
+`bun dev` auto-installs deps and starts all apps. Alchemy generates the wrangler config and runs Vite with D1 simulated locally via miniflare. Migrations are applied automatically. Open `http://localhost:3000`.
 
 > **Note:** The `.env` file is only needed for feature-flagged services (PostHog, Resend, Google OAuth). The app runs without it — disabled features are simply skipped.
 
@@ -90,25 +89,28 @@ packages/config   → Shared TypeScript configs
 
 ## Commands
 
-| Command                 | Description                                      |
-| ----------------------- | ------------------------------------------------ |
-| `bun dev`               | Start all apps in dev mode                       |
-| `bun dev:email`         | Email template preview (port 3002)               |
-| `bun ok`                | Type check + lint + test (run before committing) |
-| `bun ok:ci`             | Same without auto-fixes (CI)                     |
-| `bun db:generate`       | Generate database migrations                     |
-| `bun db:migrate`        | Apply migrations locally (D1)                    |
-| `bun db:migrate:remote` | Apply migrations to remote D1                    |
-| `bun db:studio`         | Open Drizzle Studio                              |
+| Command                 | Description                                                               |
+| ----------------------- | ------------------------------------------------------------------------- |
+| `bun dev`               | Start all apps in dev mode (Alchemy generates wrangler config, runs Vite) |
+| `bun dev:email`         | Email template preview (port 3002)                                        |
+| `bun ok`                | Type check + lint + test (run before committing)                          |
+| `bun ok:ci`             | Same without auto-fixes (CI)                                              |
+| `bun db:generate`       | Generate database migrations                                              |
+| `bun db:migrate`        | Apply migrations locally (D1)                                             |
+| `bun db:migrate:remote` | Apply migrations to remote D1                                             |
+| `bun db:studio`         | Open Drizzle Studio                                                       |
 
 ## Environment Variables
 
 ### Required (Production)
 
-| Variable             | Description                             |
-| -------------------- | --------------------------------------- |
-| `BETTER_AUTH_SECRET` | Auth encryption secret (min 32 chars)   |
-| `URL`                | Production URL (e.g. https://myapp.com) |
+| Variable                | Description                                      |
+| ----------------------- | ------------------------------------------------ |
+| `ALCHEMY_PASSWORD`      | IaC state encryption (`openssl rand -base64 32`) |
+| `CLOUDFLARE_API_TOKEN`  | Cloudflare API token (for deploy)                |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID (for deploy)               |
+| `BETTER_AUTH_SECRET`    | Auth encryption secret (min 32 chars)            |
+| `URL`                   | Production URL (e.g. https://myapp.com)          |
 
 ### Optional (Service Features)
 
@@ -195,23 +197,24 @@ With new locale:  Paraglide fr.json auth_* keys  →  buildAuthTranslations()  �
 
 ## Tech Stack
 
-| Layer           | Technology                                                                                                     |
-| --------------- | -------------------------------------------------------------------------------------------------------------- |
-| Framework       | [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router + Cloudflare Workers)                     |
-| Language        | TypeScript 5.9 (type-checked via [tsgo](https://github.com/microsoft/typescript-go))                           |
-| API             | [oRPC](https://orpc.dev/) + [TanStack Query](https://tanstack.com/query)                                       |
-| Database        | [Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite)     |
-| Auth            | [Better Auth](https://better-auth.com/) (email/password, passkeys, admin)                                      |
-| UI              | [shadcn v4](https://ui.shadcn.com/) + Tailwind CSS 4 + [Base UI](https://base-ui.com/)                         |
-| Email           | [React Email](https://react.email/) + [Resend](https://resend.com/)                                            |
-| i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)                          |
-| Logging         | Structured console logger (Cloudflare Logpush compatible)                                                      |
-| Analytics       | [PostHog](https://posthog.com/) (client + server, error tracking)                                              |
-| Linting         | [Ultracite](https://github.com/haydenbleasel/ultracite) (Oxlint + Oxfmt)                                       |
-| Package Manager | [Bun](https://bun.sh/)                                                                                         |
-| Monorepo        | [Turborepo](https://turborepo.dev/)                                                                            |
-| Deployment      | [Cloudflare Workers](https://workers.cloudflare.com/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) |
-| CI/CD           | GitHub Actions                                                                                                 |
+| Layer           | Technology                                                                                                                                               |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Framework       | [TanStack Start](https://tanstack.com/start) (Vite + TanStack Router + Cloudflare Workers)                                                               |
+| Language        | TypeScript 5.9 (type-checked via [tsgo](https://github.com/microsoft/typescript-go))                                                                     |
+| API             | [oRPC](https://orpc.dev/) + [TanStack Query](https://tanstack.com/query)                                                                                 |
+| Database        | [Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) + [KV](https://developers.cloudflare.com/kv/) |
+| Auth            | [Better Auth](https://better-auth.com/) (email/password, passkeys, admin)                                                                                |
+| UI              | [shadcn v4](https://ui.shadcn.com/) + Tailwind CSS 4 + [Base UI](https://base-ui.com/)                                                                   |
+| Email           | [React Email](https://react.email/) + [Resend](https://resend.com/)                                                                                      |
+| i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)                                                                    |
+| Logging         | Structured console logger (Cloudflare Logpush compatible)                                                                                                |
+| Analytics       | [PostHog](https://posthog.com/) (client + server, error tracking)                                                                                        |
+| Linting         | [Ultracite](https://github.com/haydenbleasel/ultracite) (Oxlint + Oxfmt)                                                                                 |
+| Package Manager | [Bun](https://bun.sh/)                                                                                                                                   |
+| Monorepo        | [Turborepo](https://turborepo.dev/)                                                                                                                      |
+| IaC             | [Alchemy](https://alchemy.run/) (TypeScript-native, wraps Cloudflare APIs directly)                                                                      |
+| Deployment      | [Cloudflare Workers](https://workers.cloudflare.com/) + [Cloudflare D1](https://developers.cloudflare.com/d1/)                                           |
+| CI/CD           | GitHub Actions                                                                                                                                           |
 
 <details>
 <summary>Claude Code Skills</summary>

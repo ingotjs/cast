@@ -1,13 +1,15 @@
 // Reference: https://github.com/TanStack/router/tree/main/examples/react/start-i18n-paraglide
 
+import { initKv } from "@packages/auth/kv-storage";
 import { initDb } from "@packages/db";
 import handler from "@tanstack/react-start/server-entry";
 import { env } from "cloudflare:workers";
 
 import { paraglideMiddleware } from "./paraglide/server.js";
 
-// Initialize the database with the D1 binding from the Workers environment
+// Initialize bindings from the Workers environment
 initDb(env.DB);
+initKv(env.SESSION_KV);
 
 export default {
   fetch(req: Request): Promise<Response> {
