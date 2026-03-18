@@ -163,11 +163,11 @@ OmegaStart is **i18n-ready from day one** — every user-facing string flows thr
 
 Three separate Paraglide projects keep bundles lean and concerns separated:
 
-| Project  | Path                       | Covers                                                          |
-| -------- | -------------------------- | --------------------------------------------------------------- |
-| Frontend | `apps/web/messages/`       | UI labels, buttons, forms, toasts, meta tags, validation errors |
-| Backend  | `packages/auth/messages/`  | Auth error messages, API responses, validation errors           |
-| Email    | `packages/email/messages/` | Subject lines, body copy, CTAs, transactional email content     |
+| Project  | Path                            | Covers                                                          |
+| -------- | ------------------------------- | --------------------------------------------------------------- |
+| Frontend | `apps/web/messages/`            | UI labels, buttons, forms, toasts, meta tags, validation errors |
+| Backend  | `packages/auth/messages/`       | Auth error messages, API responses, validation errors           |
+| Email    | `packages/email/.etc/messages/` | Subject lines, body copy, CTAs, transactional email content     |
 
 Each project generates its own type-safe message functions. Server strings never leak into the client bundle.
 

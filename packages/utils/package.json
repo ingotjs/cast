@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./consts": "./src/shared/consts.ts",
-    "./server/env": "./src/server/env.ts",
-    "./server/logger": "./src/server/logger.ts",
-    "./server/posthog": "./src/server/posthog.ts"
+    "./consts": "./shared/consts.ts",
+    "./server/env": "./server/env.ts",
+    "./server/logger": "./server/logger.ts",
+    "./server/posthog": "./server/posthog.ts"
   },
   "scripts": {
     "test": "bun test",

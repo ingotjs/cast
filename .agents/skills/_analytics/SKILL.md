@@ -17,8 +17,8 @@ description: PostHog analytics, error tracking, and event capture — client pro
 | :------------------ | :---------------------------------------------------------------------------------------- |
 | Client provider     | `apps/web/src/routes/__root.tsx` — `PostHogProvider` + `PostHogErrorBoundary`             |
 | Client env          | `apps/web/src/lib/env.ts` — `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`         |
-| Server client       | `packages/utils/src/server/posthog.ts` — `posthog-node` with `enableExceptionAutocapture` |
-| Server env          | `packages/utils/src/server/env.ts` — same `VITE_PUBLIC_POSTHOG_*` env vars as client      |
+| Server client       | `packages/utils/server/posthog.ts` — `posthog-node` with `enableExceptionAutocapture` |
+| Server env          | `packages/utils/server/env.ts` — same `VITE_PUBLIC_POSTHOG_*` env vars as client      |
 | Reverse proxy       | `apps/web/vite.config.ts` — Nitro `routeRules` proxies `/api/ph/**` to `us.i.posthog.com` |
 | Event tracking plan | `.posthog-events.json` — all tracked events with descriptions and source files            |
 
@@ -69,7 +69,7 @@ Structured console logger — Cloudflare Workers compatible. JSON in prod (Cloud
 
 | What            | Where                                              |
 | :-------------- | :------------------------------------------------- |
-| Logger instance | `packages/utils/src/server/logger.ts`              |
+| Logger instance | `packages/utils/server/logger.ts`              |
 | Methods         | `logger.info()`, `.warn()`, `.error()`, `.debug()` |
 
 Cloudflare Workers observability is enabled via `alchemy.run.ts` wrangler transform (`"observability": { "enabled": true }`).

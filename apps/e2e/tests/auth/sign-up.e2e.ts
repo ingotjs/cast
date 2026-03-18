@@ -58,14 +58,12 @@ test.describe("Sign Up", () => {
       timeout: 10_000,
     });
 
-    // Verify verification email was captured
-    // Wait a moment for the async email capture to complete
-    await page.waitForTimeout(500);
-    const emails = getEmails(email);
-    expect(emails.length).toBeGreaterThanOrEqual(1);
-
-    const verificationEmail = emails.find((e) => e.subject.toLowerCase().includes("verif"));
-    expect(verificationEmail).toBeTruthy();
+    // Verify verification email was captured (poll — email capture is async)
+    await expect(() => {
+      const emails = getEmails(email);
+      const verificationEmail = emails.find((e) => e.subject.toLowerCase().includes("verif"));
+      expect(verificationEmail).toBeTruthy();
+    }).toPass({ timeout: 5_000 });
   });
 
   test("should show validation errors for empty fields", async ({ page }) => {

@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignoreFiles": [".agents/**", ".claude/**", "**/paraglide/**"],
+  "ignoreFiles": [".agents/**", ".claude/**", "**/paraglide/**", "**/__tests__/**"],
   "ignoreIssues": {
     "**/paraglide/**": ["exports"]
   },

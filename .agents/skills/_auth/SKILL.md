@@ -51,7 +51,7 @@ description: Authentication system using Better Auth — config, plugins, sessio
 
 ## Capability Flags
 
-Product decisions in `consts.auth` (`packages/utils/src/shared/consts.ts`):
+Product decisions in `consts.auth` (`packages/utils/shared/consts.ts`):
 
 | Capability | Default | Access                 |
 | :--------- | :-----: | :--------------------- |

@@ -33,11 +33,6 @@ dist
 .alchemy/miniflare
 .alchemy/local
 
-# E2E email captures
-.email-captures
-
-# React Email dev server
-.react-email
 
 # Playwright MCP
 .playwright-mcp

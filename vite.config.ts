@@ -4,5 +4,6 @@ export default defineConfig({
   staged: {
     "*": "vp check --fix",
   },
+
   lint: {},
 });

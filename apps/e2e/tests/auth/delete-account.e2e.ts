@@ -1,11 +1,11 @@
 /**
  * E2E Test: Delete Account Flow
  *
- * Uses the `authenticatedPage` fixture which creates a user via API,
- * signs in through the UI, and lands on the home page authenticated.
+ * Uses the `authenticatedPage` fixture which creates a user via API
+ * (session cookies set automatically).
  *
  * Steps:
- * 1. authenticatedPage fixture creates user and signs in through the UI
+ * 1. authenticatedPage fixture creates user (cookies set via API)
  * 2. Navigate to the account settings page at /account
  * 3. Wait for the page to settle (session data loading causes re-renders)
  * 4. Click the "Delete account" trigger button to reveal the confirmation form
@@ -47,11 +47,12 @@ test.describe("Delete Account", () => {
       timeout: 10_000,
     });
 
-    // Verify account-deleted email was captured
-    await page.waitForTimeout(500);
-    const emails = getEmails(authenticatedPage.email);
-    const deletedEmail = emails.find((e) => e.subject.toLowerCase().includes("deleted"));
-    expect(deletedEmail).toBeTruthy();
+    // Verify account-deleted email was captured (poll — email capture is async)
+    await expect(() => {
+      const emails = getEmails(authenticatedPage.email);
+      const deletedEmail = emails.find((e) => e.subject.toLowerCase().includes("deleted"));
+      expect(deletedEmail).toBeTruthy();
+    }).toPass({ timeout: 5_000 });
 
     // Verify the deleted user cannot sign in anymore
     await page.goto("/auth/sign-in");

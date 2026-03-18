@@ -31,7 +31,7 @@ All transactional emails are in `packages/email/`. Emails are fully i18n via Par
 | `packages/email/templates.ts` | Render functions (`renderXxxEmail`) + localized subject helpers (`getEmailSubject.xxx`) |
 | `packages/email/send.ts` | `createEmailSender` factory (Resend API) |
 | `packages/auth/auth.ts` | All email triggers configured here (hooks, databaseHooks, emailVerification, deleteUser) |
-| `packages/email/messages/en.json` | Email i18n strings |
+| `packages/email/.etc/messages/en.json` | Email i18n strings |
 
 ## Email i18n Pattern
 
@@ -39,11 +39,11 @@ All email text MUST use `m.email_xxx({...}, loc(locale))` where `loc()` casts th
 
 ## Welcome Email Config
 
-`consts.auth.welcomeEmail` (boolean) in `packages/utils/src/shared/consts.ts` — set to `false` to disable.
+`consts.auth.welcomeEmail` (boolean) in `packages/utils/shared/consts.ts` — set to `false` to disable.
 
 ## Adding a New Email Template
 
-1. Add message keys to `packages/email/messages/en.json` (pattern: `email_{template}_{element}`)
+1. Add message keys to `packages/email/.etc/messages/en.json` (pattern: `email_{template}_{element}`)
 2. Create template in `packages/email/emails/` using `EmailLayout` + `loc()` + `m.email_xxx()`
 3. Add render function to `packages/email/templates.ts`
 4. Add subject to `getEmailSubject` in `packages/email/templates.ts`
@@ -52,7 +52,7 @@ All email text MUST use `m.email_xxx({...}, loc(locale))` where `loc()` casts th
 
 ## Email Capture (E2E)
 
-`packages/email/email-capture.ts` — captures emails to `.email-captures/` as JSON in dev/test mode. Read via `getEmails` fixture in E2E tests.
+`packages/email/email-capture.ts` — captures emails to `packages/email/.etc/.email-captures/` as JSON in dev/test mode. Read via `getEmails` fixture in E2E tests.
 
 ## Preview
 

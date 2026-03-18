@@ -21,7 +21,7 @@ i18n covers frontend UI, backend API responses, Zod validation errors, auth erro
 | :------- | :-------------------------- | :---------------------------------------------------------------------------- |
 | Frontend | `apps/web/messages/`        | UI labels, buttons, placeholders, toasts, auth forms, settings, admin         |
 | Backend  | `packages/auth/messages/` | Auth error messages (`auth_*`), oRPC errors, API responses, validation errors |
-| Email    | `packages/email/messages/`  | Subject lines, body copy, CTAs, transactional email content                   |
+| Email    | `packages/email/.etc/messages/`  | Subject lines, body copy, CTAs, transactional email content                   |
 
 Each has its own `project.inlang/settings.json` and generates its own `paraglide/messages`. Server strings never leak to client bundle.
 
@@ -43,7 +43,7 @@ ALL user-facing strings MUST use Paraglide. This includes UI text, Zod validatio
 1. Add to the appropriate `messages/en.json`:
    - Frontend → `apps/web/messages/en.json`
    - Backend → `packages/auth/messages/en.json`
-   - Email → `packages/email/messages/en.json`
+   - Email → `packages/email/.etc/messages/en.json`
 2. Import: `import { m } from "@/paraglide/messages"`
 3. Use:
    ```tsx
@@ -63,7 +63,7 @@ Every validation message the user sees is locale-aware:
 
 ## Email i18n
 
-Email templates use their own Paraglide project (`packages/email/messages/`). All email text — subjects, headings, body, buttons — MUST use Paraglide. Emails are sent in the recipient's preferred locale (stored in the `users.locale` DB field).
+Email templates use their own Paraglide project (`packages/email/.etc/messages/`). All email text — subjects, headings, body, buttons — MUST use Paraglide. Emails are sent in the recipient's preferred locale (stored in the `users.locale` DB field).
 
 **Locale bridge:** `packages/email/locale.ts` — `loc()` casts string locale to Paraglide's narrow type.
 
@@ -114,7 +114,7 @@ The test suite (`auth-i18n.test.ts`) imports `BASE_ERROR_CODES` from `better-aut
 1. Add the locale code to **all three** `project.inlang/settings.json` `locales` arrays:
    - `apps/web/project.inlang/settings.json`
    - `packages/auth/project.inlang/settings.json`
-   - `packages/email/project.inlang/settings.json`
+   - `packages/email/.etc/project.inlang/settings.json`
 2. Create `messages/{locale}.json` in each project with translated strings
 3. For auth errors: add `auth_*` keys to `packages/auth/messages/{locale}.json` — the builder automatically includes non-default locale translations
 4. Compile Paraglide in each package (`bun run build`) or run `bun ok` from root

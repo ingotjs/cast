@@ -9,7 +9,7 @@
 const isDev = process.env.NODE_ENV !== "production";
 
 const CAPTURE_ENDPOINT = "http://localhost:2000/__email-capture";
-const DIR_SUFFIX = "../../.email-captures";
+const DIR_SUFFIX = ".etc/.email-captures";
 
 /** Capture an email to a JSON file for E2E test verification */
 export const captureEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }) => {

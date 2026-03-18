@@ -13,7 +13,7 @@ description: SEO, Open Graph, LLMO, and structured data patterns — per-page me
 
 ## Core Setup
 
-- `consts.siteUrl` in `packages/utils/src/shared/consts.ts` — **MUST update before deploying** (used in sitemap, robots.txt, JSON-LD)
+- `consts.siteUrl` in `packages/utils/shared/consts.ts` — **MUST update before deploying** (used in sitemap, robots.txt, JSON-LD)
 - SSR enabled by default — crawlers receive fully rendered HTML
 - Every public route MUST have `head()` with title, description, and OG tags (i18n via Paraglide)
 - Dynamic favicon at `/api/icon?theme=light|dark` — renders via `@vercel/og`, adapts to dark/light mode

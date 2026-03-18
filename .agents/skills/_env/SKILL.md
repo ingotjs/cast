@@ -30,7 +30,7 @@ External services toggled by env var presence. Set the env vars → service is o
 
 ## Capability Flags
 
-Product decisions in `consts.auth` (`packages/utils/src/shared/consts.ts`). Always the same regardless of environment.
+Product decisions in `consts.auth` (`packages/utils/shared/consts.ts`). Always the same regardless of environment.
 
 | Capability | Default | Access                 |
 | :--------- | :-----: | :--------------------- |
@@ -56,7 +56,7 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 
 ## Adding a New Service Feature
 
-1. Add an env group in the appropriate env file (`packages/utils/src/server/env.ts` and/or `apps/web/src/lib/env.ts`):
+1. Add an env group in the appropriate env file (`packages/utils/server/env.ts` and/or `apps/web/src/lib/env.ts`):
    ```ts
    myService: env.MY_SERVICE_KEY
      ? { MY_SERVICE_KEY: parseEnv("MY_SERVICE_KEY", z.string().min(1)) }
@@ -69,7 +69,7 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 
 | File                                | Purpose                                    |
 | :---------------------------------- | :----------------------------------------- |
-| `packages/utils/src/server/env.ts`  | Server env vars + feature-gated groups     |
+| `packages/utils/server/env.ts`  | Server env vars + feature-gated groups     |
 | `apps/web/src/lib/env.ts`           | Client env vars + feature groups           |
-| `packages/utils/src/shared/consts.ts` | App constants + capability flags         |
+| `packages/utils/shared/consts.ts` | App constants + capability flags         |
 | `.env.example`                      | Template for required env vars             |

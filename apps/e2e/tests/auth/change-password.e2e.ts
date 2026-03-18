@@ -1,11 +1,11 @@
 /**
  * E2E Test: Change Password Flow
  *
- * Uses the `authenticatedPage` fixture which creates a user via API,
- * signs in through the UI, and lands on the home page authenticated.
+ * Uses the `authenticatedPage` fixture which creates a user via API
+ * (session cookies set automatically).
  *
  * Test 1 — Successful password change:
- * 1. authenticatedPage fixture creates user and signs in through the UI
+ * 1. authenticatedPage fixture creates user (cookies set via API)
  * 2. Navigate to the account settings page at /account
  * 3. Wait for the page to settle (session data loading causes re-renders)
  * 4. Fill in the change-password form (current password, new password, confirm new password)
@@ -15,7 +15,7 @@
  * 8. Sign in with the new password through the UI to verify it works
  *
  * Test 2 — Incorrect current password:
- * 1. authenticatedPage fixture creates user and signs in through the UI
+ * 1. authenticatedPage fixture creates user (cookies set via API)
  * 2. Navigate to /account
  * 3. Enter wrong current password with valid new password
  * 4. Submit the form
@@ -54,13 +54,14 @@ test.describe("Change Password", () => {
       timeout: 10_000,
     });
 
-    // Verify password-changed email was captured
-    await page.waitForTimeout(500);
-    const emails = getEmails(authenticatedPage.email);
-    const passwordChangedEmail = emails.find(
-      (e) => e.subject.toLowerCase().includes("password") && e.subject.toLowerCase().includes("change")
-    );
-    expect(passwordChangedEmail).toBeTruthy();
+    // Verify password-changed email was captured (poll — email capture is async)
+    await expect(() => {
+      const emails = getEmails(authenticatedPage.email);
+      const passwordChangedEmail = emails.find(
+        (e) => e.subject.toLowerCase().includes("password") && e.subject.toLowerCase().includes("change")
+      );
+      expect(passwordChangedEmail).toBeTruthy();
+    }).toPass({ timeout: 5_000 });
 
     // Sign out via user menu
     await page.getByTestId("user-menu-trigger").click();

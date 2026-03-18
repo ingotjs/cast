@@ -1,12 +1,16 @@
+// oxlint-disable node/no-process-env
 import { defineConfig } from "@playwright/test";
 
 // Reference: https://playwright.dev/docs/test-configuration
 export default defineConfig({
+  globalSetup: "./global-setup.ts",
   testDir: "./tests",
   testMatch: "**/*.e2e.ts",
   timeout: 30_000,
   expect: { timeout: 10_000 },
-  fullyParallel: false,
+  fullyParallel: true,
+  workers: process.env.CI ? 8 : 1000,
+
   retries: 0,
   reporter: [["list"]],
   use: {

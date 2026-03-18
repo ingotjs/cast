@@ -1,0 +1,5 @@
+# React Email dev server
+.react-email
+
+# E2E email captures
+.etc/.email-captures

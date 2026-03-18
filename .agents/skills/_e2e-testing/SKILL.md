@@ -36,7 +36,7 @@ bunx playwright test tests/auth/  # specific directory
 | :------------- | :------------------------------------------------------- |
 | `createUser`   | Creates user via Better Auth API, returns email/password  |
 | `signInViaAPI` | Signs in via API, sets session cookies on browser context |
-| `getEmails`    | Reads captured emails from `.email-captures/` directory   |
+| `getEmails`    | Reads captured emails from `packages/email/.etc/.email-captures/` directory   |
 | `clearEmails`  | Clears all captured emails                               |
 | `uniqueEmail`  | Generates unique test email with prefix                   |
 
@@ -70,15 +70,32 @@ await expect(
 
 ### Email verification
 
-Emails are captured to `.email-captures/` as JSON files (filename = recipient email, key = timestamp, value = { subject, html }). Use the `getEmails` fixture:
+Emails are captured to `packages/email/.etc/.email-captures/` as JSON files (filename = recipient email, key = timestamp, value = { subject, html }). Use the `getEmails` fixture with `expect().toPass()` for polling (email capture is async):
 
 ```ts
-const emails = getEmails(email);
-const verificationEmail = emails.find((e) =>
-  e.subject.toLowerCase().includes("verif")
-);
-expect(verificationEmail).toBeTruthy();
+await expect(() => {
+  const emails = getEmails(email);
+  const verificationEmail = emails.find((e) =>
+    e.subject.toLowerCase().includes("verif")
+  );
+  expect(verificationEmail).toBeTruthy();
+}).toPass({ timeout: 5_000 });
 ```
+
+**NEVER use `waitForTimeout()` before checking emails** — it's a race condition. Always use `expect().toPass()` to poll.
+
+**MUST verify email was sent** for any flow that triggers an email notification. Every E2E test that exercises a flow sending an email MUST assert the email was captured.
+
+### Email notification coverage
+
+| Email Notification  | Trigger                        | E2E Test                  | Status      |
+| :------------------ | :----------------------------- | :------------------------ | :---------- |
+| Email Verification  | Sign up with email/password    | `sign-up.e2e.ts`          | Covered     |
+| Password Changed    | Change password                | `change-password.e2e.ts`  | Covered     |
+| Account Deleted     | Delete account                 | `delete-account.e2e.ts`   | Covered     |
+| Welcome             | New user created               | —                         | Not covered |
+| Password Reset      | Forgot password flow           | —                         | Not covered |
+| Magic Link          | Passwordless sign-in requested | —                         | Not covered |
 
 ### Auth guard (SSR)
 

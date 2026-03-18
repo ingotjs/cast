@@ -120,11 +120,11 @@ Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap +
 
 ### Analytics & Logging
 
-[PostHog](https://posthog.com/) for analytics + error tracking. Structured logger in `packages/utils/src/server/logger.ts`. Full details in **`_analytics` skill**.
+[PostHog](https://posthog.com/) for analytics + error tracking. Structured logger in `packages/utils/server/logger.ts`. Full details in **`_analytics` skill**.
 
 ### Internationalization (i18n)
 
-[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) — **ZERO TOLERANCE for non-i18n strings.** All user-facing text MUST come from Paraglide message functions. Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`). Three projects: Frontend (`apps/web/messages/`), Backend (`packages/auth/messages/`), Email (`packages/email/messages/`). Full details in **`_i18n` skill**.
+[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) — **ZERO TOLERANCE for non-i18n strings.** All user-facing text MUST come from Paraglide message functions. Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`). Three projects: Frontend (`apps/web/messages/`), Backend (`packages/auth/messages/`), Email (`packages/email/.etc/messages/`). Full details in **`_i18n` skill**.
 
 ### Dependency Management
 
@@ -246,10 +246,10 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 
 | File                                     | Purpose                                                                                |
 | :--------------------------------------- | :------------------------------------------------------------------------------------- |
-| `packages/utils/src/shared/consts.ts`    | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink)   |
-| `packages/utils/src/server/env.ts`       | Server env vars + feature-gated groups                                                 |
-| `packages/utils/src/server/logger.ts`    | Structured console logger (Workers-compatible)                                         |
-| `packages/utils/src/server/posthog.ts`   | PostHog server client (error tracking + analytics)                                     |
+| `packages/utils/shared/consts.ts`        | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink)   |
+| `packages/utils/server/env.ts`           | Server env vars + feature-gated groups                                                 |
+| `packages/utils/server/logger.ts`        | Structured console logger (Workers-compatible)                                         |
+| `packages/utils/server/posthog.ts`       | PostHog server client (error tracking + analytics)                                     |
 | `packages/db/index.ts`                   | Database client (D1 via `initDb()` + proxy)                                            |
 | `packages/db/schema.ts`                  | Drizzle schema + indexes                                                               |
 | `packages/db/zod-schema.ts`              | Drizzle-Zod select/insert/update schemas for all tables                                |
@@ -284,7 +284,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                        |
 | `packages/email/emails/email-layout.tsx` | Shared email layout component                                                          |
 | `packages/auth/messages/en.json`         | Server i18n strings (auth error messages with `auth_` prefix)                          |
-| `packages/email/messages/en.json`        | Email i18n strings                                                                     |
+| `packages/email/.etc/messages/en.json`   | Email i18n strings                                                                     |
 | `bunfig.toml`                            | Bun config (exact versions, min release age)                                           |
 
 <!--VITE PLUS START-->

@@ -6,7 +6,7 @@ import { test as base, expect } from "@playwright/test";
 // Reference: https://playwright.dev/docs/test-fixtures
 
 const BASE_URL = "http://localhost:2000";
-const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../../../.email-captures");
+const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../../../packages/email/.etc/.email-captures");
 const TEST_PASSWORD = "TestPassword123!";
 
 const generateEmail = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e.test`;
@@ -22,7 +22,7 @@ type CapturedEmail = {
 type AuthFixtures = {
   /** Create a user via API. Returns credentials. Does NOT sign in. */
   testUser: TestUser;
-  /** Create a user and sign in via the UI. Returns authenticated page + credentials. */
+  /** Create a user via API. Session cookies are set automatically. Returns credentials. */
   authenticatedPage: TestUser;
   /** Read captured emails for a recipient */
   getEmails: (email: string) => CapturedEmail[];
@@ -51,24 +51,12 @@ export const test = base.extend<AuthFixtures>({
     const email = generateEmail("e2e");
     const name = "E2E Test User";
 
-    // Create user via API
+    // Create user via API — session cookies are set automatically on the browser context
     const res = await page.request.post(`${BASE_URL}/api/auth/sign-up/email`, {
       data: { email, password: TEST_PASSWORD, name },
       headers: { Origin: BASE_URL },
     });
     expect(res.ok()).toBe(true);
-
-    // Clear cookies and sign in through the UI (like a real user)
-    // Wait for form hydration (data-hydrated is set by useEffect after React hydrates)
-    await page.context().clearCookies();
-    await page.goto("/auth/sign-in");
-    await page.waitForSelector("[data-testid='signin-form'][data-hydrated]", {
-      timeout: 10_000,
-    });
-    await page.getByLabel("Email").fill(email);
-    await page.locator("#password").fill(TEST_PASSWORD);
-    await page.getByTestId("signin-submit").click();
-    await expect(page).toHaveURL("/", { timeout: 15_000 });
 
     await use({ email, password: TEST_PASSWORD, name });
   },
