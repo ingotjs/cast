@@ -67,6 +67,8 @@ CI auto-deploys on push to `main`. Pre-configured in `.github/workflows/ci.yml`.
 cp .env.example .env  # Create your env file, fill in values for enabled features
 bun install
 bun dev
+
+bunx alchemy configure # Sets up Alchemy & CloudFlare
 ```
 
 `bun dev` auto-installs deps and starts all apps. Alchemy generates the wrangler config and runs Vite with D1 simulated locally via miniflare. Migrations are applied automatically. Open `http://localhost:3000`.

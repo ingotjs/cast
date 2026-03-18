@@ -153,222 +153,31 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 
 ### Authentication
 
-[Better Auth](https://better-auth.com/) with email/password + passkey + Google OAuth + magic link + admin + i18n plugins.
-
-| What              | Where                                                                                                            |
-| :---------------- | :--------------------------------------------------------------------------------------------------------------- |
-| Auth config       | `packages/auth/auth.ts`                                                                                          |
-| KV storage        | `packages/auth/kv-storage.ts` — Cloudflare KV adapter for Better Auth secondary storage                          |
-| Auth i18n builder | `packages/auth/auth-i18n.ts` — builds translations dict from Paraglide messages                                  |
-| Auth client       | `apps/web/src/lib/auth-client.ts` — exports `signIn`, `signUp`, `signOut`, `useSession`, `passkey`, `authClient` |
-| Auth API route    | `apps/web/src/routes/api/auth.$.ts`                                                                              |
-| Auth forms        | `apps/web/src/components/auth/` — sign-in, sign-up, forgot/reset password, social OAuth, magic link              |
-| Account settings  | `apps/web/src/components/settings/` — profile, password, sessions, passkeys, delete                              |
-| Password schema   | `apps/web/src/lib/schemas.ts` — shared across sign-up, reset-password, change-password                           |
-| Auth error msgs   | `packages/auth/messages/en.json` — all Better Auth error codes as Paraglide messages                             |
-
-- Auth routes at `/auth/$path`, account at `/account` (redirects to sign-in if unauthenticated)
-- Admin role guard on `/admin` via `beforeLoad` (`user.role === "admin"`)
-- **Secondary storage** — [Cloudflare KV](https://developers.cloudflare.com/kv/) via `packages/auth/kv-storage.ts`. Sessions and rate limiting stored in KV for fast globally-replicated reads (<10ms). Sessions also stored in D1 (`storeSessionInDatabase: true`) for admin queries. Rate limiting uses KV (`storage: "secondary-storage"`) instead of in-memory (required for Workers — each isolate has separate memory).
-- Session: cookie caching (5 min), 30-day expiry, daily refresh, `trustedOrigins` for CSRF
-- `BETTER_AUTH_SECRET` required in prod, auto-generated static fallback in dev
-- Sonner `<Toaster />` in root layout for auth notifications
-- User `locale` field stored in DB (default `"en"`, updatable via `input: true` in additionalFields)
-- `user.deleteUser` enabled — users can delete their own account with password confirmation
-- Email verification enabled (`sendOnSignUp: true`, `autoSignInAfterVerification: true`)
-- **Auth error i18n** — [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) translates base + passkey [error codes](https://better-auth.com/docs/reference/errors) via Paraglide. English skipped (Better Auth defaults). Detection: session locale → Accept-Language. See `packages/auth/auth-i18n.ts`.
+[Better Auth](https://better-auth.com/) with email/password + passkey + Google OAuth + magic link + admin + i18n plugins. Config: `packages/auth/auth.ts`. Client: `apps/web/src/lib/auth-client.ts`. Full details in **`_auth` skill**.
 
 ### Transactional Emails
 
-All transactional emails are in `packages/email/`. Emails are fully i18n via Paraglide — text is NEVER hardcoded. Emails are sent in the user's preferred `locale` (stored in the users table).
-
-| Email              | Trigger                                                 | Template                        |
-| :----------------- | :------------------------------------------------------ | :------------------------------ |
-| Email verification | On signup (`emailVerification.sendOnSignUp`)            | `emails/email-verification.tsx` |
-| Password reset     | Forgot password (`sendResetPassword`)                   | `emails/reset-password.tsx`     |
-| Password changed   | After change-password (`hooks.after`)                   | `emails/password-changed.tsx`   |
-| Account deleted    | After user deletion (`deleteUser.afterDelete`)          | `emails/account-deleted.tsx`    |
-| Welcome            | After user creation (`databaseHooks.user.create.after`) | `emails/welcome.tsx`            |
-| Magic link         | Magic link auth (disabled)                              | `emails/magic-link.tsx`         |
-
-**Architecture:**
-
-- `packages/email/emails/email-layout.tsx` — Shared layout (Html, Head, Preview, Tailwind, Body, footer)
-- `packages/email/locale.ts` — `loc()` helper to bridge string locale → Paraglide's narrow locale literal types
-- `packages/email/templates.ts` — Render functions (`renderXxxEmail`) + localized subject helpers (`getEmailSubject.xxx`)
-- `packages/email/send.ts` — `createEmailSender` factory (Resend API)
-- `packages/auth/auth.ts` — All email triggers configured here (hooks, databaseHooks, emailVerification, deleteUser)
-
-**Email i18n pattern:** All email text uses `m.email_xxx({...}, loc(locale))` where `loc()` casts the string locale to Paraglide's type.
-
-**Welcome email config:** `consts.auth.welcomeEmail` (boolean) in `packages/utils/src/shared/consts.ts` — set to `false` to disable.
-
-**Adding a new email template:**
-
-1. Add message keys to `packages/email/messages/en.json` (pattern: `email_{template}_{element}`)
-2. Create template in `packages/email/emails/` using `EmailLayout` + `loc()` + `m.email_xxx()`
-3. Add render function to `packages/email/templates.ts`
-4. Add subject to `getEmailSubject` in `packages/email/templates.ts`
-5. Wire trigger in `packages/auth/auth.ts`
-6. Add tests to `packages/auth/__tests__/email-notifications.test.ts`
+React Email + Resend in `packages/email/`. All templates i18n via Paraglide. Full details in **`_email` skill**.
 
 ### API (oRPC)
 
-[oRPC](https://orpc.dev/) with TanStack Query — define procedures inline, no contract-first.
-
-| Procedure Level      | Access              |
-| :------------------- | :------------------ |
-| `publicProcedure`    | Anyone              |
-| `protectedProcedure` | Authenticated users |
-| `adminProcedure`     | Admin role required |
-
-| What                   | Where                                                                        |
-| :--------------------- | :--------------------------------------------------------------------------- |
-| Base procedures        | `packages/api/base.ts`                                                       |
-| Router                 | `packages/api/router.ts`                                                     |
-| API route              | `apps/web/src/routes/api/rpc.$.ts`                                           |
-| Client (SSR + browser) | `apps/web/src/lib/orpc.ts` — server calls bypass HTTP, client uses `RPCLink` |
-
-Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
-
-**Usage:** `import { orpc } from "@/lib/orpc"` then `useQuery(orpc.health.queryOptions())`
+[oRPC](https://orpc.dev/) with TanStack Query. Procedures: `publicProcedure`, `protectedProcedure`, `adminProcedure`. Router: `packages/api/router.ts`. Client: `apps/web/src/lib/orpc.ts`. Usage: `useQuery(orpc.health.queryOptions())`. Full details in **`_database` skill**.
 
 ### Database
 
-[Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) + [Cloudflare KV](https://developers.cloudflare.com/kv/) (session/rate-limit storage). D1 for relational data, KV for fast key-value lookups.
-
-| What        | Where                                                                   |
-| :---------- | :---------------------------------------------------------------------- |
-| DB client   | `packages/db/index.ts` — `initDb(env.DB)` called from server.ts         |
-| KV storage  | `packages/auth/kv-storage.ts` — `initKv(env.SESSION_KV)` from server.ts |
-| Schema      | `packages/db/schema.ts` — Better Auth tables (SQLite) + indexes         |
-| ULID helper | `packages/db/utils.ts` — `ulidPrimaryKey` (text + ULID)                 |
-| D1 types    | `packages/db/d1.d.ts` — minimal D1Database type declaration             |
-| Migrations  | `packages/db/drizzle/` — applied automatically by Alchemy on dev/deploy |
-| Local data  | `.alchemy/miniflare/` (gitignored) — miniflare simulates D1+KV locally  |
-| Test DB     | `packages/db/__tests__/setup.ts` — in-memory bun:sqlite for tests       |
-
-- D1 binding `DB` + KV binding `SESSION_KV` defined in `alchemy.run.ts`, initialized in `apps/web/src/server.ts`
-- No `DATABASE_URL` — D1 is accessed via native Worker binding, not a connection string
-- KV used as Better Auth secondary storage (sessions + rate limiting) for globally-replicated sub-10ms reads
-- Local dev: D1 + KV simulated by miniflare via Alchemy's Vite plugin (wraps `@cloudflare/vite-plugin`)
-- Tests: in-memory `bun:sqlite` via preload setup (`packages/db/bunfig.toml`). KV no-ops gracefully when uninitialized.
-- NEVER run `bun db:generate` or `bun db:migrate` via Claude Code — requires interactive input
+[Drizzle ORM](https://orm.drizzle.team/) + [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite) + KV. Schema: `packages/db/schema.ts`. NEVER run `bun db:generate` or `bun db:migrate` via Claude Code. Full details in **`_database` skill**.
 
 ### SEO, Open Graph & LLMO
 
-**References:** [TanStack Start SEO guide](https://tanstack.com/start/latest/docs/framework/react/guide/seo) · [TanStack Start LLMO guide](https://tanstack.com/start/latest/docs/framework/react/guide/llmo)
+Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap + robots.txt + llms.txt. Full details in **`_seo` skill**.
 
-**Core setup:**
+### Analytics & Logging
 
-- `consts.siteUrl` in `packages/utils/src/shared/consts.ts` — **MUST update before deploying** (used in sitemap, robots.txt, JSON-LD)
-- SSR enabled by default — crawlers receive fully rendered HTML
-- Per-page `head()` on every public route — title, description, OG tags (i18n via Paraglide)
-- Dynamic favicon at `/api/icon?theme=light|dark` — renders via `@vercel/og`, adapts to dark/light mode
-- Dynamic OG image at `/api/og?title=...&description=...` — branded 1200×630 image, 1-hour cache
-
-**Structured data (JSON-LD):**
-
-- Root route (`__root.tsx`): `WebSite` + `Organization` schema using `consts.appName` / `consts.siteUrl`
-- FAQ page (`/faq`): `FAQPage` schema with all Q&A pairs — highly effective for LLMO (AI systems extract Q&A pairs)
-
-**SEO files (all in `apps/web/public/`):**
-
-| File          | Purpose                                                                |
-| :------------ | :--------------------------------------------------------------------- |
-| `robots.txt`  | Allows all crawlers, disallows `/admin`, `/account`, `/auth/`, `/api/` |
-| `sitemap.xml` | Static sitemap for all public pages                                    |
-| `llms.txt`    | Machine-readable project summary for AI systems (LLMO)                 |
-
-**Per-page SEO pattern (MUST follow for all new public routes):**
-
-```tsx
-import { seoMeta } from "../lib/seo";
-import { m } from "../paraglide/messages";
-
-export const Route = createFileRoute("/my-page")({
-  head: () => ({
-    meta: [
-      ...seoMeta({
-        title: m.meta_mypage_title(),
-        description: m.meta_mypage_description(),
-      }),
-    ],
-  }),
-  component: MyPage,
-});
-```
-
-**Adding a new public page (SEO checklist):**
-
-1. Create route with `head()` containing title, description, and OG meta tags (i18n)
-2. Add i18n keys to `apps/web/messages/en.json` (pattern: `meta_{page}_title`, `meta_{page}_description`)
-3. Add page to `apps/web/public/sitemap.xml`
-4. Add page to `apps/web/public/llms.txt`
-5. If FAQ-like content, add `FAQPage` JSON-LD schema in `head().scripts`
-6. Add link in footer nav (`apps/web/src/components/footer.tsx`)
-7. Regenerate paraglide: `cd apps/web && npx @inlang/paraglide-js compile --project ./project.inlang --outdir ./src/paraglide`
-
-**i18n for meta tags:** All meta tag values MUST use Paraglide message functions (e.g., `m.meta_home_title()`). Keys are in `apps/web/messages/en.json`.
-
-### Logging
-
-Structured console logger — Cloudflare Workers compatible. JSON in prod (Cloudflare Logpush), colored output in dev.
-
-| What            | Where                                              |
-| :-------------- | :------------------------------------------------- |
-| Logger instance | `packages/utils/src/server/logger.ts`              |
-| Methods         | `logger.info()`, `.warn()`, `.error()`, `.debug()` |
-
-Cloudflare Workers observability is enabled via `alchemy.run.ts` wrangler transform (`"observability": { "enabled": true }`).
-
-### Analytics, Error Tracking & Event Capture
-
-[PostHog](https://posthog.com/) — full-stack analytics, error tracking, and event capture. Enabled by env var presence. Admin analytics at `/admin/analytics`.
-
-| What                | Where                                                                                     |
-| :------------------ | :---------------------------------------------------------------------------------------- |
-| Client provider     | `apps/web/src/routes/__root.tsx` — `PostHogProvider` + `PostHogErrorBoundary`             |
-| Client env          | `apps/web/src/lib/env.ts` — `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`         |
-| Server client       | `packages/utils/src/server/posthog.ts` — `posthog-node` with `enableExceptionAutocapture` |
-| Server env          | `packages/utils/src/server/env.ts` — same `VITE_PUBLIC_POSTHOG_*` env vars as client      |
-| Reverse proxy       | `apps/web/vite.config.ts` — Nitro `routeRules` proxies `/api/ph/**` to `us.i.posthog.com` |
-| Event tracking plan | `.posthog-events.json` — all tracked events with descriptions and source files            |
-
-**Reverse proxy** ([reference](https://posthog.com/docs/advanced/proxy)): All client-side PostHog traffic flows through `/api/ph/` on your own domain via Nitro `routeRules`. This avoids ad blockers. Static assets route to `us-assets.i.posthog.com`, API calls to `us.i.posthog.com`. Client uses `api_host: "/api/ph"` + `ui_host` for toolbar/session replay. E2E tested in `apps/e2e/tests/proxy/`.
-
-**Error tracking (both client + server):**
-
-- **Client:** `capture_exceptions: true` auto-captures uncaught errors + unhandled promise rejections. `PostHogErrorBoundary` catches React rendering errors.
-- **Server:** `enableExceptionAutocapture: true` catches uncaught exceptions + unhandled promise rejections at the process level. Client initialized via import in `auth.ts`.
-- **Manual capture:** Client: `posthog.captureException(error)`. Server: `posthog?.captureException(error, distinctId)`.
-
-**Event capture:**
-
-- **Client-side** (via `usePostHog()` hook): `user_signed_in`, `user_signed_up`, `user_signed_out`, `password_reset_requested`, `password_reset_completed`, `password_changed`, `profile_updated`, `passkey_added`, `passkey_deleted`, `session_revoked`, `account_deleted`
-- **Server-side** (via `posthog?.capture()`): `user_created`, `user_deleted` — fired in Better Auth database hooks (`packages/auth/auth.ts`)
-- **User identification:** `posthog.identify(userId, { email, name })` called on sign-in and sign-up
-
-**Usage pattern:**
-
-```tsx
-// Client: import { usePostHog } from "@posthog/react"
-const posthog = usePostHog();
-posthog?.capture("event_name", { property: "value" });
-
-// Server: import { posthog } from "@packages/utils/server/posthog"
-posthog?.capture({ distinctId: userId, event: "event_name", properties: { ... } });
-```
+[PostHog](https://posthog.com/) for analytics + error tracking. Structured logger in `packages/utils/src/server/logger.ts`. Full details in **`_analytics` skill**.
 
 ### Internationalization (i18n)
 
-[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) for type-safe i18n across the entire stack. **All user-facing text MUST be internationalized** — NEVER hardcode strings. Full details in the **i18n skill** (`.agents/skills/_i18n/SKILL.md`).
-
-**CRITICAL — ZERO TOLERANCE for non-i18n strings.** Every text the user sees — browser, email, or API error — MUST come from a Paraglide message function.
-
-Three Paraglide projects: Frontend (`apps/web/messages/`), Backend (`packages/auth/messages/`), Email (`packages/email/messages/`). Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`).
-
-Auth errors: [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) maps `auth_*` Paraglide keys to error codes. Covers base + passkey codes (55 total). English skipped at runtime (Better Auth handles defaults). See `packages/auth/auth-i18n.ts`.
+[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) — **ZERO TOLERANCE for non-i18n strings.** All user-facing text MUST come from Paraglide message functions. Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`). Three projects: Frontend (`apps/web/messages/`), Backend (`packages/auth/messages/`), Email (`packages/email/messages/`). Full details in **`_i18n` skill**.
 
 ### Dependency Management
 
@@ -377,35 +186,9 @@ Auth errors: [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i
 - [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) checks for vulnerabilities on `bun install`
 - [Knip](https://knip.dev/) finds unused files, dependencies, and exports — run `bun knip`. Config: `knip.json`
 
-### Infrastructure & Deployment
+### Infrastructure & CI/CD
 
-[Alchemy](https://alchemy.run/) — TypeScript-native IaC for [Cloudflare Workers](https://workers.cloudflare.com/) + [D1](https://developers.cloudflare.com/d1/) (SQLite). Alchemy wraps `@cloudflare/vite-plugin` and `wrangler`, providing typed infrastructure definitions in pure TypeScript.
-
-| What           | Config                                                                                                      |
-| :------------- | :---------------------------------------------------------------------------------------------------------- |
-| IaC definition | `alchemy.run.ts` — D1 database + TanStack Start worker                                                      |
-| Build/Deploy   | `cd apps/web && bun run deploy` (`alchemy deploy` — builds, provisions D1, applies migrations, deploys)     |
-| Dev server     | `bun dev` → `alchemy dev` → generates wrangler config → runs `vite dev`                                     |
-| Migrations     | Applied automatically by Alchemy on `dev`/`deploy` via `migrationsDir` in D1Database                        |
-| Health check   | `/api/auth/ok`                                                                                              |
-| State          | `.alchemy/omegastart/` — encrypted resource state (committed). `.alchemy/miniflare/` — local data (ignored) |
-| Wrangler       | `apps/web/wrangler.jsonc` — kept for manual wrangler CLI use (db:studio, db:migrate)                        |
-
-**How it works:**
-
-- `alchemy dev` evaluates `alchemy.run.ts`, generates `.alchemy/local/wrangler.jsonc`, then runs `vite dev`
-- `alchemy deploy` evaluates `alchemy.run.ts`, provisions/updates D1 + Worker, applies migrations, deploys
-- The Alchemy Vite plugin (`alchemy/cloudflare/tanstack-start`) wraps `@cloudflare/vite-plugin`, pointing it at the generated wrangler config
-- `ALCHEMY_PASSWORD` env var required for state encryption (generate with `openssl rand -base64 32`)
-- `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` required for deploy (not needed for local dev)
-
-Reference: https://alchemy.run/guides/cloudflare-tanstack-start/
-
-### CI/CD
-
-GitHub Actions (`.github/workflows/ci.yml`) — runs `bun ok:ci` on push to `main` and PRs. Uses `oven-sh/setup-bun@v2`.
-
-On push to `main`: deploys via `alchemy deploy` (provisions D1, applies migrations, deploys Worker), uploads source maps to PostHog, reports CI metrics. Requires GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ALCHEMY_PASSWORD`, `POSTHOG_PROJECT_ID`, `POSTHOG_CLI_API_KEY`, `POSTHOG_PROJECT_API_KEY`.
+[Alchemy](https://alchemy.run/) IaC for Cloudflare Workers + D1. IaC: `alchemy.run.ts`. Deploy: `cd apps/web && bun run deploy`. CI: `.github/workflows/ci.yml`. Full details in **`_infra` skill**.
 
 ---
 
@@ -464,11 +247,19 @@ const result = await client.admin.users.list({ limit: 10 });
 
 Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-testing`, `_i18n`). Installed skills from registries have no prefix. This makes it immediately obvious which skills are ours vs. third-party.
 
-**Auto-invoke skills:**
+**Auto-invoke skills** — MUST activate the relevant skill when working in its domain:
 
-- **`_frontend`** — MUST be invoked when writing or modifying any frontend code in `apps/web/` (components, routes, styles, layouts). See `.agents/skills/_frontend/SKILL.md`.
-- **`_i18n`** — MUST be invoked when adding/modifying user-facing text. See `.agents/skills/_i18n/SKILL.md`.
-- **`_e2e-testing`** — MUST be invoked when adding/modifying E2E tests. See `.agents/skills/_e2e-testing/SKILL.md`.
+| Skill          | Trigger                                                                           |
+| :------------- | :-------------------------------------------------------------------------------- |
+| `_frontend`    | Writing/modifying frontend code in `apps/web/`                                    |
+| `_i18n`        | Adding/modifying user-facing text                                                 |
+| `_e2e-testing` | Adding/modifying E2E tests                                                        |
+| `_auth`        | Auth flows, sessions, Better Auth config in `packages/auth/`                      |
+| `_email`       | Email templates, triggers in `packages/email/`                                    |
+| `_seo`         | New public routes, meta tags, SEO files                                           |
+| `_analytics`   | PostHog events, error tracking, logging                                           |
+| `_database`    | Schema, migrations, queries, oRPC procedures in `packages/db/` or `packages/api/` |
+| `_infra`       | Alchemy IaC, deployment, CI/CD pipeline                                           |
 
 ### General Rules
 
@@ -526,44 +317,9 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 - `console.log('DEBUG:', JSON.stringify(data, null, 2))` — MUST clean up after
 - MUST try solutions before suggesting them
 
-### React
+### React & Frontend
 
-- Server Components by default — `"use client"` only when needed
-- **Rules of Hooks** — top level only, never conditional, no early return before hooks
-
-<details>
-<summary><strong>CSS Flexbox min-w-0 pattern</strong></summary>
-
-Flex items have `min-width: auto` by default, breaking `truncate`:
-
-```tsx
-<div className="flex min-w-0">
-  <Icon className="flex-shrink-0" />
-  <span className="min-w-0 flex-1 truncate">Long text...</span>
-  <Button className="flex-shrink-0" />
-</div>
-```
-
-</details>
-
-### Frontend & UI
-
-**Mobile-first — THIS IS NON-NEGOTIABLE.** Every screen, component, and layout MUST be designed mobile-first. Desktop is the enhancement, not the other way around. The app may eventually ship as a native app via Capacitor, so touch-friendly UX is mandatory.
-
-**Core principles:**
-
-- **Mobile-first responsive:** MUST start with the mobile layout (`sm:`, `md:`, `lg:` breakpoints upward). NEVER design for desktop and then try to squeeze it into mobile.
-- **Touch targets:** Interactive elements MUST be at least 44×44px tap area. Use adequate padding on buttons, links, and form controls.
-- **i18n-safe layouts:** Since we use Paraglide, text can be significantly longer or shorter depending on locale. UI MUST accommodate variable text lengths:
-  - NEVER use fixed widths on text containers — use `min-w-0`, `flex-1`, `w-full`
-  - Prefer wrapping (`flex-wrap`) over truncation for important content
-  - Use `truncate` only for secondary/non-critical text (e.g. email addresses in lists)
-  - Buttons MUST grow with their label — NEVER fixed-width buttons with text
-  - Test mentally: "Would this break if the label were 2× longer?"
-- **Clean, small components:** Prefer composition of small shadcn primitives over custom CSS. Use Tailwind utilities directly — NEVER create CSS files. Keep component files short and focused.
-- **Spacing & layout:** Use consistent spacing via Tailwind's scale (`gap-2`, `p-4`, `space-y-3`). Use `container` + `max-w-*` for content width. Stack vertically on mobile, go horizontal on larger screens (`flex-col sm:flex-row`).
-- **Typography:** Use Tailwind's responsive text sizes (`text-sm md:text-base`). Ensure readable line lengths (`max-w-prose` for long-form text).
-- **Forms:** Full-width inputs on mobile. Stack labels above inputs (not beside). Use shadcn form components consistently.
+**Mobile-first — NON-NEGOTIABLE.** Rules of Hooks (top level only). `"use client"` only when needed. Full details in **`_frontend` skill**.
 
 ### Implementation
 
