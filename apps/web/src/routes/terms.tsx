@@ -1,4 +1,4 @@
-import { consts } from "@packages/shared/consts";
+import { consts } from "@packages/utils/consts";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { seoMeta } from "../lib/seo";

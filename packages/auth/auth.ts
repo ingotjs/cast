@@ -2,6 +2,7 @@ import { i18n } from "@better-auth/i18n";
 import { passkey } from "@better-auth/passkey";
 import { db } from "@packages/db";
 import { generateId } from "@packages/db/utils";
+import { captureEmail } from "@packages/email/email-capture";
 import { createEmailSender } from "@packages/email/send";
 import {
   getEmailSubject,
@@ -12,17 +13,16 @@ import {
   renderResetPasswordEmail,
   renderWelcomeEmail,
 } from "@packages/email/templates";
-import { consts } from "@packages/shared/consts";
+import { consts } from "@packages/utils/consts";
+import { serverEnv } from "@packages/utils/server/env";
+import { posthog } from "@packages/utils/server/posthog";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { admin, magicLink } from "better-auth/plugins";
 
 import { buildAuthTranslations } from "./auth-i18n";
-import { captureEmail } from "./email-capture";
-import { serverEnv } from "./env";
 import { kvSecondaryStorage } from "./kv-storage";
-import { posthog } from "./posthog";
 
 // Reference: https://better-auth.com/docs
 // Reference: https://better-auth.com/docs/reference/security

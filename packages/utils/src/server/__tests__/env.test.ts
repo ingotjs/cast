@@ -1,7 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { consts } from "@packages/shared/consts";
-
+import { consts } from "../../shared/consts";
 import { isDevelopment, serverEnv } from "../env";
 
 describe("server env", () => {

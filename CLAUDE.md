@@ -44,15 +44,15 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 | :---------------- | :----------------- | :------------------------------------------------------------------------- |
 | `apps/web`        | —                  | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
 | `packages/db`     | `@packages/db`     | Drizzle ORM + D1 schema, migrations, database client                       |
-| `packages/auth`   | `@packages/auth`   | Better Auth config, env, logger, PostHog, i18n                             |
+| `packages/utils`  | `@packages/utils`  | Shared consts (`src/shared/`), server env/logger/posthog (`src/server/`)   |
+| `packages/auth`   | `@packages/auth`   | Better Auth config, KV storage, i18n                                       |
 | `packages/api`    | `@packages/api`    | oRPC router + procedures (public/protected/admin)                          |
-| `packages/shared` | `@packages/shared` | Constants, capability flags, error handling                                |
-| `packages/email`  | `@packages/email`  | React Email templates + Resend                                             |
+| `packages/email`  | `@packages/email`  | React Email templates + Resend + email capture (E2E)                       |
 | `packages/ui`     | `@packages/ui`     | shadcn v4 + Tailwind CSS + Base UI                                         |
 | `apps/e2e`        | —                  | Playwright E2E tests (auth flows, email verification)                      |
 | `packages/config` | `@packages/config` | Shared TypeScript configs                                                  |
 
-**Dependency graph:** `@packages/db` (leaf) ← `@packages/auth` (+ `@packages/email`, `@packages/shared`) ← `@packages/api` (+ `@packages/shared`)
+**Dependency graph:** `@packages/db` (leaf) ← `@packages/auth` (+ `@packages/email`, `@packages/utils`) ← `@packages/api`
 
 ### Type Checking
 
@@ -85,10 +85,10 @@ Turborepo monorepo. Bun package manager. [Just-in-Time Packages](https://turbore
 
 **NEVER use `process.env` or `import.meta.env` directly.** Enforced by oxlint. Only `**/env.ts` files may access them.
 
-| Context | Import                                           | Example                                      |
-| :------ | :----------------------------------------------- | :------------------------------------------- |
-| Server  | `import { serverEnv } from "@packages/auth/env"` | `serverEnv.email?.RESEND_API_KEY`            |
-| Client  | `import { clientEnv } from "@/lib/env"`          | `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY` |
+| Context | Import                                                   | Example                                      |
+| :------ | :------------------------------------------------------- | :------------------------------------------- |
+| Server  | `import { serverEnv } from "@packages/utils/server/env"` | `serverEnv.email?.RESEND_API_KEY`            |
+| Client  | `import { clientEnv } from "@/lib/env"`                  | `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY` |
 
 ### Service Features & Capability Flags
 
@@ -102,7 +102,7 @@ Two types of features, two obvious places:
 | `email`       | `RESEND_API_KEY`          | `serverEnv.email`                         |
 | `googleOAuth` | `GOOGLE_CLIENT_ID`        | `serverEnv.googleOAuth`                   |
 
-**Capability flags** — product decisions in `consts.auth` (`packages/shared/src/consts.ts`). Always the same regardless of environment.
+**Capability flags** — product decisions in `consts.auth` (`packages/utils/src/shared/consts.ts`). Always the same regardless of environment.
 
 | Capability | Default | Access                 |
 | :--------- | :-----: | :--------------------- |
@@ -127,7 +127,7 @@ clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY; // client-side env
 <details>
 <summary><strong>Adding a new service feature</strong></summary>
 
-1. Add an env group in the appropriate env file (`packages/auth/env.ts` and/or `apps/web/src/lib/env.ts`):
+1. Add an env group in the appropriate env file (`packages/utils/src/server/env.ts` and/or `apps/web/src/lib/env.ts`):
    ```ts
    myService: env.MY_SERVICE_KEY
      ? { MY_SERVICE_KEY: parseEnv("MY_SERVICE_KEY", z.string().min(1)) }
@@ -188,7 +188,7 @@ All transactional emails are in `packages/email/`. Emails are fully i18n via Par
 
 **Email i18n pattern:** All email text uses `m.email_xxx({...}, loc(locale))` where `loc()` casts the string locale to Paraglide's type.
 
-**Welcome email config:** `consts.auth.welcomeEmail` (boolean) in `packages/shared/src/consts.ts` — set to `false` to disable.
+**Welcome email config:** `consts.auth.welcomeEmail` (boolean) in `packages/utils/src/shared/consts.ts` — set to `false` to disable.
 
 **Adding a new email template:**
 
@@ -248,7 +248,7 @@ Admin procedures: `router.admin.users.*` (list, ban, unban, setRole, remove).
 
 **Core setup:**
 
-- `consts.siteUrl` in `packages/shared/src/consts.ts` — **MUST update before deploying** (used in sitemap, robots.txt, JSON-LD)
+- `consts.siteUrl` in `packages/utils/src/shared/consts.ts` — **MUST update before deploying** (used in sitemap, robots.txt, JSON-LD)
 - SSR enabled by default — crawlers receive fully rendered HTML
 - Per-page `head()` on every public route — title, description, OG tags (i18n via Paraglide)
 - Dynamic favicon at `/api/icon?theme=light|dark` — renders via `@vercel/og`, adapts to dark/light mode
@@ -304,7 +304,7 @@ Structured console logger — Cloudflare Workers compatible. JSON in prod (Cloud
 
 | What            | Where                                              |
 | :-------------- | :------------------------------------------------- |
-| Logger instance | `packages/auth/logger.ts`                          |
+| Logger instance | `packages/utils/src/server/logger.ts`              |
 | Methods         | `logger.info()`, `.warn()`, `.error()`, `.debug()` |
 
 Cloudflare Workers observability is enabled via `alchemy.run.ts` wrangler transform (`"observability": { "enabled": true }`).
@@ -317,8 +317,8 @@ Cloudflare Workers observability is enabled via `alchemy.run.ts` wrangler transf
 | :------------------ | :---------------------------------------------------------------------------------------- |
 | Client provider     | `apps/web/src/routes/__root.tsx` — `PostHogProvider` + `PostHogErrorBoundary`             |
 | Client env          | `apps/web/src/lib/env.ts` — `VITE_PUBLIC_POSTHOG_KEY`, `VITE_PUBLIC_POSTHOG_HOST`         |
-| Server client       | `packages/auth/posthog.ts` — `posthog-node` with `enableExceptionAutocapture`             |
-| Server env          | `packages/auth/env.ts` — same `VITE_PUBLIC_POSTHOG_*` env vars as client                  |
+| Server client       | `packages/utils/src/server/posthog.ts` — `posthog-node` with `enableExceptionAutocapture` |
+| Server env          | `packages/utils/src/server/env.ts` — same `VITE_PUBLIC_POSTHOG_*` env vars as client      |
 | Reverse proxy       | `apps/web/vite.config.ts` — Nitro `routeRules` proxies `/api/ph/**` to `us.i.posthog.com` |
 | Event tracking plan | `.posthog-events.json` — all tracked events with descriptions and source files            |
 
@@ -343,7 +343,7 @@ Cloudflare Workers observability is enabled via `alchemy.run.ts` wrangler transf
 const posthog = usePostHog();
 posthog?.capture("event_name", { property: "value" });
 
-// Server: import { posthog } from "./posthog"
+// Server: import { posthog } from "@packages/utils/server/posthog"
 posthog?.capture({ distinctId: userId, event: "event_name", properties: { ... } });
 ```
 
@@ -553,16 +553,16 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 
 | File                                     | Purpose                                                                                |
 | :--------------------------------------- | :------------------------------------------------------------------------------------- |
-| `packages/shared/src/consts.ts`          | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink)   |
+| `packages/utils/src/shared/consts.ts`    | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink)   |
+| `packages/utils/src/server/env.ts`       | Server env vars + feature-gated groups                                                 |
+| `packages/utils/src/server/logger.ts`    | Structured console logger (Workers-compatible)                                         |
+| `packages/utils/src/server/posthog.ts`   | PostHog server client (error tracking + analytics)                                     |
 | `packages/db/index.ts`                   | Database client (D1 via `initDb()` + proxy)                                            |
 | `packages/db/schema.ts`                  | Drizzle schema + indexes                                                               |
 | `packages/db/utils.ts`                   | `ulidPrimaryKey` helper                                                                |
 | `packages/auth/auth.ts`                  | Better Auth config + i18n plugin + all email triggers                                  |
 | `packages/auth/kv-storage.ts`            | Cloudflare KV adapter for Better Auth secondary storage (sessions + rate limiting)     |
 | `packages/auth/auth-i18n.ts`             | `buildAuthTranslations()` — Paraglide → Better Auth error codes (null if English-only) |
-| `packages/auth/env.ts`                   | Server env vars + feature-gated groups                                                 |
-| `packages/auth/logger.ts`                | Structured console logger (Workers-compatible)                                         |
-| `packages/auth/posthog.ts`               | PostHog server client (error tracking + analytics)                                     |
 | `packages/api/base.ts`                   | Procedure definitions (public/protected/admin)                                         |
 | `packages/api/router.ts`                 | oRPC router                                                                            |
 | `apps/web/src/lib/env.ts`                | Client features + env groups                                                           |
@@ -584,6 +584,7 @@ Flex items have `min-width: auto` by default, breaking `truncate`:
 | `.syncpackrc`                            | Syncpack config                                                                        |
 | `apps/web/wrangler.jsonc`                | Fallback wrangler config (manual CLI use only — Alchemy generates its own)             |
 | `.github/workflows/ci.yml`               | CI pipeline                                                                            |
+| `packages/email/email-capture.ts`        | Email capture for E2E test verification (dev/test only)                                |
 | `packages/email/templates.ts`            | Email render functions + localized subject helpers                                     |
 | `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                        |
 | `packages/email/emails/email-layout.tsx` | Shared email layout component                                                          |

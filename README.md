@@ -77,10 +77,10 @@ bun dev
 ```
 apps/web          → TanStack Start (Vite + Router + Nitro)
 packages/db       → Drizzle ORM + Cloudflare D1 (schema, migrations, client)
-packages/auth     → Better Auth + env + logger + PostHog
+packages/utils    → Constants, server env/logger/posthog (shared/, server/, client/)
+packages/auth     → Better Auth + KV storage + i18n
 packages/api      → oRPC router + procedures
-packages/shared   → Constants + capability flags
-packages/email    → React Email + Resend
+packages/email    → React Email + Resend + email capture (E2E)
 packages/ui       → shadcn v4 + Tailwind CSS + Base UI
 packages/config   → Shared TypeScript configs
 ```

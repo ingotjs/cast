@@ -1,5 +1,5 @@
-import { consts } from "@packages/shared/consts";
 import { Toaster } from "@packages/ui/components/sonner";
+import { consts } from "@packages/utils/consts";
 import { PostHogErrorBoundary, PostHogProvider } from "@posthog/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
