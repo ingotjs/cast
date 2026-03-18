@@ -5,3 +5,4 @@ exact = true
 
 [test]
 onlyFailures = true
+preload = ["./packages/db/__tests__/setup.ts"]
