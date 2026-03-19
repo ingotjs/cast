@@ -1,5 +1,5 @@
 {
-  "extends": "@packages/config/react-library.json",
+  "extends": "@ingot/config/react-library.json",
   "compilerOptions": {
     "module": "ESNext",
     "moduleResolution": "bundler",

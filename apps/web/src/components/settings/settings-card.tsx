@@ -1,4 +1,4 @@
-import { cn } from "@packages/ui/lib/utils";
+import { cn } from "@ingot/ui/lib/utils";
 
 type SettingsCardProps = {
   children: React.ReactNode;

@@ -1,5 +1,5 @@
+import { DEV_PORT } from "@ingot/utils/consts";
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
-import { DEV_PORT } from "@packages/utils/consts";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";

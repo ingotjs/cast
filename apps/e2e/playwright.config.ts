@@ -1,4 +1,4 @@
-import { DEV_URL } from "@packages/utils/consts";
+import { DEV_URL } from "@ingot/utils/consts";
 // oxlint-disable node/no-process-env
 import { defineConfig } from "@playwright/test";
 

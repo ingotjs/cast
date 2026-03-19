@@ -1,0 +1,23 @@
+{
+  "name": "@ingot/cast",
+  "version": "0.0.1",
+  "description": "Scaffold a Cast project — the modern full-stack TypeScript starter",
+  "license": "MIT",
+  "bin": {
+    "cast": "./bin.ts"
+  },
+  "files": [
+    "bin.ts"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@inquirer/prompts": "7.5.3"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

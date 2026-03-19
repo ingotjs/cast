@@ -1,9 +1,9 @@
 import { i18n } from "@better-auth/i18n";
 import { passkey } from "@better-auth/passkey";
-import { db } from "@packages/db";
-import { generateId } from "@packages/db/utils";
-import { captureEmail } from "@packages/email/email-capture";
-import { createEmailSender } from "@packages/email/send";
+import { db } from "@ingot/db";
+import { generateId } from "@ingot/db/utils";
+import { captureEmail } from "@ingot/email/email-capture";
+import { createEmailSender } from "@ingot/email/send";
 import {
   getEmailSubject,
   renderAccountDeletedEmail,
@@ -12,10 +12,10 @@ import {
   renderPasswordChangedEmail,
   renderResetPasswordEmail,
   renderWelcomeEmail,
-} from "@packages/email/templates";
-import { consts } from "@packages/utils/consts";
-import { serverEnv } from "@packages/utils/server/env";
-import { posthog } from "@packages/utils/server/posthog";
+} from "@ingot/email/templates";
+import { consts } from "@ingot/utils/consts";
+import { serverEnv } from "@ingot/utils/server/env";
+import { posthog } from "@ingot/utils/server/posthog";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";

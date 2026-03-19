@@ -1,5 +1,5 @@
-import { Button } from "@packages/ui/components/button";
-import { Separator } from "@packages/ui/components/separator";
+import { Button } from "@ingot/ui/components/button";
+import { Separator } from "@ingot/ui/components/separator";
 import { usePostHog } from "@posthog/react";
 import { useState } from "react";
 

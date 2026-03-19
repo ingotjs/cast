@@ -1,5 +1,5 @@
 {
-  "name": "@packages/auth",
+  "name": "@ingot/auth",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -17,19 +17,19 @@
   "dependencies": {
     "@better-auth/i18n": "1.5.5",
     "@better-auth/passkey": "catalog:",
-    "@packages/db": "*",
-    "@packages/email": "*",
-    "@packages/utils": "*",
+    "@ingot/db": "*",
+    "@ingot/email": "*",
+    "@ingot/utils": "*",
     "@simplewebauthn/server": "13.3.0",
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:"
   },
   "devDependencies": {
     "@better-auth/cli": "1.4.21",
+    "@ingot/config": "*",
     "@inlang/paraglide-js": "catalog:",
     "@inlang/plugin-m-function-matcher": "catalog:",
     "@inlang/plugin-message-format": "catalog:",
-    "@packages/config": "*",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:"

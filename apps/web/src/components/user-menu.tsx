@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@packages/ui/components/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@ingot/ui/components/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@packages/ui/components/dropdown-menu";
+} from "@ingot/ui/components/dropdown-menu";
 import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
 

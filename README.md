@@ -88,7 +88,7 @@ packages/ui       → shadcn v4 + Tailwind CSS + Base UI
 packages/config   → Shared TypeScript configs
 ```
 
-`@packages/db` (leaf) ← `@packages/auth` ← `@packages/api`
+`@ingot/db` (leaf) ← `@ingot/auth` ← `@ingot/api`
 
 ## Commands
 

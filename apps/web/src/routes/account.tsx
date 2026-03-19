@@ -1,4 +1,4 @@
-import { consts } from "@packages/utils/consts";
+import { consts } from "@ingot/utils/consts";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
 import { ChangePasswordCard } from "../components/settings/change-password-card";

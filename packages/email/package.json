@@ -1,5 +1,5 @@
 {
-  "name": "@packages/email",
+  "name": "@ingot/email",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -25,11 +25,11 @@
     "resend": "6.9.3"
   },
   "devDependencies": {
+    "@ingot/config": "*",
+    "@ingot/utils": "*",
     "@inlang/paraglide-js": "catalog:",
     "@inlang/plugin-m-function-matcher": "catalog:",
     "@inlang/plugin-message-format": "catalog:",
-    "@packages/config": "*",
-    "@packages/utils": "*",
     "@react-email/preview-server": "5.2.9",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",

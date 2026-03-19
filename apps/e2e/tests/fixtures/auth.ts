@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, readdirSync, unlinkSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-import { DEV_URL } from "@packages/utils/consts";
+import { DEV_URL } from "@ingot/utils/consts";
 import { test as base, expect } from "@playwright/test";
 
 // Reference: https://playwright.dev/docs/test-fixtures

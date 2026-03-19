@@ -1,5 +1,5 @@
+import { router } from "@ingot/api";
 import { RPCHandler } from "@orpc/server/fetch";
-import { router } from "@packages/api";
 import { createFileRoute } from "@tanstack/react-router";
 
 const handler = new RPCHandler(router);

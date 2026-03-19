@@ -10,7 +10,7 @@
   "workspaces": {
     ".": {
       "entry": ["vite.config.ts"],
-      "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "ultracite", "@packages/config"],
+      "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "ultracite", "@ingot/config"],
       "ignoreBinaries": ["wrangler"]
     },
     "packages/infra": {
@@ -67,6 +67,9 @@
       "ignoreDependencies": ["postcss-load-config"]
     },
     "packages/utils": {},
-    "packages/prospect": {}
+    "packages/prospect": {},
+    "packages/cast": {
+      "entry": ["bin.ts"]
+    }
   }
 }

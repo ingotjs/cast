@@ -1,5 +1,5 @@
-import { Input } from "@packages/ui/components/input";
-import { cn } from "@packages/ui/lib/utils";
+import { Input } from "@ingot/ui/components/input";
+import { cn } from "@ingot/ui/lib/utils";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 

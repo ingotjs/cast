@@ -1,10 +1,10 @@
+import type { Router } from "@ingot/api";
+import { router } from "@ingot/api";
 import { createORPCClient, onError } from "@orpc/client";
 import { RPCLink } from "@orpc/client/fetch";
 import { createRouterClient } from "@orpc/server";
 import type { RouterClient } from "@orpc/server";
 import { createRouterUtils } from "@orpc/tanstack-query";
-import type { Router } from "@packages/api";
-import { router } from "@packages/api";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 import { toast } from "sonner";

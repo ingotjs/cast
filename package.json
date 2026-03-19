@@ -1,5 +1,5 @@
 {
-  "name": "cast",
+  "name": "@ingot/cast",
   "version": "0.0.0",
   "private": true,
   "workspaces": [
@@ -15,7 +15,7 @@
     "db:migrate": "cd apps/web && npx wrangler d1 migrations apply db --local",
     "db:migrate:remote": "cd apps/web && npx wrangler d1 migrations apply db --remote",
     "db:studio": "bun run --cwd packages/db db:studio",
-    "dev:email": "vp run @packages/email#dev",
+    "dev:email": "vp run @ingot/email#dev",
     "e2e": "bun run --cwd apps/e2e e2e",
     "e2e:ui": "bun run --cwd apps/e2e e2e:ui",
     "ok": "syncpack fix --log-levels error && vp run ts -r && vp fmt --write && vp lint --fix && bun test",

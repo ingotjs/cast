@@ -9,8 +9,8 @@
     "e2e:headed": "playwright test --headed"
   },
   "devDependencies": {
-    "@packages/prospect": "*",
-    "@packages/utils": "*",
+    "@ingot/prospect": "*",
+    "@ingot/utils": "*",
     "@playwright/test": "1.52.0"
   }
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Button as ButtonPrimitive } from "@base-ui/react/button";
-import { cn } from "@packages/ui/lib/utils";
+import { cn } from "@ingot/ui/lib/utils";
 import { cva } from "class-variance-authority";
 import type { VariantProps } from "class-variance-authority";
 import { Loader2 } from "lucide-react";

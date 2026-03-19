@@ -1,5 +1,5 @@
-import { Separator } from "@packages/ui/components/separator";
-import { cn } from "@packages/ui/lib/utils";
+import { Separator } from "@ingot/ui/components/separator";
+import { cn } from "@ingot/ui/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
 
 type AuthCardProps = {

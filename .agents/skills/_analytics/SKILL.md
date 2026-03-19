@@ -59,7 +59,7 @@ All client-side PostHog traffic flows through `/api/ph/` on your own domain via 
 const posthog = usePostHog();
 posthog?.capture("event_name", { property: "value" });
 
-// Server: import { posthog } from "@packages/utils/server/posthog"
+// Server: import { posthog } from "@ingot/utils/server/posthog"
 posthog?.capture({ distinctId: userId, event: "event_name", properties: { ... } });
 ```
 

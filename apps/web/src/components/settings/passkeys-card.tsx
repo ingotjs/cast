@@ -1,4 +1,4 @@
-import { Button } from "@packages/ui/components/button";
+import { Button } from "@ingot/ui/components/button";
 import { usePostHog } from "@posthog/react";
 import { Fingerprint, Trash2 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";

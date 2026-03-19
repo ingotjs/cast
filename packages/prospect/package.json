@@ -1,16 +1,27 @@
 {
-  "name": "@packages/prospect",
+  "name": "@ingot/prospect",
   "version": "0.0.0",
-  "private": true,
+  "description": "E2E interactive element coverage framework for route-based apps",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "exports": {
     ".": "./define-coverage.ts"
   },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": "./dist/index.mjs"
+    }
+  },
   "scripts": {
-    "ts": "tsgo --noEmit"
+    "ts": "tsgo --noEmit",
+    "prepublishOnly": "vp pack"
   },
   "devDependencies": {
-    "@packages/config": "*",
+    "@ingot/config": "*",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:"

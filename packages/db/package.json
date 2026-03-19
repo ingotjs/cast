@@ -1,5 +1,5 @@
 {
-  "name": "@packages/db",
+  "name": "@ingot/db",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -23,7 +23,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@packages/config": "*",
+    "@ingot/config": "*",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "drizzle-kit": "0.31.9",

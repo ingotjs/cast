@@ -9,7 +9,7 @@
 const isDev = process.env.NODE_ENV !== "production";
 
 // oxlint-disable-next-line -- dev-only import for email capture endpoint
-import { DEV_URL } from "@packages/utils/consts";
+import { DEV_URL } from "@ingot/utils/consts";
 
 const CAPTURE_ENDPOINT = `${DEV_URL}/__email-capture`;
 const DIR_SUFFIX = ".etc/.email-captures";

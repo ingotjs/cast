@@ -15,7 +15,7 @@ description: Environment variables, service feature flags, and capability flags 
 
 | Context | Import                                                   | Example                                      |
 | :------ | :------------------------------------------------------- | :------------------------------------------- |
-| Server  | `import { serverEnv } from "@packages/utils/server/env"` | `serverEnv.email?.RESEND_API_KEY`            |
+| Server  | `import { serverEnv } from "@ingot/utils/server/env"` | `serverEnv.email?.RESEND_API_KEY`            |
 | Client  | `import { clientEnv } from "@/lib/env"`                  | `clientEnv.posthog?.VITE_PUBLIC_POSTHOG_KEY` |
 
 ## Service Features

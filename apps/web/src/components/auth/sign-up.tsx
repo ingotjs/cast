@@ -1,7 +1,7 @@
-import { Button } from "@packages/ui/components/button";
-import { Input } from "@packages/ui/components/input";
-import { Label } from "@packages/ui/components/label";
-import { cn } from "@packages/ui/lib/utils";
+import { Button } from "@ingot/ui/components/button";
+import { Input } from "@ingot/ui/components/input";
+import { Label } from "@ingot/ui/components/label";
+import { cn } from "@ingot/ui/lib/utils";
 import { usePostHog } from "@posthog/react";
 import { useNavigate } from "@tanstack/react-router";
 import { Check, X } from "lucide-react";

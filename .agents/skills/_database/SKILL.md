@@ -43,10 +43,10 @@ description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), Drizzle-Zod
 
 Reference: https://orm.drizzle.team/docs/zod
 
-[`drizzle-zod`](https://orm.drizzle.team/docs/zod) generates Zod schemas directly from Drizzle table definitions. Pre-built schemas are exported from `@packages/db/zod-schema`.
+[`drizzle-zod`](https://orm.drizzle.team/docs/zod) generates Zod schemas directly from Drizzle table definitions. Pre-built schemas are exported from `@ingot/db/zod-schema`.
 
 ```ts
-import { selectUserSchema, insertUserSchema, updateUserSchema } from "@packages/db/zod-schema";
+import { selectUserSchema, insertUserSchema, updateUserSchema } from "@ingot/db/zod-schema";
 
 // Validate a select result
 const user = selectUserSchema.parse(row);

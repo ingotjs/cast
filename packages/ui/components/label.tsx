@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@packages/ui/lib/utils";
+import { cn } from "@ingot/ui/lib/utils";
 
 const Label = ({ className, ...props }: React.ComponentProps<"label">) => (
   // oxlint-disable-next-line jsx-a11y/label-has-associated-control -- htmlFor passed via ...props

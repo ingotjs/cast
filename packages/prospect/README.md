@@ -1,4 +1,4 @@
-# @packages/prospect
+# @ingot/prospect
 
 E2E interactive element coverage framework for TanStack Start apps. Provides `defineE2ECoverage()` for mapping every user-interactive element to its test, and `setup()` for validating coverage integrity on every test run.
 
@@ -7,7 +7,7 @@ Built for route-based architectures — coverage is organized by route, with sha
 ## Usage
 
 ```ts
-import { defineE2ECoverage, interactions } from "@packages/prospect";
+import { defineE2ECoverage, interactions } from "@ingot/prospect";
 
 const testId = { signin: { buttonSubmit: "signin-button-submit" } } as const;
 

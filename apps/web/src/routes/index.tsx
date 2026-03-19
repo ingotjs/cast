@@ -1,4 +1,4 @@
-import { consts } from "@packages/utils/consts";
+import { consts } from "@ingot/utils/consts";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { useSession } from "../lib/auth-client";

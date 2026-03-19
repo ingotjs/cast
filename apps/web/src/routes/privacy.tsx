@@ -1,4 +1,4 @@
-import { consts } from "@packages/utils/consts";
+import { consts } from "@ingot/utils/consts";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { clientEnv } from "../lib/env";

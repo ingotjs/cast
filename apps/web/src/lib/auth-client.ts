@@ -1,5 +1,5 @@
 import { passkeyClient } from "@better-auth/passkey/client";
-import { auth } from "@packages/auth";
+import { auth } from "@ingot/auth";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequestHeaders } from "@tanstack/react-start/server";
 import { magicLinkClient } from "better-auth/client/plugins";

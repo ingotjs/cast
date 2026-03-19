@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@packages/ui/lib/utils";
+import { cn } from "@ingot/ui/lib/utils";
 
 const Input = ({ className, ...props }: React.ComponentProps<"input">) => (
   <input

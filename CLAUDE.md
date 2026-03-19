@@ -41,20 +41,20 @@
 
 ### Monorepo Structure
 
-| Package                 | Alias                    | Description                                                                |
-| :---------------------- | :----------------------- | :------------------------------------------------------------------------- |
-| `apps/web`              | —                        | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
-| `packages/db`           | `@packages/db`           | Drizzle ORM + D1 schema, migrations, database client                       |
-| `packages/utils`        | `@packages/utils`        | Shared consts (`shared/`), server env/logger/posthog (`server/`)           |
-| `packages/auth`         | `@packages/auth`         | Better Auth config, KV storage, i18n                                       |
-| `packages/api`          | `@packages/api`          | oRPC router + procedures (public/protected/admin)                          |
-| `packages/email`        | `@packages/email`        | React Email templates + Resend + email capture (E2E)                       |
-| `packages/ui`           | `@packages/ui`           | shadcn v4 + Tailwind CSS + Base UI                                         |
-| `apps/e2e`              | —                        | Playwright E2E tests (auth flows, email verification)                      |
-| `packages/prospect` | `@packages/prospect` | E2E coverage framework (defineE2ECoverage, testId, setup validation)       |
-| `packages/config`       | `@packages/config`       | Shared TypeScript configs                                                  |
+| Package             | Alias             | Description                                                                |
+| :------------------ | :---------------- | :------------------------------------------------------------------------- |
+| `apps/web`          | —                 | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
+| `packages/db`       | `@ingot/db`       | Drizzle ORM + D1 schema, migrations, database client                       |
+| `packages/utils`    | `@ingot/utils`    | Shared consts (`shared/`), server env/logger/posthog (`server/`)           |
+| `packages/auth`     | `@ingot/auth`     | Better Auth config, KV storage, i18n                                       |
+| `packages/api`      | `@ingot/api`      | oRPC router + procedures (public/protected/admin)                          |
+| `packages/email`    | `@ingot/email`    | React Email templates + Resend + email capture (E2E)                       |
+| `packages/ui`       | `@ingot/ui`       | shadcn v4 + Tailwind CSS + Base UI                                         |
+| `apps/e2e`          | —                 | Playwright E2E tests (auth flows, email verification)                      |
+| `packages/prospect` | `@ingot/prospect` | E2E coverage framework (defineE2ECoverage, testId, setup validation)       |
+| `packages/config`   | `@ingot/config`   | Shared TypeScript configs                                                  |
 
-**Dependency graph:** `@packages/db` (leaf) ← `@packages/auth` (+ `@packages/email`, `@packages/utils`) ← `@packages/api`
+**Dependency graph:** `@ingot/db` (leaf) ← `@ingot/auth` (+ `@ingot/email`, `@ingot/utils`) ← `@ingot/api`
 
 ### Type Checking
 

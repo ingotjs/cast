@@ -44,7 +44,7 @@ Text can be significantly longer or shorter depending on locale. UI MUST accommo
 - Prefer composition of small **shadcn primitives** over custom CSS
 - Use Tailwind utilities directly — NEVER create CSS files
 - Keep component files short and focused
-- Import shadcn components from `@packages/ui/*`
+- Import shadcn components from `@ingot/ui/*`
 
 ### Flexbox min-w-0 Pattern
 

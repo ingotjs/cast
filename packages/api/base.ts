@@ -1,6 +1,6 @@
+import { auth } from "@ingot/auth";
 import { getLogger } from "@orpc/experimental-pino";
 import { ORPCError, os } from "@orpc/server";
-import { auth } from "@packages/auth";
 
 // Reference: https://orpc.dev/docs/integrations/better-auth
 // Reference: https://orpc.dev/docs/integrations/pino

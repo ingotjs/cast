@@ -1,7 +1,7 @@
-import { Button } from "@packages/ui/components/button";
-import { Input } from "@packages/ui/components/input";
-import { Label } from "@packages/ui/components/label";
-import { Separator } from "@packages/ui/components/separator";
+import { Button } from "@ingot/ui/components/button";
+import { Input } from "@ingot/ui/components/input";
+import { Label } from "@ingot/ui/components/label";
+import { Separator } from "@ingot/ui/components/separator";
 import { usePostHog } from "@posthog/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";

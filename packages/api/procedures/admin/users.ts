@@ -1,4 +1,4 @@
-import { auth } from "@packages/auth";
+import { auth } from "@ingot/auth";
 import { z } from "zod";
 
 import { adminProcedure } from "../../base";

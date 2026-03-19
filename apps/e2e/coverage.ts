@@ -7,7 +7,7 @@
  * Grep for `test: null` to find coverage gaps.
  */
 
-import { defineE2ECoverage, interactions } from "@packages/prospect";
+import { defineE2ECoverage, interactions } from "@ingot/prospect";
 
 // ---------------------------------------------------------------------------
 // Test IDs

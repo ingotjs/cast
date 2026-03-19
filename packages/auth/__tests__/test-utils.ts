@@ -1,5 +1,5 @@
-import { db } from "@packages/db";
-import * as schema from "@packages/db/schema";
+import { db } from "@ingot/db";
+import * as schema from "@ingot/db/schema";
 import { eq } from "drizzle-orm";
 
 import { auth } from "../auth";

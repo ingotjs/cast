@@ -2,8 +2,8 @@
 	"$schema": "https://unpkg.com/syncpack/dist/schema.json",
 	"versionGroups": [
 		{
-			"label": "Internal @packages/* packages use workspace wildcard",
-			"dependencies": ["@packages/**"],
+			"label": "Internal @ingot/* packages use workspace wildcard",
+			"dependencies": ["@ingot/**"],
 			"pinVersion": "*"
 		},
 		{

@@ -19,7 +19,7 @@ Runner: **bun:test**. Test files colocated: `{name}.test.ts` or `__tests__/` dir
 
 ## Test Utilities
 
-`packages/auth/__tests__/test-utils.ts` (exported as `@packages/auth/test-utils`):
+`packages/auth/__tests__/test-utils.ts` (exported as `@ingot/auth/test-utils`):
 
 | Utility                                            | Purpose                                                      |
 | :------------------------------------------------- | :----------------------------------------------------------- |

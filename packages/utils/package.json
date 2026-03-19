@@ -1,5 +1,5 @@
 {
-  "name": "@packages/utils",
+  "name": "@ingot/utils",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -18,7 +18,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@packages/config": "*",
+    "@ingot/config": "*",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:"

@@ -13,11 +13,11 @@
   "iconLibrary": "lucide",
   "rtl": false,
   "aliases": {
-    "components": "@packages/ui/components",
-    "utils": "@packages/ui/lib/utils",
-    "hooks": "@packages/ui/hooks",
-    "lib": "@packages/ui/lib",
-    "ui": "@packages/ui/components"
+    "components": "@ingot/ui/components",
+    "utils": "@ingot/ui/lib/utils",
+    "hooks": "@ingot/ui/hooks",
+    "lib": "@ingot/ui/lib",
+    "ui": "@ingot/ui/components"
   },
   "menuColor": "default",
   "menuAccent": "subtle",

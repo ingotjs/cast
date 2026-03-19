@@ -1,7 +1,7 @@
 // Reference: https://github.com/TanStack/router/tree/main/examples/react/start-i18n-paraglide
 
-import { initKv } from "@packages/auth/kv-storage";
-import { initDb } from "@packages/db";
+import { initKv } from "@ingot/auth/kv-storage";
+import { initDb } from "@ingot/db";
 import handler from "@tanstack/react-start/server-entry";
 import { env } from "cloudflare:workers";
 
