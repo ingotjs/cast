@@ -49,8 +49,14 @@ console.log(`\nCloning ${REPO}...`);
 execSync(`git clone --depth 1 ${REPO_URL} ${dest}`, { stdio: "pipe" });
 rmSync(resolve(dir, ".git"), { recursive: true, force: true });
 
-// Remove the cast CLI package itself — users don't need it
-rmSync(resolve(dir, "packages/cast"), { recursive: true, force: true });
+// Remove meta/ — users don't need CLI or docs site
+rmSync(resolve(dir, "meta"), { recursive: true, force: true });
+
+// Remove meta/* from workspaces + deploy-site workflow
+const pkgPath = resolve(dir, "package.json");
+const pkg = readFileSync(pkgPath, "utf8");
+writeFileSync(pkgPath, pkg.replace(/,?\s*"meta\/\*"/, ""));
+rmSync(resolve(dir, ".github/workflows/deploy-site.yml"), { force: true });
 
 // ---------------------------------------------------------------------------
 // Replace app name

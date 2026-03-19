@@ -4,9 +4,10 @@
   "description": "Scaffold a Cast project — the modern full-stack TypeScript starter",
   "license": "MIT",
   "bin": {
-    "cast": "./bin.ts"
+    "cast": "./bin.js"
   },
   "files": [
+    "bin.js",
     "bin.ts"
   ],
   "type": "module",

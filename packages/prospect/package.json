@@ -18,7 +18,7 @@
   },
   "scripts": {
     "ts": "tsgo --noEmit",
-    "prepublishOnly": "vp pack"
+    "prepublishOnly": "vp pack define-coverage.ts"
   },
   "devDependencies": {
     "@ingot/config": "*",

@@ -1,0 +1,22 @@
+name: Deploy Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "meta/site/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to ingotjs.github.io
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          deploy_key: ${{ secrets.SITE_DEPLOY_KEY }}
+          external_repository: ingotjs/ingotjs.github.io
+          publish_branch: main
+          publish_dir: ./meta/site
+          cname: ingot.js.org

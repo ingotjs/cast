@@ -68,7 +68,7 @@
     },
     "packages/utils": {},
     "packages/prospect": {},
-    "packages/cast": {
+    "meta/cast": {
       "entry": ["bin.ts"]
     }
   }

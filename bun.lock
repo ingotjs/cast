@@ -76,6 +76,20 @@
         "wrangler": "4.73.0",
       },
     },
+    "meta/cast": {
+      "name": "@ingot/cast",
+      "version": "0.0.1",
+      "bin": {
+        "cast": "./bin.js",
+      },
+      "dependencies": {
+        "@inquirer/prompts": "7.5.3",
+      },
+      "devDependencies": {
+        "@types/node": "catalog:",
+        "typescript": "catalog:",
+      },
+    },
     "packages/api": {
       "name": "@ingot/api",
       "version": "0.0.0",
@@ -112,20 +126,6 @@
         "@inlang/plugin-m-function-matcher": "catalog:",
         "@inlang/plugin-message-format": "catalog:",
         "@types/bun": "catalog:",
-        "@types/node": "catalog:",
-        "typescript": "catalog:",
-      },
-    },
-    "packages/cast": {
-      "name": "@ingot/cast",
-      "version": "0.0.0",
-      "bin": {
-        "cast": "./bin.ts",
-      },
-      "dependencies": {
-        "@inquirer/prompts": "7.5.3",
-      },
-      "devDependencies": {
         "@types/node": "catalog:",
         "typescript": "catalog:",
       },
@@ -618,7 +618,7 @@
 
     "@ingot/auth": ["@ingot/auth@workspace:packages/auth"],
 
-    "@ingot/cast": ["@ingot/cast@workspace:packages/cast"],
+    "@ingot/cast": ["@ingot/cast@workspace:meta/cast"],
 
     "@ingot/config": ["@ingot/config@workspace:packages/config"],
 
