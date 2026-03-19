@@ -12,22 +12,23 @@
  * 5. Verify the header shows the "Sign in" link instead of user menu
  */
 
+import { testId } from "../../coverage";
 import { expect, test } from "../fixtures/auth";
 
 test.describe("Sign Out", () => {
   test("should sign out via user menu and show unauthenticated state", async ({ page, authenticatedPage: _setup }) => {
     // Navigate to home page and verify authenticated state
     await page.goto("/");
-    await expect(page.getByTestId("user-menu-trigger")).toBeVisible();
+    await expect(page.getByTestId(testId.userMenu.trigger)).toBeVisible();
 
     // Open the user menu dropdown
-    await page.getByTestId("user-menu-trigger").click();
+    await page.getByTestId(testId.userMenu.trigger).click();
 
     // Click the sign-out menu item
-    await page.getByTestId("user-menu-signout").click();
+    await page.getByTestId(testId.userMenu.signout).click();
 
     // Verify unauthenticated state — header shows "Sign in" link
-    await expect(page.getByTestId("header-signin-link")).toBeVisible();
+    await expect(page.getByTestId(testId.header.signinLink)).toBeVisible();
 
     // _setup activates the authenticatedPage fixture (unused directly)
   });

@@ -14,9 +14,10 @@
  * 7. Verify the user is redirected to the home page in unauthenticated state
  * 8. Verify the header shows the "Sign in" link (unauthenticated)
  * 9. Verify an account-deleted email was captured for the user
- * 10. Verify the user can no longer sign in with their credentials
+ * 10. Verify the user can no longer sign in via API
  */
 
+import { testId } from "../../coverage";
 import { expect, test } from "../fixtures/auth";
 
 test.describe("Delete Account", () => {
@@ -29,31 +30,28 @@ test.describe("Delete Account", () => {
     await expect(page.getByText("Loading sessions...")).not.toBeVisible();
 
     // Click the initial delete trigger button
-    await expect(page.getByTestId("delete-account-trigger")).toBeVisible();
-    await page.getByTestId("delete-account-trigger").click();
+    await expect(page.getByTestId(testId.deleteAccount.trigger)).toBeVisible();
+    await page.getByTestId(testId.deleteAccount.trigger).click();
 
     // Verify the confirmation form appears
-    await expect(page.getByTestId("delete-account-form")).toBeVisible();
+    await expect(page.getByTestId(testId.deleteAccount.form)).toBeVisible();
 
     // Enter password and confirm deletion
     await page.locator("#delete-password").fill(authenticatedPage.password);
-    await page.getByTestId("delete-account-confirm").click();
+    await page.getByTestId(testId.deleteAccount.confirm).click();
 
     // Auth redirect involves server-side session invalidation + redirect
     await expect(page).toHaveURL("/", { timeout: 15_000 });
-    await expect(page.getByTestId("header-signin-link")).toBeVisible();
+    await expect(page.getByTestId(testId.header.signinLink)).toBeVisible();
 
     // Verify account-deleted email was captured
     await expectEmail(authenticatedPage.email, "deleted");
 
-    // Verify the deleted user cannot sign in anymore
-    await page.goto("/auth/sign-in");
-    await expect(page.getByTestId("signin-form")).toBeVisible();
-    await page.getByLabel("Email").fill(authenticatedPage.email);
-    await page.locator("#password").fill(authenticatedPage.password);
-    await page.getByTestId("signin-submit").click();
-
-    // Should remain on sign-in page (auth failure)
-    await expect(page).toHaveURL(/\/auth\/sign-in/);
+    // Verify deleted user cannot sign in via API (faster than UI sign-in)
+    const res = await page.request.post("http://localhost:2000/api/auth/sign-in/email", {
+      data: { email: authenticatedPage.email, password: authenticatedPage.password },
+      headers: { Origin: "http://localhost:2000" },
+    });
+    expect(res.ok()).toBe(false);
   });
 });

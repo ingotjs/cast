@@ -11,8 +11,7 @@
  * 4. Fill in the change-password form (current password, new password, confirm new password)
  * 5. Submit the form and verify success toast appears
  * 6. Verify a password-changed email was captured for the user
- * 7. Sign out via user menu dropdown
- * 8. Sign in with the new password through the UI to verify it works
+ * 7. Verify new password works via signOut + signIn fixtures
  *
  * Test 2 — Incorrect current password:
  * 1. authenticatedPage fixture creates user (cookies set via API)
@@ -22,6 +21,7 @@
  * 5. Verify no success toast appears (the change is rejected)
  */
 
+import { testId } from "../../coverage";
 import { expect, test } from "../fixtures/auth";
 
 test.describe("Change Password", () => {
@@ -29,12 +29,14 @@ test.describe("Change Password", () => {
     page,
     authenticatedPage,
     expectEmail,
+    signOut,
+    signIn,
   }) => {
     const newPassword = "NewPassword456!";
 
     // Navigate to account settings
     await page.goto("/account");
-    await expect(page.getByTestId("change-password-form")).toBeVisible();
+    await expect(page.getByTestId(testId.changePassword.form)).toBeVisible();
 
     // Wait for the page to fully settle (session data loading causes re-renders
     // that reset form fields). The "Sessions" card shows "Loading sessions..." then
@@ -47,7 +49,7 @@ test.describe("Change Password", () => {
     await page.locator("#confirmPassword").fill(newPassword);
 
     // Submit the form
-    await page.getByTestId("change-password-submit").click();
+    await page.getByTestId(testId.changePassword.submit).click();
 
     // Verify success toast
     await expect(page.getByText("Password changed successfully")).toBeVisible();
@@ -55,23 +57,14 @@ test.describe("Change Password", () => {
     // Verify password-changed email was captured
     await expectEmail(authenticatedPage.email, "password");
 
-    // Sign out via user menu
-    await page.getByTestId("user-menu-trigger").click();
-    await page.getByTestId("user-menu-signout").click();
-    await expect(page.getByTestId("header-signin-link")).toBeVisible();
-
-    // Sign in with new password through the UI
-    await page.goto("/auth/sign-in");
-    await expect(page.getByTestId("signin-form")).toBeVisible();
-    await page.getByLabel("Email").fill(authenticatedPage.email);
-    await page.locator("#password").fill(newPassword);
-    await page.getByTestId("signin-submit").click();
-    await expect(page).toHaveURL("/");
+    // Verify new password works via API
+    await signOut();
+    await signIn(authenticatedPage.email, newPassword);
   });
 
   test("should reject incorrect current password", async ({ page, authenticatedPage: _setup }) => {
     await page.goto("/account");
-    await expect(page.getByTestId("change-password-form")).toBeVisible();
+    await expect(page.getByTestId(testId.changePassword.form)).toBeVisible();
 
     // Wait for page to settle (session data loading)
     await expect(page.getByText("Loading sessions...")).not.toBeVisible();
@@ -81,7 +74,7 @@ test.describe("Change Password", () => {
     await page.locator("#newPassword").fill("NewPassword456!");
     await page.locator("#confirmPassword").fill("NewPassword456!");
 
-    await page.getByTestId("change-password-submit").click();
+    await page.getByTestId(testId.changePassword.submit).click();
 
     // Should show an error, not success
     await expect(page.getByText("Password changed successfully")).not.toBeVisible();

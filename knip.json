@@ -64,6 +64,7 @@
       "ignore": ["src/svgs/omega-icon.tsx"],
       "ignoreDependencies": ["postcss-load-config"]
     },
-    "packages/utils": {}
+    "packages/utils": {},
+    "packages/omega-e2e": {}
   }
 }

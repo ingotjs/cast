@@ -41,17 +41,18 @@
 
 ### Monorepo Structure
 
-| Package           | Alias              | Description                                                                |
-| :---------------- | :----------------- | :------------------------------------------------------------------------- |
-| `apps/web`        | —                  | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
-| `packages/db`     | `@packages/db`     | Drizzle ORM + D1 schema, migrations, database client                       |
-| `packages/utils`  | `@packages/utils`  | Shared consts (`src/shared/`), server env/logger/posthog (`src/server/`)   |
-| `packages/auth`   | `@packages/auth`   | Better Auth config, KV storage, i18n                                       |
-| `packages/api`    | `@packages/api`    | oRPC router + procedures (public/protected/admin)                          |
-| `packages/email`  | `@packages/email`  | React Email templates + Resend + email capture (E2E)                       |
-| `packages/ui`     | `@packages/ui`     | shadcn v4 + Tailwind CSS + Base UI                                         |
-| `apps/e2e`        | —                  | Playwright E2E tests (auth flows, email verification)                      |
-| `packages/config` | `@packages/config` | Shared TypeScript configs                                                  |
+| Package              | Alias                 | Description                                                                |
+| :------------------- | :-------------------- | :------------------------------------------------------------------------- |
+| `apps/web`           | —                     | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
+| `packages/db`        | `@packages/db`        | Drizzle ORM + D1 schema, migrations, database client                       |
+| `packages/utils`     | `@packages/utils`     | Shared consts (`shared/`), server env/logger/posthog (`server/`)           |
+| `packages/auth`      | `@packages/auth`      | Better Auth config, KV storage, i18n                                       |
+| `packages/api`       | `@packages/api`       | oRPC router + procedures (public/protected/admin)                          |
+| `packages/email`     | `@packages/email`     | React Email templates + Resend + email capture (E2E)                       |
+| `packages/ui`        | `@packages/ui`        | shadcn v4 + Tailwind CSS + Base UI                                         |
+| `apps/e2e`           | —                     | Playwright E2E tests (auth flows, email verification)                      |
+| `packages/omega-e2e` | `@packages/omega-e2e` | E2E coverage framework (defineE2ECoverage, testId, setup validation)       |
+| `packages/config`    | `@packages/config`    | Shared TypeScript configs                                                  |
 
 **Dependency graph:** `@packages/db` (leaf) ← `@packages/auth` (+ `@packages/email`, `@packages/utils`) ← `@packages/api`
 

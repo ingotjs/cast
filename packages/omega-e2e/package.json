@@ -1,0 +1,18 @@
+{
+  "name": "@packages/omega-e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./define-coverage.ts"
+  },
+  "scripts": {
+    "ts": "tsgo --noEmit"
+  },
+  "devDependencies": {
+    "@packages/config": "*",
+    "@types/bun": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:"
+  }
+}

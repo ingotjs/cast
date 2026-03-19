@@ -25,6 +25,7 @@
  * 4. Verify form stays on sign-up page (client-side validation catches mismatch)
  */
 
+import { testId } from "../../coverage";
 import { expect, test } from "../fixtures/auth";
 
 const generateEmail = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e.test`;
@@ -38,7 +39,7 @@ test.describe("Sign Up", () => {
 
     // Navigate to the sign-up page and wait for form hydration
     await page.goto("/auth/sign-up");
-    await page.waitForSelector("[data-testid='signup-form'][data-hydrated]");
+    await page.waitForSelector(`[data-testid='${testId.signup.form}'][data-hydrated]`);
 
     // Fill in the registration form using id locators for reliability
     await page.locator("#firstName").fill(firstName);
@@ -48,11 +49,11 @@ test.describe("Sign Up", () => {
     await page.locator("#confirmPassword").fill(password);
 
     // Submit the form
-    await page.getByTestId("signup-submit").click();
+    await page.getByTestId(testId.signup.submit).click();
 
     // Auth redirect involves server-side session creation + redirect
     await expect(page).toHaveURL("/", { timeout: 15_000 });
-    await expect(page.getByTestId("user-menu-trigger")).toBeVisible();
+    await expect(page.getByTestId(testId.userMenu.trigger)).toBeVisible();
 
     // Verify verification email was captured
     await expectEmail(email, "verif");
@@ -62,7 +63,7 @@ test.describe("Sign Up", () => {
     await page.goto("/auth/sign-up");
 
     // Submit empty form
-    await page.getByTestId("signup-submit").click();
+    await page.getByTestId(testId.signup.submit).click();
 
     // Verify form doesn't navigate away
     await expect(page).toHaveURL(/\/auth\/sign-up/);
@@ -79,7 +80,7 @@ test.describe("Sign Up", () => {
     await page.locator("#password").fill("TestPassword123!");
     await page.locator("#confirmPassword").fill("DifferentPassword123!");
 
-    await page.getByTestId("signup-submit").click();
+    await page.getByTestId(testId.signup.submit).click();
 
     // Should stay on the sign-up page due to validation error
     await expect(page).toHaveURL(/\/auth\/sign-up/);

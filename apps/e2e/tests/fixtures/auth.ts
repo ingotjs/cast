@@ -24,6 +24,10 @@ type AuthFixtures = {
   testUser: TestUser;
   /** Create a user via API. Session cookies are set automatically. Returns credentials. */
   authenticatedPage: TestUser;
+  /** Sign in via API. Sets session cookies on browser context. */
+  signIn: (email: string, password: string) => Promise<void>;
+  /** Sign out by clearing cookies. */
+  signOut: () => Promise<void>;
   /** Read captured emails for a recipient */
   getEmails: (email: string) => CapturedEmail[];
   /** Assert an email with a matching subject keyword was captured (polls until found) */
@@ -61,6 +65,22 @@ export const test = base.extend<AuthFixtures>({
     expect(res.ok()).toBe(true);
 
     await use({ email, password: TEST_PASSWORD, name });
+  },
+
+  signIn: async ({ page }, use) => {
+    await use(async (email: string, password: string) => {
+      const res = await page.request.post(`${BASE_URL}/api/auth/sign-in/email`, {
+        data: { email, password },
+        headers: { Origin: BASE_URL },
+      });
+      expect(res.ok()).toBe(true);
+    });
+  },
+
+  signOut: async ({ page }, use) => {
+    await use(async () => {
+      await page.context().clearCookies();
+    });
   },
 
   getEmails: async ({}, use) => {
