@@ -12,10 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy to ingotjs.github.io
+      - name: Push to ingotjs.github.io
         uses: peaceiris/actions-gh-pages@v4
         with:
-          deploy_key: ${{ secrets.SITE_DEPLOY_KEY }}
+          personal_token: ${{ secrets.SITE_DEPLOY_TOKEN }}
           external_repository: ingotjs/ingotjs.github.io
           publish_branch: main
           publish_dir: ./meta/site
