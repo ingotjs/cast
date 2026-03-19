@@ -65,6 +65,6 @@
       "ignoreDependencies": ["postcss-load-config"]
     },
     "packages/utils": {},
-    "packages/omega-e2e": {}
+    "packages/e2e-coverage": {}
   }
 }

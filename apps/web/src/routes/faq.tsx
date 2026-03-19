@@ -1,15 +1,18 @@
+import { consts } from "@packages/utils/consts";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { seoMeta } from "../lib/seo";
 import { m } from "../paraglide/messages";
 
+const { appName } = consts;
+
 const getFaqs = () => [
-  { question: m.faq_q_what_is(), answer: m.faq_a_what_is() },
-  { question: m.faq_q_tech_stack(), answer: m.faq_a_tech_stack() },
+  { question: m.faq_q_what_is({ appName }), answer: m.faq_a_what_is({ appName }) },
+  { question: m.faq_q_tech_stack({ appName }), answer: m.faq_a_tech_stack() },
   { question: m.faq_q_get_started(), answer: m.faq_a_get_started() },
   { question: m.faq_q_auth(), answer: m.faq_a_auth() },
-  { question: m.faq_q_open_source(), answer: m.faq_a_open_source() },
-  { question: m.faq_q_deploy(), answer: m.faq_a_deploy() },
+  { question: m.faq_q_open_source({ appName }), answer: m.faq_a_open_source({ appName }) },
+  { question: m.faq_q_deploy({ appName }), answer: m.faq_a_deploy() },
 ];
 
 const FAQPage = () => {
@@ -18,7 +21,7 @@ const FAQPage = () => {
   return (
     <main className="container mx-auto max-w-3xl px-4 py-12 md:py-20">
       <h1 className="text-3xl font-bold tracking-tight">{m.faq_heading()}</h1>
-      <p className="mt-2 text-muted-foreground">{m.faq_subheading()}</p>
+      <p className="mt-2 text-muted-foreground">{m.faq_subheading({ appName })}</p>
 
       <div className="mt-8 space-y-8">
         {faqs.map((faq) => (
@@ -38,8 +41,8 @@ export const Route = createFileRoute("/faq")({
     return {
       meta: [
         ...seoMeta({
-          title: m.meta_faq_title(),
-          description: m.meta_faq_description(),
+          title: m.meta_faq_title({ appName }),
+          description: m.meta_faq_description({ appName }),
         }),
       ],
       scripts: [

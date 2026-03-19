@@ -1,4 +1,4 @@
-# OmegaStart
+# Cast
 
 > **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
 >
@@ -41,18 +41,18 @@
 
 ### Monorepo Structure
 
-| Package              | Alias                 | Description                                                                |
-| :------------------- | :-------------------- | :------------------------------------------------------------------------- |
-| `apps/web`           | —                     | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
-| `packages/db`        | `@packages/db`        | Drizzle ORM + D1 schema, migrations, database client                       |
-| `packages/utils`     | `@packages/utils`     | Shared consts (`shared/`), server env/logger/posthog (`server/`)           |
-| `packages/auth`      | `@packages/auth`      | Better Auth config, KV storage, i18n                                       |
-| `packages/api`       | `@packages/api`       | oRPC router + procedures (public/protected/admin)                          |
-| `packages/email`     | `@packages/email`     | React Email templates + Resend + email capture (E2E)                       |
-| `packages/ui`        | `@packages/ui`        | shadcn v4 + Tailwind CSS + Base UI                                         |
-| `apps/e2e`           | —                     | Playwright E2E tests (auth flows, email verification)                      |
-| `packages/omega-e2e` | `@packages/omega-e2e` | E2E coverage framework (defineE2ECoverage, testId, setup validation)       |
-| `packages/config`    | `@packages/config`    | Shared TypeScript configs                                                  |
+| Package                 | Alias                    | Description                                                                |
+| :---------------------- | :----------------------- | :------------------------------------------------------------------------- |
+| `apps/web`              | —                        | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
+| `packages/db`           | `@packages/db`           | Drizzle ORM + D1 schema, migrations, database client                       |
+| `packages/utils`        | `@packages/utils`        | Shared consts (`shared/`), server env/logger/posthog (`server/`)           |
+| `packages/auth`         | `@packages/auth`         | Better Auth config, KV storage, i18n                                       |
+| `packages/api`          | `@packages/api`          | oRPC router + procedures (public/protected/admin)                          |
+| `packages/email`        | `@packages/email`        | React Email templates + Resend + email capture (E2E)                       |
+| `packages/ui`           | `@packages/ui`           | shadcn v4 + Tailwind CSS + Base UI                                         |
+| `apps/e2e`              | —                        | Playwright E2E tests (auth flows, email verification)                      |
+| `packages/e2e-coverage` | `@packages/e2e-coverage` | E2E coverage framework (defineE2ECoverage, testId, setup validation)       |
+| `packages/config`       | `@packages/config`       | Shared TypeScript configs                                                  |
 
 **Dependency graph:** `@packages/db` (leaf) ← `@packages/auth` (+ `@packages/email`, `@packages/utils`) ← `@packages/api`
 
@@ -125,7 +125,7 @@ Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap +
 
 ### Internationalization (i18n)
 
-[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) — **ZERO TOLERANCE for non-i18n strings.** All user-facing text MUST come from Paraglide message functions. Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`). Three projects: Frontend (`apps/web/messages/`), Backend (`packages/auth/messages/`), Email (`packages/email/.etc/messages/`). Full details in **`_i18n` skill**.
+[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) — **ZERO TOLERANCE for non-i18n strings.** All user-facing text MUST come from Paraglide message functions. Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`). Three projects: Frontend (`apps/web/messages/`), Backend (`packages/auth/messages/`), Email (`packages/email/messages/`). Full details in **`_i18n` skill**.
 
 ### Dependency Management
 
@@ -155,21 +155,21 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 
 **Auto-invoke skills** — MUST activate the relevant skill when working in its domain:
 
-| Skill             | Trigger                                                                           |
-| :---------------- | :-------------------------------------------------------------------------------- |
-| `_frontend`       | Writing/modifying frontend code in `apps/web/`                                    |
-| `_i18n`           | Adding/modifying user-facing text                                                 |
-| `_e2e-testing`    | Adding/modifying E2E tests                                                        |
-| `_auth`           | Auth flows, sessions, Better Auth config in `packages/auth/`                      |
-| `_email`          | Email templates, triggers in `packages/email/`                                    |
-| `_seo`            | New public routes, meta tags, SEO files                                           |
-| `_analytics`      | PostHog events, error tracking, logging                                           |
-| `_env`            | Adding env vars, toggling service features or capability flags                    |
-| `_database`       | Schema, migrations, queries, oRPC procedures in `packages/db/` or `packages/api/` |
-| `_infra`          | Alchemy IaC, deployment, CI/CD pipeline                                           |
-| `_testing`        | Writing/modifying unit or integration tests                                       |
-| `_linear`         | Working on Linear tickets or given a Linear link                                  |
-| `_skill-creation` | Creating or modifying custom `_` skills                                           |
+| Skill             | Trigger                                                                              |
+| :---------------- | :----------------------------------------------------------------------------------- |
+| `_frontend`       | Writing/modifying frontend code in `apps/web/`                                       |
+| `_i18n`           | Adding/modifying user-facing text                                                    |
+| `_e2e-testing`    | Adding/modifying E2E tests                                                           |
+| `_auth`           | Auth flows, sessions, Better Auth config in `packages/auth/`                         |
+| `_email`          | Email templates, triggers in `packages/email/`                                       |
+| `_seo`            | New public routes, meta tags, SEO files                                              |
+| `_analytics`      | PostHog events, error tracking, logging                                              |
+| `_env`            | Adding env vars, toggling service features or capability flags                       |
+| `_database`       | Schema, migrations, queries, oRPC procedures in `packages/db/` or `packages/api/`    |
+| `_infra`          | Alchemy IaC, deployment, CI/CD pipeline                                              |
+| `_testing`        | Writing/modifying unit or integration tests                                          |
+| `_linear`         | Working on Linear tickets or given a Linear link                                     |
+| `_skill-creation` | Creating or modifying custom `_` skills                                              |
 | `_brand-naming`   | Brainstorming names for projects, packages, companies, or checking name availability |
 
 ### General Rules
@@ -286,7 +286,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                        |
 | `packages/email/emails/email-layout.tsx` | Shared email layout component                                                          |
 | `packages/auth/messages/en.json`         | Server i18n strings (auth error messages with `auth_` prefix)                          |
-| `packages/email/.etc/messages/en.json`   | Email i18n strings                                                                     |
+| `packages/email/messages/en.json`        | Email i18n strings                                                                     |
 | `bunfig.toml`                            | Bun config (exact versions, min release age)                                           |
 
 <!--VITE PLUS START-->

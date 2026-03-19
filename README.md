@@ -1,12 +1,12 @@
-# OmegaStart
+# Cast
 
 **The full-stack TypeScript starter that actually works.** Ship production apps in minutes, not weeks.
 
 Built on [TanStack Start](https://tanstack.com/start) + [Bun](https://bun.sh/) + [Vite+](https://vite.dev/plus/). Everything is type-safe, everything is fast, everything just works.
 
-## Why OmegaStart?
+## Why Cast?
 
-Most starters give you a skeleton. OmegaStart gives you a **production-ready foundation** — auth, API, database, email, i18n, logging, CI/CD, and deployment are all wired up and working together. No glue code, no boilerplate, no "figure it out yourself."
+Most starters give you a skeleton. Cast gives you a **production-ready foundation** — auth, API, database, email, i18n, logging, CI/CD, and deployment are all wired up and working together. No glue code, no boilerplate, no "figure it out yourself."
 
 # Pillars
 
@@ -129,7 +129,7 @@ Services activate when their env vars are set. Leave them out and the service is
 
 ## Observability
 
-OmegaStart ships with a complete observability stack — all centralized in [PostHog](https://posthog.com/). Analytics, error tracking, event capture, and server logs in one dashboard. Just set `VITE_PUBLIC_POSTHOG_KEY` and `VITE_PUBLIC_POSTHOG_HOST`.
+Cast ships with a complete observability stack — all centralized in [PostHog](https://posthog.com/). Analytics, error tracking, event capture, and server logs in one dashboard. Just set `VITE_PUBLIC_POSTHOG_KEY` and `VITE_PUBLIC_POSTHOG_HOST`.
 
 ### Structured Logging — [Pino](https://getpino.io/) + [PostHog Logs](https://posthog.com/docs/logs)
 
@@ -157,17 +157,17 @@ Automatic on both client and server — no extra setup required.
 
 ## Internationalization (i18n)
 
-OmegaStart is **i18n-ready from day one** — every user-facing string flows through [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs), from UI labels to auth errors to transactional emails. Adding a new language is a JSON file, not a refactor.
+Cast is **i18n-ready from day one** — every user-facing string flows through [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs), from UI labels to auth errors to transactional emails. Adding a new language is a JSON file, not a refactor.
 
 ### Architecture
 
 Three separate Paraglide projects keep bundles lean and concerns separated:
 
-| Project  | Path                            | Covers                                                          |
-| -------- | ------------------------------- | --------------------------------------------------------------- |
-| Frontend | `apps/web/messages/`            | UI labels, buttons, forms, toasts, meta tags, validation errors |
-| Backend  | `packages/auth/messages/`       | Auth error messages, API responses, validation errors           |
-| Email    | `packages/email/.etc/messages/` | Subject lines, body copy, CTAs, transactional email content     |
+| Project  | Path                       | Covers                                                          |
+| -------- | -------------------------- | --------------------------------------------------------------- |
+| Frontend | `apps/web/messages/`       | UI labels, buttons, forms, toasts, meta tags, validation errors |
+| Backend  | `packages/auth/messages/`  | Auth error messages, API responses, validation errors           |
+| Email    | `packages/email/messages/` | Subject lines, body copy, CTAs, transactional email content     |
 
 Each project generates its own type-safe message functions. Server strings never leak into the client bundle.
 

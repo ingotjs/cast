@@ -13,7 +13,7 @@
     { "path": "packages/api" },
     { "path": "packages/email" },
     { "path": "packages/ui" },
-    { "path": "packages/omega-e2e" },
+    { "path": "packages/e2e-coverage" },
     { "path": "apps/web" }
   ]
 }

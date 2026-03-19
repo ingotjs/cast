@@ -20,7 +20,7 @@ description: Infrastructure and deployment — Alchemy IaC, Cloudflare Workers, 
 | Dev server     | `bun dev` → `alchemy dev` → generates wrangler config → runs `vite dev`                                     |
 | Migrations     | Applied automatically by Alchemy on `dev`/`deploy` via `migrationsDir` in D1Database                        |
 | Health check   | `/api/auth/ok`                                                                                              |
-| State          | `.alchemy/omegastart/` — encrypted resource state (committed). `.alchemy/miniflare/` — local data (ignored) |
+| State          | `.alchemy/cast/` — encrypted resource state (committed). `.alchemy/miniflare/` — local data (ignored) |
 | Wrangler       | `apps/web/wrangler.jsonc` — kept for manual wrangler CLI use (db:studio, db:migrate)                        |
 
 ## How It Works

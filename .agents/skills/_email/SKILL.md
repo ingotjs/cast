@@ -31,7 +31,7 @@ All transactional emails are in `packages/email/`. Emails are fully i18n via Par
 | `packages/email/templates.ts` | Render functions (`renderXxxEmail`) + localized subject helpers (`getEmailSubject.xxx`) |
 | `packages/email/send.ts` | `createEmailSender` factory (Resend API) |
 | `packages/auth/auth.ts` | All email triggers configured here (hooks, databaseHooks, emailVerification, deleteUser) |
-| `packages/email/.etc/messages/en.json` | Email i18n strings |
+| `packages/email/messages/en.json` | Email i18n strings |
 
 ## Email i18n Pattern
 
@@ -43,7 +43,7 @@ All email text MUST use `m.email_xxx({...}, loc(locale))` where `loc()` casts th
 
 ## Adding a New Email Template
 
-1. Add message keys to `packages/email/.etc/messages/en.json` (pattern: `email_{template}_{element}`)
+1. Add message keys to `packages/email/messages/en.json` (pattern: `email_{template}_{element}`)
 2. Create template in `packages/email/emails/` using `EmailLayout` + `loc()` + `m.email_xxx()`
 3. Add render function to `packages/email/templates.ts`
 4. Add subject to `getEmailSubject` in `packages/email/templates.ts`

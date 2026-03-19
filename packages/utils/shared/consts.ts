@@ -4,7 +4,7 @@ export const DEV_PORT = 2000;
 export const DEV_URL = `http://localhost:${DEV_PORT}`;
 
 export const consts = {
-  appName: "OmegaStart",
+  appName: "Cast",
   /** Production URL — update before deploying (used for sitemap, robots.txt, JSON-LD) */
   siteUrl: "https://example.com",
   defaultLocale: "en",

@@ -4,6 +4,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { seoMeta } from "../lib/seo";
 import { m } from "../paraglide/messages";
 
+const { appName } = consts;
+
 const TermsPage = () => (
   <main className="container mx-auto max-w-3xl px-4 py-12 md:py-20">
     <h1 className="text-3xl font-bold tracking-tight">Terms of Service</h1>
@@ -65,8 +67,8 @@ export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
       ...seoMeta({
-        title: m.meta_terms_title(),
-        description: m.meta_terms_description(),
+        title: m.meta_terms_title({ appName }),
+        description: m.meta_terms_description({ appName }),
       }),
     ],
   }),

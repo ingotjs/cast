@@ -1,5 +1,5 @@
 {
-  "name": "start",
+  "name": "cast",
   "version": "0.0.0",
   "private": true,
   "workspaces": [
@@ -12,8 +12,8 @@
     "deploy": "bun run --cwd packages/infra deploy",
     "db:auth": "bun run --cwd packages/auth db:auth",
     "db:generate": "bun run --cwd packages/db db:generate && bun db:migrate",
-    "db:migrate": "cd apps/web && npx wrangler d1 migrations apply omegastart-db --local",
-    "db:migrate:remote": "cd apps/web && npx wrangler d1 migrations apply omegastart-db --remote",
+    "db:migrate": "cd apps/web && npx wrangler d1 migrations apply db --local",
+    "db:migrate:remote": "cd apps/web && npx wrangler d1 migrations apply db --remote",
     "db:studio": "bun run --cwd packages/db db:studio",
     "dev:email": "vp run @packages/email#dev",
     "e2e": "bun run --cwd apps/e2e e2e",

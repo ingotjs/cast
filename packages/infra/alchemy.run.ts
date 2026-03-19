@@ -3,20 +3,20 @@
 import alchemy from "alchemy";
 import { D1Database, KVNamespace, TanStackStart } from "alchemy/cloudflare";
 
-const app = await alchemy("omegastart");
+const app = await alchemy("app");
 
-const db = await D1Database("omegastart-db", {
-  name: "omegastart-db",
+const db = await D1Database("db", {
+  name: "db",
   migrationsDir: `${import.meta.dirname}/../db/drizzle`,
   adopt: true,
 });
 
-const kv = await KVNamespace("omegastart-kv", {
-  title: "omegastart-kv",
+const kv = await KVNamespace("kv", {
+  title: "kv",
 });
 
 export const website = await TanStackStart("website", {
-  name: "omegastart",
+  name: "worker",
   cwd: `${import.meta.dirname}/../../apps/web`,
   bindings: {
     DB: db,

@@ -1,5 +1,5 @@
 {
-  "name": "@packages/omega-e2e",
+  "name": "@packages/e2e-coverage",
   "version": "0.0.0",
   "private": true,
   "type": "module",

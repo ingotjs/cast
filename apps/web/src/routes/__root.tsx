@@ -10,6 +10,8 @@ import { Header } from "../components/header";
 import { Providers } from "../components/providers";
 import { clientEnv } from "../lib/env";
 import { m } from "../paraglide/messages";
+
+const { appName } = consts;
 import { getLocale } from "../paraglide/runtime.js";
 
 import appCss from "../styles.css?url";
@@ -71,15 +73,15 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: m.og_title() },
+      { title: m.og_title({ appName }) },
       { name: "description", content: m.og_description() },
-      { property: "og:title", content: m.og_title() },
+      { property: "og:title", content: m.og_title({ appName }) },
       { property: "og:description", content: m.og_description() },
       { property: "og:image", content: "/api/og" },
       { property: "og:type", content: "website" },
       { property: "og:url", content: consts.siteUrl },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: m.og_title() },
+      { name: "twitter:title", content: m.og_title({ appName }) },
       { name: "twitter:description", content: m.og_description() },
       { name: "twitter:image", content: "/api/og" },
     ],

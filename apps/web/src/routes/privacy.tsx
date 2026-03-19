@@ -1,8 +1,11 @@
+import { consts } from "@packages/utils/consts";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { clientEnv } from "../lib/env";
 import { seoMeta } from "../lib/seo";
 import { m } from "../paraglide/messages";
+
+const { appName } = consts;
 
 const PrivacyPage = () => (
   <main className="container mx-auto max-w-3xl px-4 py-12 md:py-20">
@@ -99,8 +102,8 @@ export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
       ...seoMeta({
-        title: m.meta_privacy_title(),
-        description: m.meta_privacy_description(),
+        title: m.meta_privacy_title({ appName }),
+        description: m.meta_privacy_description({ appName }),
       }),
     ],
   }),

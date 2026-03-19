@@ -1,10 +1,10 @@
-# OmegaStart
+# Cast
 
-> OmegaStart is the modern full-stack TypeScript starter. Ship production apps in minutes, not weeks.
+> Cast is the modern full-stack TypeScript starter. Ship production apps in minutes, not weeks.
 
 ## About
 
-OmegaStart is a production-ready monorepo starter built on TanStack Start, Bun, and Turborepo. It includes authentication (email/password + passkeys), type-safe API (oRPC), database (Drizzle ORM + PGlite/PostgreSQL), transactional emails (React Email + Resend), full-stack i18n (Paraglide JS), structured logging (Pino), CI/CD (GitHub Actions), and one-click deployment (Railway).
+Cast is a production-ready monorepo starter built on TanStack Start, Bun, and Turborepo. It includes authentication (email/password + passkeys), type-safe API (oRPC), database (Drizzle ORM + PGlite/PostgreSQL), transactional emails (React Email + Resend), full-stack i18n (Paraglide JS), structured logging (Pino), CI/CD (GitHub Actions), and one-click deployment (Railway).
 
 ## Key Features
 

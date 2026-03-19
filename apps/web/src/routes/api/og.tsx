@@ -1,3 +1,4 @@
+import { consts } from "@packages/utils/consts";
 import { createFileRoute } from "@tanstack/react-router";
 import { ImageResponse } from "workers-og";
 
@@ -12,7 +13,7 @@ export const Route = createFileRoute("/api/og")({
     handlers: {
       GET: ({ request }) => {
         const { searchParams } = new URL(request.url);
-        const title = searchParams.get("title") ?? "OmegaStart";
+        const title = searchParams.get("title") ?? consts.appName;
         const description = searchParams.get("description") ?? "The modern full-stack starter";
 
         return new ImageResponse(

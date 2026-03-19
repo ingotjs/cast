@@ -6,8 +6,8 @@ import { defineConfig } from "drizzle-kit";
  * Drizzle Kit configuration for Cloudflare D1 (SQLite).
  *
  * Generate migrations: `bun db:generate`
- * Apply locally:       `cd apps/web && npx wrangler d1 migrations apply omegastart-db --local`
- * Apply remotely:      `cd apps/web && npx wrangler d1 migrations apply omegastart-db --remote`
+ * Apply locally:       `cd apps/web && npx wrangler d1 migrations apply db --local`
+ * Apply remotely:      `cd apps/web && npx wrangler d1 migrations apply db --remote`
  */
 export default defineConfig({
   out: "./drizzle",

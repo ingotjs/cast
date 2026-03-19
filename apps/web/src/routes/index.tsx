@@ -1,8 +1,11 @@
+import { consts } from "@packages/utils/consts";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { useSession } from "../lib/auth-client";
 import { seoMeta } from "../lib/seo";
 import { m } from "../paraglide/messages";
+
+const { appName } = consts;
 
 const App = () => {
   const { data: session } = useSession();
@@ -88,7 +91,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       ...seoMeta({
-        title: m.meta_home_title(),
+        title: m.meta_home_title({ appName }),
         description: m.meta_home_description(),
       }),
     ],

@@ -1,7 +1,10 @@
+import { consts } from "@packages/utils/consts";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { seoMeta } from "../lib/seo";
 import { m } from "../paraglide/messages";
+
+const { appName } = consts;
 
 const About = () => (
   <main className="page-wrap px-4 py-12">
@@ -22,8 +25,8 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       ...seoMeta({
-        title: m.meta_about_title(),
-        description: m.meta_about_description(),
+        title: m.meta_about_title({ appName }),
+        description: m.meta_about_description({ appName }),
       }),
     ],
   }),

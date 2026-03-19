@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev:email": "email dev --port 3002",
-    "build": "paraglide-js compile --project ./.etc/project.inlang --outdir ./paraglide",
+    "build": "paraglide-js compile --project ./project.inlang --outdir ./paraglide",
     "build:email": "email build",
     "clean": "rm -rf .react-email .etc/.email-captures paraglide",
     "export": "email export",
