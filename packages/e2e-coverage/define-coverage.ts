@@ -6,15 +6,15 @@ import { resolve } from "node:path";
 // ---------------------------------------------------------------------------
 
 export type Interaction = {
-  /** Precondition / input state (null = default/only state) */
-  context?: string | null;
+  /** Precondition / input state — omit if there's only one scenario */
+  context?: string;
   /** Visibility condition (feature flag, auth state, etc.) */
   condition?: string;
   /** Whether the element should be visible under this condition */
   visible?: boolean;
   /** Expected behavior when interacted with */
   expected?: string;
-  /** Test file that covers this case (null = not yet covered) */
+  /** Test file covering this case — null means no test exists yet (coverage gap) */
   test: string | null;
   /** Nested interactive elements revealed by this interaction */
   reveals?: Record<string, Interaction[]>;

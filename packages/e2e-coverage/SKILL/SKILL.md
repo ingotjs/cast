@@ -24,9 +24,9 @@ bunx playwright test tests/auth/       # specific directory
 
 ## Architecture
 
-| Path                               | Purpose                                              |
-| :--------------------------------- | :--------------------------------------------------- |
-| `apps/e2e/playwright.config.ts`    | Config (baseURL, webServer, timeouts)                |
+| Path                              | Purpose                                              |
+| :-------------------------------- | :--------------------------------------------------- |
+| `apps/e2e/playwright.config.ts`   | Config (baseURL, webServer, timeouts)                |
 | `apps/e2e/coverage.ts`            | Interactive element coverage map (source of truth)   |
 | `apps/e2e/global-setup.ts`        | Cleans .email-captures before each run               |
 | `apps/e2e/tests/fixtures/auth.ts` | Custom fixtures (testUser, signIn, expectEmail, etc) |
@@ -40,6 +40,7 @@ bunx playwright test tests/auth/       # specific directory
 ### Philosophy
 
 E2E tests MUST simulate a real human. Every interactive element — buttons, links, inputs, selects, toggles, dropdowns — MUST be tested. If a user can interact with it, it MUST:
+
 1. Have a `data-testid` on the **outermost interaction point** (what the user clicks, not internal wrappers)
 2. Be listed in `apps/e2e/coverage.ts`
 3. Have a test for every meaningful context/state
@@ -49,13 +50,19 @@ E2E tests MUST simulate a real human. Every interactive element — buttons, lin
 `apps/e2e/coverage.ts` is the central file for E2E testing. It serves two purposes:
 
 1. **Test ID registry** — exports `testId`, a nested const object of all `data-testid` strings. Tests MUST import from here instead of hardcoding strings:
+
    ```ts
    import { testId } from "../../coverage";
-   await page.getByTestId(testId.userMenu.trigger).click();
-   await page.getByTestId(testId.deleteAccount.confirm).click();
+   await page.getByTestId(testId.userMenu.buttonTrigger).click();
+   await page.getByTestId(testId.deleteAccount.buttonConfirm).click();
    ```
 
-2. **Coverage map** — maps every route → every interactive element → every context → the test that covers it. Grep for `test: null` to find gaps.
+2. **Coverage map** — maps every route → every interactive element → every context → the test that covers it. `test: null` explicitly marks coverage gaps — grep for it to find them.
+
+**Interaction fields:**
+
+- `context` — omit if there's only one scenario. Include when the same element behaves differently based on input/state.
+- `test: null` — means no test exists yet. Always set explicitly so gaps are visible and searchable.
 
 **Structure:**
 
@@ -66,9 +73,7 @@ const userMenu: Record<string, Interaction[]> = {
     { condition: "authenticated", visible: true, test: "sign-out.e2e.ts" },
     { condition: "unauthenticated", visible: false, test: "sign-out.e2e.ts" },
   ],
-  "user-menu-signout": [
-    { context: null, expected: "signs out, redirects to /", test: "sign-out.e2e.ts" },
-  ],
+  "user-menu-signout": [{ expected: "signs out, redirects to /", test: "sign-out.e2e.ts" }],
 };
 
 // Routes compose shared + route-specific elements
@@ -80,9 +85,7 @@ export const coverage: Record<string, Route> = {
     },
     interactions: {
       ...userMenu,
-      "update-profile-submit": [
-        { context: "valid name", expected: "updates profile, success toast", test: null },
-      ],
+      "update-profile-submit": [{ context: "valid name", expected: "updates profile, success toast", test: null }],
     },
   },
 };
@@ -91,6 +94,7 @@ export const coverage: Record<string, Route> = {
 ### How to model different element types
 
 **Buttons / Links** — simple interactions:
+
 ```ts
 "signin-submit": [
   { context: "valid credentials", expected: "signs in, redirects to /", test: "sign-in.e2e.ts" },
@@ -100,6 +104,7 @@ export const coverage: Record<string, Route> = {
 ```
 
 **Selects / Dropdowns with options** — each option is a context:
+
 ```ts
 "filter-status": [
   { context: "select: all", expected: "shows all items", test: "filter.e2e.ts" },
@@ -109,45 +114,48 @@ export const coverage: Record<string, Route> = {
 ```
 
 **Conditional visibility** (auth state, feature flags, roles):
+
 ```ts
 "google-oauth-button": [
   { condition: "googleOAuth enabled", visible: true, test: null },
   { condition: "googleOAuth disabled", visible: false, test: null },
-  { context: null, expected: "initiates Google OAuth flow", test: null },
+  { expected: "initiates Google OAuth flow", test: null },
 ]
 ```
 
 **Elements that reveal nested UI** (modals, drawers, accordions, expandable sections):
+
 ```ts
 // Extract the revealed group as a reusable variable
 const deleteAccountModal = {
   "delete-account-password": [
-    { context: null, expected: "accepts password input", test: "delete-account.e2e.ts" },
+    { expected: "accepts password input", test: "delete-account.e2e.ts" },
   ],
   "delete-account-confirm": [
     { context: "correct password", expected: "deletes account", test: "delete-account.e2e.ts" },
     { context: "wrong password", expected: "shows error", test: null },
   ],
   "delete-account-cancel": [
-    { context: null, expected: "hides confirmation form", test: null },
+    { expected: "hides confirmation form", test: null },
   ],
 };
 
 // Reference in the trigger
 "delete-account-trigger": [
-  { context: null, expected: "opens confirmation modal", test: "delete-account.e2e.ts",
+  { expected: "opens confirmation modal", test: "delete-account.e2e.ts",
     reveals: deleteAccountModal },
 ]
 ```
 
 **Multiple interactive elements in the same component** — each gets its own testid and entry. Use a naming prefix to group them:
+
 ```ts
 // UserCard component has edit and delete buttons
 "user-card-edit": [
-  { context: null, expected: "opens edit modal", test: "users.e2e.ts" },
+  { expected: "opens edit modal", test: "users.e2e.ts" },
 ],
 "user-card-delete": [
-  { context: null, expected: "opens delete confirmation", test: "users.e2e.ts" },
+  { expected: "opens delete confirmation", test: "users.e2e.ts" },
 ],
 "user-card-role-select": [
   { context: "select: admin", expected: "promotes user to admin", test: "users.e2e.ts" },
@@ -156,6 +164,7 @@ const deleteAccountModal = {
 ```
 
 **Repeated elements in lists** (sessions, passkeys, table rows) — one entry represents the pattern. Don't list each individual item:
+
 ```ts
 "session-revoke": [
   { context: "other session", expected: "revokes session, removes from list", test: null },
@@ -164,6 +173,7 @@ const deleteAccountModal = {
 ```
 
 **Inputs** — only need coverage entries if they have meaningful interactive behavior beyond "accepts text". Inputs tested as part of a form submission (fill → submit → verify) are covered by the submit button's test. Give them a testid for selector stability, but the coverage entry is optional unless the input has special behavior (autocomplete, search-on-type, etc.):
+
 ```ts
 // Search input that filters without a submit button
 "search-query": [
@@ -176,6 +186,7 @@ const deleteAccountModal = {
 ### Route access control
 
 Routes with auth guards or role requirements MUST test all access scenarios:
+
 ```ts
 "/admin": {
   access: {
@@ -209,15 +220,15 @@ When adding new features, follow the same process for the new/changed routes.
 
 ## Test Fixtures (`tests/fixtures/auth.ts`)
 
-| Fixture             | Description                                                          |
-| :------------------ | :------------------------------------------------------------------- |
-| `testUser`          | Creates user via API, clears cookies. Returns `{ email, password }`  |
-| `authenticatedPage` | Creates user via API, keeps session cookies. Returns credentials     |
-| `signIn`            | Signs in via API, sets session cookies: `signIn(email, password)`    |
-| `signOut`           | Signs out by clearing cookies: `signOut()`                           |
-| `getEmails`         | Reads captured emails for a recipient (low-level)                    |
-| `expectEmail`       | Asserts an email with matching subject keyword was captured (polls)  |
-| `clearEmails`       | Clears all captured emails                                           |
+| Fixture             | Description                                                         |
+| :------------------ | :------------------------------------------------------------------ |
+| `testUser`          | Creates user via API, clears cookies. Returns `{ email, password }` |
+| `authenticatedPage` | Creates user via API, keeps session cookies. Returns credentials    |
+| `signIn`            | Signs in via API, sets session cookies: `signIn(email, password)`   |
+| `signOut`           | Signs out by clearing cookies: `signOut()`                          |
+| `getEmails`         | Reads captured emails for a recipient (low-level)                   |
+| `expectEmail`       | Asserts an email with matching subject keyword was captured (polls) |
+| `clearEmails`       | Clears all captured emails                                          |
 
 ---
 
@@ -270,24 +281,36 @@ Route auth guards use `getSession()` from `apps/web/src/lib/auth-client.ts` whic
 Place `data-testid` on the **outermost interaction point** — what the user actually clicks/types in:
 
 ```tsx
-{/* Button — testid on the button itself */}
-<Button data-testid="signup-submit" type="submit">Create account</Button>
+{
+  /* Button — testid on the button itself */
+}
+<Button data-testid="signup-submit" type="submit">
+  Create account
+</Button>;
 
-{/* Link — testid on the link */}
-<Link data-testid="header-nav-about" to="/about">About</Link>
+{
+  /* Link — testid on the link */
+}
+<Link data-testid="header-nav-about" to="/about">
+  About
+</Link>;
 
-{/* Select — testid on the select trigger, not the wrapper */}
+{
+  /* Select — testid on the select trigger, not the wrapper */
+}
 <Select data-testid="filter-status">
   <SelectTrigger>...</SelectTrigger>
   <SelectContent>...</SelectContent>
-</Select>
+</Select>;
 
-{/* Multiple elements in same component — prefix groups them */}
+{
+  /* Multiple elements in same component — prefix groups them */
+}
 <Card>
   <Input data-testid="user-card-name" />
   <Button data-testid="user-card-edit">Edit</Button>
   <Button data-testid="user-card-delete">Delete</Button>
-</Card>
+</Card>;
 ```
 
 Naming convention: `{feature}-{element}` (e.g., `signup-submit`, `delete-account-trigger`, `filter-status`)
