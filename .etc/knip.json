@@ -9,7 +9,7 @@
   "exclude": ["duplicates"],
   "workspaces": {
     ".": {
-      "entry": ["vite.config.ts", "lingui.config.ts"],
+      "entry": ["vite.config.ts"],
       "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "ultracite", "@ingot/config"],
       "ignoreBinaries": ["wrangler"]
     },

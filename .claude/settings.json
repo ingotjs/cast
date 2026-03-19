@@ -15,7 +15,7 @@
   "enabledPlugins": {
     "claude-md-management@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "playwright@claude-plugins-official": true,
+    "playwright@claude-plugins-official": false,
     "impeccable@impeccable": true
   },
   "mcpServers": {
@@ -24,6 +24,15 @@
       "args": [
         "vp",
         "mcp"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp",
+        "--output-dir",
+        "/tmp/playwright-mcp"
       ]
     }
   }
