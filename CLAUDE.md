@@ -170,6 +170,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `_testing`        | Writing/modifying unit or integration tests                                       |
 | `_linear`         | Working on Linear tickets or given a Linear link                                  |
 | `_skill-creation` | Creating or modifying custom `_` skills                                           |
+| `_brand-naming`   | Brainstorming names for projects, packages, companies, or checking name availability |
 
 ### General Rules
 
