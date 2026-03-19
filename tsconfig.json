@@ -1,0 +1,19 @@
+{
+  "extends": "@packages/config/base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true
+  },
+  "include": [],
+  "references": [
+    { "path": "packages/utils" },
+    { "path": "packages/db" },
+    { "path": "packages/auth" },
+    { "path": "packages/api" },
+    { "path": "packages/email" },
+    { "path": "packages/ui" },
+    { "path": "packages/omega-e2e" },
+    { "path": "apps/web" }
+  ]
+}
