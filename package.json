@@ -21,6 +21,7 @@
     "ok": "syncpack fix --log-levels error && vp run ts -r && vp fmt --write && vp lint --fix && bun test",
     "ok:ci": "syncpack lint --log-levels error && vp run ts -r && vp fmt --check && vp lint && bun test",
     "ok:full": "bun knip && bun ok && bun e2e",
+    "clean": "bun run --filter '*' clean && rm -rf .alchemy",
     "prepare": "vp config"
   },
   "devDependencies": {

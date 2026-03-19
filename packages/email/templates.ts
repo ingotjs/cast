@@ -8,7 +8,7 @@ import { PasswordChangedEmail } from "./emails/password-changed";
 import { ResetPasswordEmail } from "./emails/reset-password";
 import { WelcomeEmail } from "./emails/welcome";
 import { loc } from "./locale";
-import * as m from "./src/paraglide/messages";
+import * as m from "./paraglide/messages";
 
 type CommonProps = {
   appName: string;

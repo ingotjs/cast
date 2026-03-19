@@ -24,7 +24,7 @@ const config = defineConfig({
   plugins: [
     // Reference: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/strategy
     paraglideVitePlugin({
-      project: "./.etc/project.inlang",
+      project: "./project.inlang",
       outdir: "./src/paraglide",
       strategy: ["cookie", "preferredLanguage", "url", "baseLocale"],
     }),

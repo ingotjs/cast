@@ -2,7 +2,7 @@ import { Body, Container, Head, Html, Link, Preview, Section, Tailwind, Text } f
 import type { ReactNode } from "react";
 
 import { loc } from "../locale";
-import * as m from "../src/paraglide/messages";
+import * as m from "../paraglide/messages";
 
 type EmailLayoutProps = {
   locale: string;

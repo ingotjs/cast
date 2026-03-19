@@ -4,10 +4,10 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./globals.css": "./src/globals.css",
+    "./globals.css": "./globals.css",
     "./postcss.config": "./postcss.config.mjs",
-    "./lib/*": "./src/lib/*.ts",
-    "./components/*": "./src/components/*.tsx"
+    "./lib/*": "./lib/*.ts",
+    "./components/*": "./components/*.tsx"
   },
   "scripts": {
     "ts": "tsgo --noEmit"

@@ -1,7 +1,7 @@
 import { Text } from "@react-email/components";
 
 import { loc } from "../locale";
-import * as m from "../src/paraglide/messages";
+import * as m from "../paraglide/messages";
 import { EmailLayout } from "./email-layout";
 
 type AccountDeletedEmailProps = {

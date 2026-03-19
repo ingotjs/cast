@@ -19,7 +19,7 @@ i18n covers frontend UI, backend API responses, Zod validation errors, auth erro
 
 | Project  | Path                        | Covers                                                                        |
 | :------- | :-------------------------- | :---------------------------------------------------------------------------- |
-| Frontend | `apps/web/.etc/messages/`   | UI labels, buttons, placeholders, toasts, auth forms, settings, admin         |
+| Frontend | `apps/web/messages/`        | UI labels, buttons, placeholders, toasts, auth forms, settings, admin         |
 | Backend  | `packages/auth/messages/` | Auth error messages (`auth_*`), oRPC errors, API responses, validation errors |
 | Email    | `packages/email/.etc/messages/`  | Subject lines, body copy, CTAs, transactional email content                   |
 
@@ -41,7 +41,7 @@ ALL user-facing strings MUST use Paraglide. This includes UI text, Zod validatio
 ## How to add a new i18n string
 
 1. Add to the appropriate `messages/en.json`:
-   - Frontend → `apps/web/.etc/messages/en.json`
+   - Frontend → `apps/web/messages/en.json`
    - Backend → `packages/auth/messages/en.json`
    - Email → `packages/email/.etc/messages/en.json`
 2. Import: `import { m } from "@/paraglide/messages"`
@@ -112,7 +112,7 @@ The test suite (`auth-i18n.test.ts`) imports `BASE_ERROR_CODES` from `better-aut
 ## Adding a new locale
 
 1. Add the locale code to **all three** `project.inlang/settings.json` `locales` arrays:
-   - `apps/web/.etc/project.inlang/settings.json`
+   - `apps/web/project.inlang/settings.json`
    - `packages/auth/project.inlang/settings.json`
    - `packages/email/.etc/project.inlang/settings.json`
 2. Create `messages/{locale}.json` in each project with translated strings
@@ -122,7 +122,7 @@ The test suite (`auth-i18n.test.ts`) imports `BASE_ERROR_CODES` from `better-aut
 
 ## i18n for meta tags
 
-All meta tag values MUST use Paraglide message functions (e.g., `m.meta_home_title()`). Keys are in `apps/web/.etc/messages/en.json`.
+All meta tag values MUST use Paraglide message functions (e.g., `m.meta_home_title()`). Keys are in `apps/web/messages/en.json`.
 
 **Per-page SEO pattern:**
 

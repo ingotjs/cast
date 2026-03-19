@@ -2,10 +2,10 @@
   "extends": "@packages/config/react-library.json",
   "compilerOptions": {
     "paths": {
-      "@packages/ui/*": ["./src/*"]
+      "@packages/ui/*": ["./*"]
     },
     "strictNullChecks": true
   },
-  "include": ["src"],
+  "include": ["components", "lib", "svgs", "globals.css"],
   "exclude": ["node_modules"]
 }
