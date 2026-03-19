@@ -13,6 +13,8 @@ This project uses **Playwright** for E2E tests in `apps/e2e/`. The core principl
 
 ## Running Tests
 
+The dev server starts automatically — Playwright's `webServer` config runs `bun dev` and waits for it. NEVER manually start the dev server or claim it needs to be running.
+
 ```sh
 bun e2e                               # all tests (from project root)
 bunx playwright test --headed          # with browser visible (from apps/e2e/)
@@ -251,30 +253,11 @@ The `/account` page re-renders when session/passkey data loads, which can reset 
 await expect(page.getByText("Loading sessions...")).not.toBeVisible();
 ```
 
-### Email verification
+### Email notifications
 
-Emails are captured to `packages/email/.etc/.email-captures/` as JSON files. Use the `expectEmail` fixture to assert an email was sent (polls automatically):
+Email notifications and their test coverage are defined in `apps/e2e/coverage.ts` under `notifications`. Grep for `test: null` to find gaps. When adding a new email template, add an entry to `notifications`.
 
-```ts
-await expectEmail(email, "verif");       // verification email
-await expectEmail(email, "password");    // password changed
-await expectEmail(email, "deleted");     // account deleted
-```
-
-**NEVER use `waitForTimeout()` before checking emails** — it's a race condition.
-
-**MUST verify email was sent** for any flow that triggers an email notification.
-
-### Email notification coverage
-
-| Email Notification  | Trigger                        | E2E Test                  | Status      |
-| :------------------ | :----------------------------- | :------------------------ | :---------- |
-| Email Verification  | Sign up with email/password    | `sign-up.e2e.ts`          | Covered     |
-| Password Changed    | Change password                | `change-password.e2e.ts`  | Covered     |
-| Account Deleted     | Delete account                 | `delete-account.e2e.ts`   | Covered     |
-| Welcome             | New user created               | —                         | Not covered |
-| Password Reset      | Forgot password flow           | —                         | Not covered |
-| Magic Link          | Passwordless sign-in requested | —                         | Not covered |
+**NEVER use `waitForTimeout()` before checking emails** — it's a race condition. Use the `expectEmail` fixture.
 
 ### Auth guard (SSR)
 

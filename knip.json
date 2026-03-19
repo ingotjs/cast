@@ -2,13 +2,15 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "ignoreFiles": [".agents/**", ".claude/**", "**/paraglide/**", "**/__tests__/**"],
   "ignoreIssues": {
-    "**/paraglide/**": ["exports"]
+    "**/paraglide/**": ["exports"],
+    "apps/e2e/coverage.ts": ["exports"],
+    "bunfig.toml": ["unresolved"]
   },
   "exclude": ["duplicates"],
   "workspaces": {
     ".": {
       "entry": ["vite.config.ts"],
-      "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "ultracite"],
+      "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "ultracite", "@packages/config"],
       "ignoreBinaries": ["wrangler"]
     },
     "packages/infra": {

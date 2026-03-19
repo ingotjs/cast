@@ -18,8 +18,8 @@
       "name": "e2e",
       "version": "0.0.0",
       "devDependencies": {
-        "@ingot/e2e-coverage": "*",
-        "@ingot/utils": "*",
+        "@packages/e2e-coverage": "*",
+        "@packages/utils": "*",
         "@playwright/test": "1.52.0",
       },
     },
@@ -28,14 +28,14 @@
       "version": "0.0.0",
       "dependencies": {
         "@better-auth/passkey": "catalog:",
-        "@ingot/api": "*",
-        "@ingot/auth": "*",
-        "@ingot/db": "*",
-        "@ingot/ui": "*",
-        "@ingot/utils": "*",
         "@orpc/client": "1.13.7",
         "@orpc/server": "1.13.7",
         "@orpc/tanstack-query": "1.13.7",
+        "@packages/api": "*",
+        "@packages/auth": "*",
+        "@packages/db": "*",
+        "@packages/ui": "*",
+        "@packages/utils": "*",
         "@posthog/react": "1.8.2",
         "@tailwindcss/vite": "4.1.18",
         "@tanstack/react-devtools": "latest",
@@ -77,51 +77,51 @@
       },
     },
     "packages/api": {
-      "name": "@ingot/api",
+      "name": "@packages/api",
       "version": "0.0.0",
       "dependencies": {
-        "@ingot/auth": "*",
         "@orpc/experimental-pino": "1.13.7",
         "@orpc/server": "1.13.7",
+        "@packages/auth": "*",
         "zod": "catalog:",
       },
       "devDependencies": {
-        "@ingot/config": "*",
+        "@packages/config": "*",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
         "typescript": "catalog:",
       },
     },
     "packages/auth": {
-      "name": "@ingot/auth",
+      "name": "@packages/auth",
       "version": "0.0.0",
       "dependencies": {
         "@better-auth/i18n": "1.5.5",
         "@better-auth/passkey": "catalog:",
-        "@ingot/db": "*",
-        "@ingot/email": "*",
-        "@ingot/utils": "*",
+        "@packages/db": "*",
+        "@packages/email": "*",
+        "@packages/utils": "*",
         "@simplewebauthn/server": "13.3.0",
         "better-auth": "catalog:",
         "drizzle-orm": "catalog:",
       },
       "devDependencies": {
         "@better-auth/cli": "1.4.21",
-        "@ingot/config": "*",
         "@inlang/paraglide-js": "catalog:",
         "@inlang/plugin-m-function-matcher": "catalog:",
         "@inlang/plugin-message-format": "catalog:",
+        "@packages/config": "*",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
         "typescript": "catalog:",
       },
     },
     "packages/config": {
-      "name": "@ingot/config",
+      "name": "@packages/config",
       "version": "0.0.0",
     },
     "packages/db": {
-      "name": "@ingot/db",
+      "name": "@packages/db",
       "version": "0.0.0",
       "dependencies": {
         "drizzle-orm": "catalog:",
@@ -130,7 +130,7 @@
         "zod": "catalog:",
       },
       "devDependencies": {
-        "@ingot/config": "*",
+        "@packages/config": "*",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
         "drizzle-kit": "0.31.9",
@@ -138,17 +138,17 @@
       },
     },
     "packages/e2e-coverage": {
-      "name": "@ingot/e2e-coverage",
+      "name": "@packages/e2e-coverage",
       "version": "0.0.0",
       "devDependencies": {
-        "@ingot/config": "*",
+        "@packages/config": "*",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
         "typescript": "catalog:",
       },
     },
     "packages/email": {
-      "name": "@ingot/email",
+      "name": "@packages/email",
       "version": "0.0.0",
       "dependencies": {
         "@react-email/components": "1.0.9",
@@ -158,11 +158,11 @@
         "resend": "6.9.3",
       },
       "devDependencies": {
-        "@ingot/config": "*",
-        "@ingot/utils": "*",
         "@inlang/paraglide-js": "catalog:",
         "@inlang/plugin-m-function-matcher": "catalog:",
         "@inlang/plugin-message-format": "catalog:",
+        "@packages/config": "*",
+        "@packages/utils": "*",
         "@react-email/preview-server": "5.2.9",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
@@ -173,14 +173,14 @@
       },
     },
     "packages/infra": {
-      "name": "@ingot/infra",
+      "name": "@packages/infra",
       "version": "0.0.0",
       "devDependencies": {
         "alchemy": "0.89.0",
       },
     },
     "packages/ui": {
-      "name": "@ingot/ui",
+      "name": "@packages/ui",
       "version": "0.0.0",
       "dependencies": {
         "@base-ui/react": "1.3.0",
@@ -196,7 +196,7 @@
         "tw-animate-css": "1.4.0",
       },
       "devDependencies": {
-        "@ingot/config": "*",
+        "@packages/config": "*",
         "@tailwindcss/postcss": "4.1.18",
         "@types/node": "catalog:",
         "@types/react": "catalog:",
@@ -207,14 +207,14 @@
       },
     },
     "packages/utils": {
-      "name": "@ingot/utils",
+      "name": "@packages/utils",
       "version": "0.0.0",
       "dependencies": {
         "posthog-node": "5.28.2",
         "zod": "catalog:",
       },
       "devDependencies": {
-        "@ingot/config": "*",
+        "@packages/config": "*",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",
         "typescript": "catalog:",
@@ -600,24 +600,6 @@
 
     "@img/sharp-win32-x64": ["@img/sharp-win32-x64@0.34.5", "", { "os": "win32", "cpu": "x64" }, "sha512-+29YMsqY2/9eFEiW93eqWnuLcWcufowXewwSNIT6UwZdUUCrM3oFjMWH/Z6/TMmb4hlFenmfAVbpWeup2jryCw=="],
 
-    "@ingot/api": ["@ingot/api@workspace:packages/api"],
-
-    "@ingot/auth": ["@ingot/auth@workspace:packages/auth"],
-
-    "@ingot/config": ["@ingot/config@workspace:packages/config"],
-
-    "@ingot/db": ["@ingot/db@workspace:packages/db"],
-
-    "@ingot/e2e-coverage": ["@ingot/e2e-coverage@workspace:packages/e2e-coverage"],
-
-    "@ingot/email": ["@ingot/email@workspace:packages/email"],
-
-    "@ingot/infra": ["@ingot/infra@workspace:packages/infra"],
-
-    "@ingot/ui": ["@ingot/ui@workspace:packages/ui"],
-
-    "@ingot/utils": ["@ingot/utils@workspace:packages/utils"],
-
     "@inlang/paraglide-js": ["@inlang/paraglide-js@2.15.0", "", { "dependencies": { "@inlang/recommend-sherlock": "^0.2.1", "@inlang/sdk": "^2.8.0", "commander": "11.1.0", "consola": "3.4.0", "json5": "2.2.3", "unplugin": "^2.1.2", "urlpattern-polyfill": "^10.0.0" }, "bin": { "paraglide-js": "bin/run.js" } }, "sha512-2ZOa9nssVn4tjkKskqb88KP5A7cTIjo8AiM9xnPvH+vBhRIRenO+ftAbVOHhHcHjcFxy2QFcOfBAH/Cw1LIsUg=="],
 
     "@inlang/plugin-m-function-matcher": ["@inlang/plugin-m-function-matcher@2.2.2", "", { "dependencies": { "@inlang/sdk": "2.8.0" } }, "sha512-DfUTUts80gtZahK8mfVNX0BXpHh2QO0pTfiSy7JceQzcJNEIOTcvXalKG093HgWJOIJwpJ4ULXeJfRlX+64UEg=="],
@@ -915,6 +897,24 @@
     "@oxlint/binding-win32-ia32-msvc": ["@oxlint/binding-win32-ia32-msvc@1.55.0", "", { "os": "win32", "cpu": "ia32" }, "sha512-gzkk4zE2zsE+WmRxFOiAZHpCpUNDFytEakqNXoNHW+PnYEOTPKDdW6nrzgSeTbGKVPXNAKQnRnMgrh7+n3Xueg=="],
 
     "@oxlint/binding-win32-x64-msvc": ["@oxlint/binding-win32-x64-msvc@1.55.0", "", { "os": "win32", "cpu": "x64" }, "sha512-ZFALNow2/og75gvYzNP7qe+rREQ5xunktwA+lgykoozHZ6hw9bqg4fn5j2UvG4gIn1FXqrZHkOAXuPf5+GOYTQ=="],
+
+    "@packages/api": ["@packages/api@workspace:packages/api"],
+
+    "@packages/auth": ["@packages/auth@workspace:packages/auth"],
+
+    "@packages/config": ["@packages/config@workspace:packages/config"],
+
+    "@packages/db": ["@packages/db@workspace:packages/db"],
+
+    "@packages/e2e-coverage": ["@packages/e2e-coverage@workspace:packages/e2e-coverage"],
+
+    "@packages/email": ["@packages/email@workspace:packages/email"],
+
+    "@packages/infra": ["@packages/infra@workspace:packages/infra"],
+
+    "@packages/ui": ["@packages/ui@workspace:packages/ui"],
+
+    "@packages/utils": ["@packages/utils@workspace:packages/utils"],
 
     "@peculiar/asn1-android": ["@peculiar/asn1-android@2.6.0", "", { "dependencies": { "@peculiar/asn1-schema": "^2.6.0", "asn1js": "^3.0.6", "tslib": "^2.8.1" } }, "sha512-cBRCKtYPF7vJGN76/yG8VbxRcHLPF3HnkoHhKOZeHpoVtbMYfY9ROKtH3DtYUY9m8uI1Mh47PRhHf2hSK3xcSQ=="],
 

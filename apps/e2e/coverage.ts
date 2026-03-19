@@ -109,22 +109,35 @@ const testId = {
 } as const;
 
 // ---------------------------------------------------------------------------
+// Test Files
+// ---------------------------------------------------------------------------
+
+const testFile = {
+  signIn: "auth/sign-in.e2e.ts",
+  signUp: "auth/sign-up.e2e.ts",
+  signOut: "auth/sign-out.e2e.ts",
+  changePassword: "auth/change-password.e2e.ts",
+  deleteAccount: "auth/delete-account.e2e.ts",
+} as const;
+
+// ---------------------------------------------------------------------------
 // Shared Components
 // ---------------------------------------------------------------------------
 
 const t = testId;
+const f = testFile;
 
 const userMenu = interactions({
   [t.userMenu.trigger]: [
-    { condition: "authenticated", visible: true, test: "auth/sign-out.e2e.ts" },
-    { condition: "unauthenticated", visible: false, test: "auth/sign-out.e2e.ts" },
+    { condition: "authenticated", visible: true, test: f.signOut },
+    { condition: "unauthenticated", visible: false, test: f.signOut },
   ],
   [t.header.signinLink]: [
-    { condition: "unauthenticated", visible: true, test: "auth/sign-out.e2e.ts" },
-    { condition: "authenticated", visible: false, test: "auth/sign-out.e2e.ts" },
+    { condition: "unauthenticated", visible: true, test: f.signOut },
+    { condition: "authenticated", visible: false, test: f.signOut },
   ],
   [t.userMenu.account]: [{ context: null, expected: "navigates to /account", test: null }],
-  [t.userMenu.signout]: [{ context: null, expected: "signs out, redirects to /", test: "auth/sign-out.e2e.ts" }],
+  [t.userMenu.signout]: [{ context: null, expected: "signs out, redirects to /", test: f.signOut }],
 });
 
 const header = interactions({
@@ -170,11 +183,9 @@ const authCardLegal = interactions({
 });
 
 const deleteAccountModal = interactions({
-  [t.deleteAccount.password]: [
-    { context: null, expected: "accepts password input", test: "auth/delete-account.e2e.ts" },
-  ],
+  [t.deleteAccount.password]: [{ context: null, expected: "accepts password input", test: f.deleteAccount }],
   [t.deleteAccount.confirm]: [
-    { context: "correct password", expected: "deletes account, redirects to /", test: "auth/delete-account.e2e.ts" },
+    { context: "correct password", expected: "deletes account, redirects to /", test: f.deleteAccount },
     { context: "wrong password", expected: "shows error", test: null },
   ],
   [t.deleteAccount.cancel]: [{ context: null, expected: "hides confirmation form", test: null }],
@@ -213,12 +224,12 @@ const e2e = defineE2ECoverage({
         ...authCardLegal,
         ...socialAuth,
         ...magicLinkAuth,
-        [t.signin.email]: [{ context: null, expected: "accepts email input", test: "auth/sign-in.e2e.ts" }],
-        [t.signin.password]: [{ context: null, expected: "accepts password input", test: "auth/sign-in.e2e.ts" }],
+        [t.signin.email]: [{ context: null, expected: "accepts email input", test: f.signIn }],
+        [t.signin.password]: [{ context: null, expected: "accepts password input", test: f.signIn }],
         [t.signin.submit]: [
-          { context: "valid credentials", expected: "signs in, redirects to /", test: "auth/sign-in.e2e.ts" },
-          { context: "invalid credentials", expected: "stays on page, shows error", test: "auth/sign-in.e2e.ts" },
-          { context: "empty form", expected: "validation errors", test: "auth/sign-in.e2e.ts" },
+          { context: "valid credentials", expected: "signs in, redirects to /", test: f.signIn },
+          { context: "invalid credentials", expected: "stays on page, shows error", test: f.signIn },
+          { context: "empty form", expected: "validation errors", test: f.signIn },
         ],
         [t.signin.forgotPassword]: [{ context: null, expected: "navigates to /auth/forgot-password", test: null }],
       },
@@ -233,19 +244,17 @@ const e2e = defineE2ECoverage({
         ...authCardLegal,
         ...socialAuth,
         ...magicLinkAuth,
-        [t.signup.firstname]: [{ context: null, expected: "accepts first name input", test: "auth/sign-up.e2e.ts" }],
-        [t.signup.lastname]: [{ context: null, expected: "accepts last name input", test: "auth/sign-up.e2e.ts" }],
-        [t.signup.email]: [{ context: null, expected: "accepts email input", test: "auth/sign-up.e2e.ts" }],
+        [t.signup.firstname]: [{ context: null, expected: "accepts first name input", test: f.signUp }],
+        [t.signup.lastname]: [{ context: null, expected: "accepts last name input", test: f.signUp }],
+        [t.signup.email]: [{ context: null, expected: "accepts email input", test: f.signUp }],
         [t.signup.password]: [
-          { context: null, expected: "accepts password input, shows requirements", test: "auth/sign-up.e2e.ts" },
+          { context: null, expected: "accepts password input, shows requirements", test: f.signUp },
         ],
-        [t.signup.confirmPassword]: [
-          { context: null, expected: "accepts confirm password input", test: "auth/sign-up.e2e.ts" },
-        ],
+        [t.signup.confirmPassword]: [{ context: null, expected: "accepts confirm password input", test: f.signUp }],
         [t.signup.submit]: [
-          { context: "valid form", expected: "creates account, redirects to /", test: "auth/sign-up.e2e.ts" },
-          { context: "empty form", expected: "validation errors", test: "auth/sign-up.e2e.ts" },
-          { context: "password mismatch", expected: "validation error", test: "auth/sign-up.e2e.ts" },
+          { context: "valid form", expected: "creates account, redirects to /", test: f.signUp },
+          { context: "empty form", expected: "validation errors", test: f.signUp },
+          { context: "password mismatch", expected: "validation error", test: f.signUp },
         ],
       },
     },
@@ -307,29 +316,29 @@ const e2e = defineE2ECoverage({
           { context: "empty name", expected: "validation error", test: null },
         ],
         [t.changePassword.form]: [
-          { condition: "password auth enabled", visible: true, test: "auth/change-password.e2e.ts" },
+          { condition: "password auth enabled", visible: true, test: f.changePassword },
           { condition: "password auth disabled", visible: false, test: null },
         ],
         [t.changePassword.current]: [
-          { context: null, expected: "accepts current password input", test: "auth/change-password.e2e.ts" },
+          { context: null, expected: "accepts current password input", test: f.changePassword },
         ],
         [t.changePassword.new]: [
           {
             context: null,
             expected: "accepts new password input, shows requirements",
-            test: "auth/change-password.e2e.ts",
+            test: f.changePassword,
           },
         ],
         [t.changePassword.confirm]: [
-          { context: null, expected: "accepts confirm password input", test: "auth/change-password.e2e.ts" },
+          { context: null, expected: "accepts confirm password input", test: f.changePassword },
         ],
         [t.changePassword.submit]: [
           {
             context: "correct current password",
             expected: "changes password, success toast",
-            test: "auth/change-password.e2e.ts",
+            test: f.changePassword,
           },
-          { context: "wrong current password", expected: "shows error", test: "auth/change-password.e2e.ts" },
+          { context: "wrong current password", expected: "shows error", test: f.changePassword },
         ],
         [t.sessions.revoke]: [{ context: null, expected: "revokes session, removes from list", test: null }],
         [t.passkeys.add]: [
@@ -345,7 +354,7 @@ const e2e = defineE2ECoverage({
           {
             context: null,
             expected: "reveals confirmation form",
-            test: "auth/delete-account.e2e.ts",
+            test: f.deleteAccount,
             reveals: deleteAccountModal,
           },
         ],
@@ -382,5 +391,18 @@ const e2e = defineE2ECoverage({
   },
 });
 
-export { testId };
+export { testId, testFile };
 export const { routes, setup } = e2e;
+
+// ---------------------------------------------------------------------------
+// Email Notifications
+// ---------------------------------------------------------------------------
+
+export const notifications = {
+  verification: { trigger: "sign up with email/password", subjectKeyword: "verif", test: f.signUp },
+  passwordChanged: { trigger: "change password", subjectKeyword: "password", test: f.changePassword },
+  accountDeleted: { trigger: "delete account", subjectKeyword: "deleted", test: f.deleteAccount },
+  welcome: { trigger: "new user created", subjectKeyword: "welcome", test: null },
+  passwordReset: { trigger: "forgot password flow", subjectKeyword: "reset", test: null },
+  magicLink: { trigger: "magic link requested", subjectKeyword: "magic", test: null },
+} as const;
