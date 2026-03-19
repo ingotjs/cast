@@ -1,15 +1,15 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignoreFiles": [".agents/**", ".claude/**", "**/paraglide/**", "**/__tests__/**"],
+  "ignoreFiles": [".agents/**", ".claude/**", "**/__tests__/**"],
   "ignoreIssues": {
-    "**/paraglide/**": ["exports"],
+    "**/locales/**": ["exports"],
     "apps/e2e/coverage.ts": ["exports"],
     "bunfig.toml": ["unresolved"]
   },
   "exclude": ["duplicates"],
   "workspaces": {
     ".": {
-      "entry": ["vite.config.ts"],
+      "entry": ["vite.config.ts", "lingui.config.ts"],
       "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "ultracite", "@ingot/config"],
       "ignoreBinaries": ["wrangler"]
     },
@@ -32,8 +32,6 @@
         "@tanstack/router-plugin",
         "tailwindcss",
         "@tailwindcss/typography",
-        "@inlang/plugin-m-function-matcher",
-        "@inlang/plugin-message-format",
         "babel-plugin-react-compiler",
         "cloudflare"
       ],
@@ -42,25 +40,16 @@
     "apps/e2e": {},
     "packages/api": {},
     "packages/auth": {
-      "ignoreDependencies": [
-        "@simplewebauthn/server",
-        "@inlang/plugin-m-function-matcher",
-        "@inlang/plugin-message-format"
-      ]
+      "entry": ["i18n.ts"],
+      "ignoreDependencies": ["@simplewebauthn/server"]
     },
     "packages/config": {
       "entry": ["*.json"]
     },
     "packages/db": {},
     "packages/email": {
-      "ignoreDependencies": [
-        "@react-email/tailwind",
-        "react-dom",
-        "@react-email/preview-server",
-        "@types/react-dom",
-        "@inlang/plugin-m-function-matcher",
-        "@inlang/plugin-message-format"
-      ]
+      "entry": ["lingui.config.ts", "locale.ts"],
+      "ignoreDependencies": ["@react-email/tailwind", "react-dom", "@react-email/preview-server", "@types/react-dom"]
     },
     "packages/ui": {
       "ignore": ["svgs/omega-icon.tsx"],

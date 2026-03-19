@@ -1,5 +1,5 @@
 import { DEV_PORT } from "@ingot/utils/consts";
-import { paraglideVitePlugin } from "@inlang/paraglide-js";
+import { lingui } from "@lingui/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -22,12 +22,7 @@ const config = defineConfig({
     sourcemap: true,
   },
   plugins: [
-    // Reference: https://inlang.com/m/gerre34r/library-inlang-paraglideJs/strategy
-    paraglideVitePlugin({
-      project: "./project.inlang",
-      outdir: "./src/paraglide",
-      strategy: ["cookie", "preferredLanguage", "url", "baseLocale"],
-    }),
+    lingui(),
     emailCapturePlugin(),
     devtools(),
     tailwindcss(),
@@ -35,7 +30,7 @@ const config = defineConfig({
     tanstackStart(),
     viteReact({
       babel: {
-        plugins: [["babel-plugin-react-compiler"]],
+        plugins: [["babel-plugin-react-compiler"], ["@lingui/babel-plugin-lingui-macro"]],
       },
     }),
   ] as PluginOption[],

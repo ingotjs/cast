@@ -1,7 +1,6 @@
 import { Button, Text } from "@react-email/components";
 
-import { loc } from "../locale";
-import * as m from "../paraglide/messages";
+import { createEmailI18n } from "../i18n";
 import { EmailLayout } from "./email-layout";
 
 type WelcomeEmailProps = {
@@ -10,26 +9,34 @@ type WelcomeEmailProps = {
   locale?: string;
 };
 
-export const WelcomeEmail = ({ appName, appUrl, locale = "en" }: WelcomeEmailProps) => (
-  <EmailLayout
-    locale={locale}
-    previewText={m.email_welcome_preview({ appName }, loc(locale))}
-    appName={appName}
-    appUrl={appUrl}
-  >
-    <Text className="mt-7 mb-0 font-bold text-3xl text-[#1d1c1d]">
-      {m.email_welcome_heading({ appName }, loc(locale))}
-    </Text>
-    <Text className="mt-8 mb-6 text-black text-lg leading-7">{m.email_welcome_body({ appName }, loc(locale))}</Text>
-    <Button
-      href={appUrl}
-      className="mt-3.5 mb-0 box-border inline-block w-full rounded-lg bg-black px-4 py-3 text-center font-semibold text-white no-underline"
+export const WelcomeEmail = ({ appName, appUrl, locale = "en" }: WelcomeEmailProps) => {
+  const i18n = createEmailI18n(locale);
+
+  return (
+    <EmailLayout
+      locale={locale}
+      previewText={i18n._("Welcome to {appName}", { appName })}
+      appName={appName}
+      appUrl={appUrl}
     >
-      {m.email_welcome_button({}, loc(locale))}
-    </Button>
-    <Text className="mt-5 mb-0 text-[#444] text-sm">{m.email_welcome_disclaimer({ appName }, loc(locale))}</Text>
-  </EmailLayout>
-);
+      <Text className="mt-7 mb-0 font-bold text-3xl text-[#1d1c1d]">
+        {i18n._("Welcome to {appName}!", { appName })}
+      </Text>
+      <Text className="mt-8 mb-6 text-black text-lg leading-7">
+        {i18n._("Thank you for joining {appName}. We're excited to have you on board.", { appName })}
+      </Text>
+      <Button
+        href={appUrl}
+        className="mt-3.5 mb-0 box-border inline-block w-full rounded-lg bg-black px-4 py-3 text-center font-semibold text-white no-underline"
+      >
+        {i18n._("Get Started")}
+      </Button>
+      <Text className="mt-5 mb-0 text-[#444] text-sm">
+        {i18n._("You're receiving this email because you signed up for {appName}.", { appName })}
+      </Text>
+    </EmailLayout>
+  );
+};
 
 WelcomeEmail.PreviewProps = {
   appName: "Start",

@@ -20,6 +20,8 @@ const testId = {
     linkAbout: "header-link-about",
     linkSignin: "header-link-signin",
     buttonThemeToggle: "header-button-theme-toggle",
+    localeSwitcherTrigger: "locale-switcher-button-trigger",
+    localeSwitcherItemEn: "locale-switcher-item-en",
   },
   userMenu: {
     buttonTrigger: "user-menu-button-trigger",
@@ -114,6 +116,7 @@ const testFile = {
   signOut: "auth/sign-out.e2e.ts",
   changePassword: "auth/change-password.e2e.ts",
   deleteAccount: "auth/delete-account.e2e.ts",
+  localeSwitcher: "locale-switcher.e2e.ts",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -141,6 +144,8 @@ const header = interactions({
   [t.header.linkHome]: [{ expected: "navigates to /", test: null }],
   [t.header.linkAbout]: [{ expected: "navigates to /about", test: null }],
   [t.header.buttonThemeToggle]: [{ expected: "cycles auto → dark → light → auto", test: null }],
+  [t.header.localeSwitcherTrigger]: [{ expected: "opens locale dropdown", test: f.localeSwitcher }],
+  [t.header.localeSwitcherItemEn]: [{ expected: "selects English locale", test: f.localeSwitcher }],
 });
 
 const footer = interactions({

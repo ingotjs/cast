@@ -22,10 +22,11 @@
     "ok": "syncpack fix --log-levels error && vp run ts -r && vp fmt --write && vp lint --fix && bun test",
     "ok:ci": "syncpack lint --log-levels error && vp run ts -r && vp fmt --check && vp lint && bun test",
     "ok:full": "bun knip && bun ok && bun e2e",
-    "clean": "bun run --filter '*' clean && rm -rf .alchemy",
+    "clean": "bun run --filter '*' clean && rm -rf .alchemy/miniflare",
     "prepare": "vp config"
   },
   "devDependencies": {
+    "@lingui/cli": "catalog:",
     "@socketsecurity/bun-security-scanner": "1.1.2",
     "@typescript/native-preview": "7.0.0-dev.20260317.1",
     "knip": "5.87.0",
@@ -57,8 +58,11 @@
     "tailwindcss": "4.1.18",
     "lucide-react": "0.577.0",
     "sonner": "2.0.7",
-    "@inlang/paraglide-js": "2.15.0",
-    "@inlang/plugin-m-function-matcher": "2.2.2",
-    "@inlang/plugin-message-format": "4.4.0"
+    "@lingui/core": "5.9.3",
+    "@lingui/react": "5.9.3",
+    "@lingui/cli": "5.9.3",
+    "@lingui/vite-plugin": "5.9.3",
+    "@lingui/babel-plugin-lingui-macro": "5.9.3",
+    "babel-plugin-macros": "3.1.0"
   }
 }

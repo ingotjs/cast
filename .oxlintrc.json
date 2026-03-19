@@ -7,7 +7,7 @@
     "**/routeTree.gen.ts",
     "**/worker-configuration.d.ts",
     "**/auth-schema.ts",
-    "**/paraglide/**",
+    "**/locales/**/messages.js",
     "**/*.md",
     "vite.config.ts"
   ],

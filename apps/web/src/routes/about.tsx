@@ -1,21 +1,30 @@
 import { consts } from "@ingot/utils/consts";
+import { msg } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { getI18n } from "../lib/i18n";
 import { seoMeta } from "../lib/seo";
-import { m } from "../paraglide/messages";
 
 const { appName } = consts;
+
+const metaAboutTitle = msg`About — ${appName}`;
+const metaAboutDescription = msg`Learn about ${appName}, the full-stack TypeScript starter built on TanStack Start, Bun, and Turborepo.`;
 
 const About = () => (
   <main className="page-wrap px-4 py-12">
     <section className="island-shell rounded-2xl p-6 sm:p-8">
-      <p className="island-kicker mb-2">About</p>
+      <p className="island-kicker mb-2">
+        <Trans>About</Trans>
+      </p>
       <h1 className="display-title mb-3 font-bold text-4xl text-[var(--sea-ink)] sm:text-5xl">
-        A small starter with room to grow.
+        <Trans>A small starter with room to grow.</Trans>
       </h1>
       <p className="m-0 max-w-3xl text-[var(--sea-ink-soft)] text-base leading-8">
-        TanStack Start gives you type-safe routing, server functions, and modern SSR defaults. Use this as a clean
-        foundation, then layer in your own routes, styling, and add-ons.
+        <Trans>
+          TanStack Start gives you type-safe routing, server functions, and modern SSR defaults. Use this as a clean
+          foundation, then layer in your own routes, styling, and add-ons.
+        </Trans>
       </p>
     </section>
   </main>
@@ -25,8 +34,8 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       ...seoMeta({
-        title: m.meta_about_title({ appName }),
-        description: m.meta_about_description({ appName }),
+        title: getI18n()._(metaAboutTitle.id, { appName }),
+        description: getI18n()._(metaAboutDescription.id, { appName }),
       }),
     ],
   }),

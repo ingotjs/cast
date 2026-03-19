@@ -1,64 +1,113 @@
 import { consts } from "@ingot/utils/consts";
+import { msg } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { createFileRoute } from "@tanstack/react-router";
 
+import { getI18n } from "../lib/i18n";
 import { seoMeta } from "../lib/seo";
-import { m } from "../paraglide/messages";
 
 const { appName } = consts;
 
+const metaTermsTitle = msg`Terms of Service — ${appName}`;
+const metaTermsDescription = msg`Terms and conditions for using ${appName}.`;
+
 const TermsPage = () => (
   <main className="container mx-auto max-w-3xl px-4 py-12 md:py-20">
-    <h1 className="text-3xl font-bold tracking-tight">Terms of Service</h1>
-    <p className="mt-2 text-sm text-muted-foreground">Last updated: March 16, 2026</p>
+    <h1 className="text-3xl font-bold tracking-tight">
+      <Trans>Terms of Service</Trans>
+    </h1>
+    <p className="mt-2 text-sm text-muted-foreground">
+      <Trans>Last updated: March 16, 2026</Trans>
+    </p>
 
     <div className="prose prose-neutral dark:prose-invert mt-8 max-w-none">
-      <h2>1. Acceptance of Terms</h2>
+      <h2>
+        <Trans>1. Acceptance of Terms</Trans>
+      </h2>
       <p>
-        By accessing or using {consts.appName}, you agree to be bound by these Terms of Service. If you do not agree to
-        these terms, please do not use the service.
+        <Trans>
+          By accessing or using {consts.appName}, you agree to be bound by these Terms of Service. If you do not agree
+          to these terms, please do not use the service.
+        </Trans>
       </p>
 
-      <h2>2. Description of Service</h2>
+      <h2>
+        <Trans>2. Description of Service</Trans>
+      </h2>
       <p>
-        {consts.appName} provides a web application platform. We reserve the right to modify, suspend, or discontinue
-        any part of the service at any time.
+        <Trans>
+          {consts.appName} provides a web application platform. We reserve the right to modify, suspend, or discontinue
+          any part of the service at any time.
+        </Trans>
       </p>
 
-      <h2>3. User Accounts</h2>
+      <h2>
+        <Trans>3. User Accounts</Trans>
+      </h2>
       <p>
-        You are responsible for maintaining the confidentiality of your account credentials and for all activities that
-        occur under your account. You must notify us immediately of any unauthorized use.
+        <Trans>
+          You are responsible for maintaining the confidentiality of your account credentials and for all activities
+          that occur under your account. You must notify us immediately of any unauthorized use.
+        </Trans>
       </p>
 
-      <h2>4. Acceptable Use</h2>
-      <p>You agree not to:</p>
+      <h2>
+        <Trans>4. Acceptable Use</Trans>
+      </h2>
+      <p>
+        <Trans>You agree not to:</Trans>
+      </p>
       <ul>
-        <li>Use the service for any unlawful purpose</li>
-        <li>Attempt to gain unauthorized access to any part of the service</li>
-        <li>Interfere with the proper functioning of the service</li>
-        <li>Upload malicious code or content</li>
+        <li>
+          <Trans>Use the service for any unlawful purpose</Trans>
+        </li>
+        <li>
+          <Trans>Attempt to gain unauthorized access to any part of the service</Trans>
+        </li>
+        <li>
+          <Trans>Interfere with the proper functioning of the service</Trans>
+        </li>
+        <li>
+          <Trans>Upload malicious code or content</Trans>
+        </li>
       </ul>
 
-      <h2>5. Intellectual Property</h2>
+      <h2>
+        <Trans>5. Intellectual Property</Trans>
+      </h2>
       <p>
-        All content, features, and functionality of the service are owned by us and are protected by copyright,
-        trademark, and other intellectual property laws.
+        <Trans>
+          All content, features, and functionality of the service are owned by us and are protected by copyright,
+          trademark, and other intellectual property laws.
+        </Trans>
       </p>
 
-      <h2>6. Limitation of Liability</h2>
+      <h2>
+        <Trans>6. Limitation of Liability</Trans>
+      </h2>
       <p>
-        To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special,
-        consequential, or punitive damages resulting from your use of the service.
+        <Trans>
+          To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special,
+          consequential, or punitive damages resulting from your use of the service.
+        </Trans>
       </p>
 
-      <h2>7. Changes to Terms</h2>
+      <h2>
+        <Trans>7. Changes to Terms</Trans>
+      </h2>
       <p>
-        We may update these terms from time to time. Continued use of the service after changes constitutes acceptance
-        of the new terms.
+        <Trans>
+          We may update these terms from time to time. Continued use of the service after changes constitutes acceptance
+          of the new terms.
+        </Trans>
       </p>
 
-      <h2>8. Contact</h2>
-      <p>If you have questions about these terms, please contact us through the application.</p>
+      <h2>
+        <Trans>8. Contact</Trans>
+      </h2>
+      <p>
+        <Trans>If you have questions about these terms, please contact us through the application.</Trans>
+      </p>
     </div>
   </main>
 );
@@ -67,8 +116,8 @@ export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
       ...seoMeta({
-        title: m.meta_terms_title({ appName }),
-        description: m.meta_terms_description({ appName }),
+        title: getI18n()._(metaTermsTitle.id, { appName }),
+        description: getI18n()._(metaTermsDescription.id, { appName }),
       }),
     ],
   }),

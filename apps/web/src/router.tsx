@@ -1,8 +1,5 @@
-// Reference: https://github.com/TanStack/router/tree/main/examples/react/start-i18n-paraglide
-
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 
-import { deLocalizeUrl, localizeUrl } from "./paraglide/runtime.js";
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
@@ -11,10 +8,6 @@ export const getRouter = () => {
     scrollRestoration: true,
     defaultPreload: "intent",
     defaultPreloadStaleTime: 0,
-    rewrite: {
-      input: ({ url }) => deLocalizeUrl(url),
-      output: ({ url }) => localizeUrl(url),
-    },
   });
 
   return router;

@@ -10,7 +10,6 @@
   },
   "scripts": {
     "db:auth": "better-auth generate --output ../db/auth-schema.ts -y",
-    "build": "paraglide-js compile --project ./project.inlang --outdir ./paraglide",
     "test": "bun test",
     "ts": "tsgo --noEmit"
   },
@@ -20,6 +19,7 @@
     "@ingot/db": "*",
     "@ingot/email": "*",
     "@ingot/utils": "*",
+    "@lingui/core": "catalog:",
     "@simplewebauthn/server": "13.3.0",
     "better-auth": "catalog:",
     "drizzle-orm": "catalog:"
@@ -27,9 +27,6 @@
   "devDependencies": {
     "@better-auth/cli": "1.4.21",
     "@ingot/config": "*",
-    "@inlang/paraglide-js": "catalog:",
-    "@inlang/plugin-m-function-matcher": "catalog:",
-    "@inlang/plugin-message-format": "catalog:",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "typescript": "catalog:"

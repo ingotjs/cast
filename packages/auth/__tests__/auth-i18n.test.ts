@@ -4,7 +4,7 @@ import { BASE_ERROR_CODES } from "better-auth";
 
 import { auth } from "../auth";
 import { buildAuthTranslations } from "../auth-i18n";
-import * as messages from "../paraglide/messages";
+import { createAuthI18n } from "../i18n";
 import { cleanupTestUser, createTestUser, uniqueEmail } from "./test-utils";
 
 const AUTH_PREFIX = "auth_";
@@ -19,16 +19,15 @@ describe("buildAuthTranslations", () => {
     expect(translations).toBeNull();
   });
 
-  test("Paraglide messages cover all BASE_ERROR_CODES", () => {
-    const messageKeys = new Set(
-      Object.keys(messages).filter(
-        (k) => k.startsWith(AUTH_PREFIX) && typeof (messages as Record<string, unknown>)[k] === "function"
-      )
-    );
+  test("Lingui catalog covers all BASE_ERROR_CODES", () => {
+    const i18n = createAuthI18n("en");
 
     const missingCodes: string[] = [];
     for (const code of Object.keys(BASE_ERROR_CODES)) {
-      if (!messageKeys.has(`${AUTH_PREFIX}${code}`)) {
+      const key = `${AUTH_PREFIX}${code}`;
+      const translated = i18n._(key);
+      // If the translation equals the key, the message is missing from the catalog
+      if (translated === key) {
         missingCodes.push(code);
       }
     }
@@ -36,7 +35,9 @@ describe("buildAuthTranslations", () => {
     expect(missingCodes).toEqual([]);
   });
 
-  test("Paraglide messages cover passkey error codes", () => {
+  test("Lingui catalog covers passkey error codes", () => {
+    const i18n = createAuthI18n("en");
+
     const passkeyCodeKeys = [
       "CHALLENGE_NOT_FOUND",
       "YOU_ARE_NOT_ALLOWED_TO_REGISTER_THIS_PASSKEY",
@@ -47,10 +48,11 @@ describe("buildAuthTranslations", () => {
       "FAILED_TO_UPDATE_PASSKEY",
     ];
 
-    const messageKeys = new Set(Object.keys(messages));
     const missingCodes: string[] = [];
     for (const code of passkeyCodeKeys) {
-      if (!messageKeys.has(`${AUTH_PREFIX}${code}`)) {
+      const key = `${AUTH_PREFIX}${code}`;
+      const translated = i18n._(key);
+      if (translated === key) {
         missingCodes.push(code);
       }
     }

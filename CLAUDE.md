@@ -87,7 +87,7 @@
 | `react-perf/jsx-no-new-function-as-prop` | off             | React Compiler handles memoization                 |
 | `typescript/consistent-type-definitions` | error, `"type"` | NEVER use `interface` (except module augmentation) |
 
-**Ignored paths:** `.agents`, `.alchemy`, `.claude`, `**/alchemy.run.ts`, `**/routeTree.gen.ts`, `**/paraglide/**`, `**/*.md`
+**Ignored paths:** `.agents`, `.alchemy`, `.claude`, `**/alchemy.run.ts`, `**/routeTree.gen.ts`, `**/locales/**/messages.js`, `**/*.md`
 
 </details>
 
@@ -105,7 +105,7 @@
 
 ### Transactional Emails
 
-React Email + Resend in `packages/email/`. All templates i18n via Paraglide. Full details in **`_email` skill**.
+React Email + Resend in `packages/email/`. All templates i18n via Lingui. Full details in **`_email` skill**.
 
 ### API (oRPC)
 
@@ -125,7 +125,7 @@ Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap +
 
 ### Internationalization (i18n)
 
-[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) — **ZERO TOLERANCE for non-i18n strings.** All user-facing text MUST come from Paraglide message functions. Import: `import { m } from "@/paraglide/messages"` (named import, NOT `import * as m`). Three projects: Frontend (`apps/web/messages/`), Backend (`packages/auth/messages/`), Email (`packages/email/messages/`). Full details in **`_i18n` skill**.
+[Lingui](https://lingui.dev/) — **ZERO TOLERANCE for non-i18n strings.** All user-facing text MUST use Lingui macros. Components: `<Trans>` from `@lingui/react/macro`. Strings in hooks: `useLingui()` → `t`. head()/server code: `msg` descriptors + `getI18n()._()`. Email/auth: `msg` + `i18n._()`. Catalogs: `apps/web/src/locales/`, `packages/email/locales/`, `packages/auth/locales/`. Full details in **`_i18n` skill**.
 
 ### Dependency Management
 
@@ -200,6 +200,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 - **When given a GitHub PR link**, checkout its branch as the **ABSOLUTE FIRST ACTION** — before reading code, before analyzing. Use `gh pr view <number> --json headRefName --jq '.headRefName'` to get the branch name, then checkout.
 - **When committing: MUST update CLAUDE.md AND README.md**
 - **NEVER add Co-Authored-By or any AI attribution to commit messages**
+- **NEVER use `--no-verify`** unless the user explicitly says to skip hooks. If the hook fails, FIX the issue — don't bypass it. If you can't fix it, ask the user for permission to skip.
 
 ---
 
@@ -247,48 +248,52 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 
 ## Key Files
 
-| File                                     | Purpose                                                                                |
-| :--------------------------------------- | :------------------------------------------------------------------------------------- |
-| `packages/utils/shared/consts.ts`        | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink)   |
-| `packages/utils/server/env.ts`           | Server env vars + feature-gated groups                                                 |
-| `packages/utils/server/logger.ts`        | Structured console logger (Workers-compatible)                                         |
-| `packages/utils/server/posthog.ts`       | PostHog server client (error tracking + analytics)                                     |
-| `packages/db/index.ts`                   | Database client (D1 via `initDb()` + proxy)                                            |
-| `packages/db/schema.ts`                  | Drizzle schema + indexes                                                               |
-| `packages/db/zod-schema.ts`              | Drizzle-Zod select/insert/update schemas for all tables                                |
-| `packages/db/utils.ts`                   | `ulidPrimaryKey` helper                                                                |
-| `packages/auth/auth.ts`                  | Better Auth config + i18n plugin + all email triggers                                  |
-| `packages/auth/kv-storage.ts`            | Cloudflare KV adapter for Better Auth secondary storage (sessions + rate limiting)     |
-| `packages/auth/auth-i18n.ts`             | `buildAuthTranslations()` — Paraglide → Better Auth error codes (null if English-only) |
-| `packages/api/base.ts`                   | Procedure definitions (public/protected/admin)                                         |
-| `packages/api/router.ts`                 | oRPC router                                                                            |
-| `apps/web/src/lib/env.ts`                | Client features + env groups                                                           |
-| `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                                            |
-| `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                                               |
-| `apps/web/src/lib/schemas.ts`            | Shared Zod schemas                                                                     |
-| `apps/web/src/lib/seo.ts`                | `seoMeta()` — generates OG + Twitter + meta tags from title/desc                       |
-| `apps/web/src/lib/zod-form-resolver.ts`  | Zod v4 resolver for react-hook-form                                                    |
-| `apps/web/src/routes/api/icon.tsx`       | Dynamic favicon (dark mode)                                                            |
-| `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                                       |
-| `apps/web/src/components/auth/`          | Auth forms                                                                             |
-| `apps/web/src/components/settings/`      | Account settings cards                                                                 |
-| `apps/web/src/server.ts`                 | Server entry — paraglide middleware for per-request locale                             |
-| `apps/web/src/router.tsx`                | TanStack Router config — rewrite with locale URL support                               |
-| `apps/web/vite.config.ts`                | Vite config (paraglide, tailwind, tanstack, alchemy, react compiler)                   |
-| `alchemy.run.ts`                         | Alchemy IaC — D1 + KV + TanStack Start worker definition                               |
-| `vite.config.ts`                         | Root Vite+ config (staged linting, oxlint options — NOT used for Vite dev/build)       |
-| `.oxlintrc.json`                         | Oxlint config                                                                          |
-| `.oxfmtrc.jsonc`                         | Oxfmt config                                                                           |
-| `.syncpackrc`                            | Syncpack config                                                                        |
-| `knip.json`                              | Knip config (unused files, deps, exports)                                              |
-| `.github/workflows/ci.yml`               | CI pipeline                                                                            |
-| `packages/email/email-capture.ts`        | Email capture for E2E test verification (dev/test only)                                |
-| `packages/email/templates.ts`            | Email render functions + localized subject helpers                                     |
-| `packages/email/locale.ts`               | `loc()` — locale string → Paraglide type bridge                                        |
-| `packages/email/emails/email-layout.tsx` | Shared email layout component                                                          |
-| `packages/auth/messages/en.json`         | Server i18n strings (auth error messages with `auth_` prefix)                          |
-| `packages/email/messages/en.json`        | Email i18n strings                                                                     |
-| `bunfig.toml`                            | Bun config (exact versions, min release age)                                           |
+| File                                     | Purpose                                                                              |
+| :--------------------------------------- | :----------------------------------------------------------------------------------- |
+| `packages/utils/shared/consts.ts`        | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink) |
+| `packages/utils/server/env.ts`           | Server env vars + feature-gated groups                                               |
+| `packages/utils/server/logger.ts`        | Structured console logger (Workers-compatible)                                       |
+| `packages/utils/server/posthog.ts`       | PostHog server client (error tracking + analytics)                                   |
+| `packages/db/index.ts`                   | Database client (D1 via `initDb()` + proxy)                                          |
+| `packages/db/schema.ts`                  | Drizzle schema + indexes                                                             |
+| `packages/db/zod-schema.ts`              | Drizzle-Zod select/insert/update schemas for all tables                              |
+| `packages/db/utils.ts`                   | `ulidPrimaryKey` helper                                                              |
+| `packages/auth/auth.ts`                  | Better Auth config + i18n plugin + all email triggers                                |
+| `packages/auth/kv-storage.ts`            | Cloudflare KV adapter for Better Auth secondary storage (sessions + rate limiting)   |
+| `packages/auth/auth-i18n.ts`             | `buildAuthTranslations()` — Lingui → Better Auth error codes (null if English-only)  |
+| `packages/api/base.ts`                   | Procedure definitions (public/protected/admin)                                       |
+| `packages/api/router.ts`                 | oRPC router                                                                          |
+| `apps/web/src/lib/env.ts`                | Client features + env groups                                                         |
+| `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                                          |
+| `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                                             |
+| `apps/web/src/lib/schemas.ts`            | Shared Zod schemas                                                                   |
+| `apps/web/src/lib/seo.ts`                | `seoMeta()` — generates OG + Twitter + meta tags from title/desc                     |
+| `apps/web/src/lib/zod-form-resolver.ts`  | Zod v4 resolver for react-hook-form                                                  |
+| `apps/web/src/routes/api/icon.tsx`       | Dynamic favicon (dark mode)                                                          |
+| `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                                     |
+| `apps/web/src/components/auth/`          | Auth forms                                                                           |
+| `apps/web/src/components/settings/`      | Account settings cards                                                               |
+| `apps/web/src/server.ts`                 | Server entry — Lingui i18n middleware for per-request locale                         |
+| `apps/web/src/router.tsx`                | TanStack Router config                                                               |
+| `apps/web/vite.config.ts`                | Vite config (lingui, tailwind, tanstack, alchemy, react compiler)                    |
+| `alchemy.run.ts`                         | Alchemy IaC — D1 + KV + TanStack Start worker definition                             |
+| `vite.config.ts`                         | Root Vite+ config (staged linting, oxlint options — NOT used for Vite dev/build)     |
+| `.oxlintrc.json`                         | Oxlint config                                                                        |
+| `.oxfmtrc.jsonc`                         | Oxfmt config                                                                         |
+| `.syncpackrc`                            | Syncpack config                                                                      |
+| `knip.json`                              | Knip config (unused files, deps, exports)                                            |
+| `.github/workflows/ci.yml`               | CI pipeline                                                                          |
+| `packages/email/email-capture.ts`        | Email capture for E2E test verification (dev/test only)                              |
+| `packages/email/templates.ts`            | Email render functions + localized subject helpers                                   |
+| `packages/email/locale.ts`               | Re-exports `createEmailI18n()` from `i18n.ts`                                        |
+| `packages/email/emails/email-layout.tsx` | Shared email layout component                                                        |
+| `packages/auth/locales/en/messages.po`   | Server i18n strings (auth error messages with `auth_` prefix)                        |
+| `packages/email/locales/en/messages.po`  | Email i18n strings (generated by `lingui extract`)                                   |
+| `apps/web/src/locales/en/messages.po`    | Frontend i18n strings (generated by `lingui extract`)                                |
+| `apps/web/src/lib/i18n.ts`               | Lingui i18n setup — `getI18n()`, `runWithI18n()`, `loadCatalog()`                    |
+| `packages/email/i18n.ts`                 | `createEmailI18n()` — per-render i18n instance for email templates                   |
+| `lingui.config.ts`                       | Root Lingui config — catalog paths for web + email                                   |
+| `bunfig.toml`                            | Bun config (exact versions, min release age)                                         |
 
 <!--VITE PLUS START-->
 

@@ -1,12 +1,16 @@
 # Cast
 
-**The full-stack TypeScript starter that actually works.** Ship production apps in minutes, not weeks.
+**AI-first full-stack TypeScript starter.** Ship production apps in minutes, not weeks.
 
-Built on [TanStack Start](https://tanstack.com/start) + [Bun](https://bun.sh/) + [Vite+](https://vite.dev/plus/). Everything is type-safe, everything is fast, everything just works.
+Built on [TanStack Start](https://tanstack.com/start) + [Bun](https://bun.sh/) + [Vite+](https://vite.dev/plus/). Designed from the ground up for AI-assisted development — with 42 [Claude Code skills](https://skills.sh), comprehensive `CLAUDE.md` instructions, and a codebase structure that AI agents navigate effortlessly.
 
 ## Why Cast?
 
 Most starters give you a skeleton. Cast gives you a **production-ready foundation** — auth, API, database, email, i18n, logging, CI/CD, and deployment are all wired up and working together. No glue code, no boilerplate, no "figure it out yourself."
+
+### AI-First by Design
+
+Cast isn't just AI-compatible — it's **built for AI agents to be productive from the first prompt**. Detailed `CLAUDE.md` project instructions, auto-invoked skills per domain, strict code standards that eliminate ambiguity, and a dependency graph that AI can reason about. The result: AI writes better code in Cast than in most hand-rolled projects.
 
 # Pillars
 
@@ -28,7 +32,7 @@ Most starters give you a skeleton. Cast gives you a **production-ready foundatio
 
 ### 3. Internationalization (i18n)
 
-[Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) across the entire stack — frontend, backend, emails, and auth errors. Type-safe, locale-aware, zero runtime cost. Every user-facing string is internationalized from day one. Adding a new language is a JSON file, not a refactor. See [Internationalization](#internationalization-i18n-1) for the full story.
+[Lingui](https://lingui.dev/) across the entire stack — frontend, backend, emails, and auth errors. Type-safe, locale-aware, message catalogs with ICU syntax. Every user-facing string is internationalized from day one. Adding a new language is a PO file, not a refactor. See [Internationalization](#internationalization-i18n-1) for the full story.
 
 ### 4. Testing
 
@@ -157,46 +161,47 @@ Automatic on both client and server — no extra setup required.
 
 ## Internationalization (i18n)
 
-Cast is **i18n-ready from day one** — every user-facing string flows through [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs), from UI labels to auth errors to transactional emails. Adding a new language is a JSON file, not a refactor.
+Cast is **i18n-ready from day one** — every user-facing string flows through [Lingui](https://lingui.dev/), from UI labels to auth errors to transactional emails. Adding a new language is a PO file, not a refactor.
 
 ### Architecture
 
-Three separate Paraglide projects keep bundles lean and concerns separated:
+Three separate Lingui catalogs keep bundles lean and concerns separated:
 
-| Project  | Path                       | Covers                                                          |
-| -------- | -------------------------- | --------------------------------------------------------------- |
-| Frontend | `apps/web/messages/`       | UI labels, buttons, forms, toasts, meta tags, validation errors |
-| Backend  | `packages/auth/messages/`  | Auth error messages, API responses, validation errors           |
-| Email    | `packages/email/messages/` | Subject lines, body copy, CTAs, transactional email content     |
+| Catalog  | Path                      | Covers                                                          |
+| -------- | ------------------------- | --------------------------------------------------------------- |
+| Frontend | `apps/web/src/locales/`   | UI labels, buttons, forms, toasts, meta tags, validation errors |
+| Backend  | `packages/auth/locales/`  | Auth error messages, API responses, validation errors           |
+| Email    | `packages/email/locales/` | Subject lines, body copy, CTAs, transactional email content     |
 
-Each project generates its own type-safe message functions. Server strings never leak into the client bundle.
+Each catalog compiles independently. Server strings never leak into the client bundle.
 
 ### What's Covered
 
-- **UI text** — All labels, buttons, placeholders, and toasts use Paraglide (`m.key()`)
-- **Auth errors** — Base + passkey [Better Auth error codes](https://better-auth.com/docs/reference/errors) translated via the [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n). Error messages managed in Paraglide, automatically mapped to Better Auth's i18n system. English skipped at runtime (Better Auth provides defaults natively). Locale detection: user's stored preference (DB) → `Accept-Language` header.
-- **Zod validation** — Frontend and backend validation errors resolve per-locale via Paraglide message functions
+- **UI text** — All labels, buttons, placeholders, and toasts use Lingui macros (`<Trans>`, `t`, `msg`)
+- **Auth errors** — Base + passkey [Better Auth error codes](https://better-auth.com/docs/reference/errors) translated via the [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n). Error messages managed in Lingui catalogs, automatically mapped to Better Auth's i18n system. English skipped at runtime (Better Auth provides defaults natively). Locale detection: user's stored preference (DB) → `Accept-Language` header.
+- **Zod validation** — Frontend and backend validation errors resolve per-locale via Lingui message descriptors
 - **Transactional emails** — All email templates (verification, password reset, welcome, etc.) render in the recipient's preferred locale
 - **Meta tags & SEO** — Page titles, descriptions, and OG tags are i18n-aware
 
 ### Adding a New Language
 
-1. Add the locale to each `project.inlang/settings.json` `locales` array
-2. Create `messages/{locale}.json` in each Paraglide project with translated strings
-3. Run `bun run build` in each package (or `bun ok` from root) to compile
-4. Auth error translations flow through automatically — no code changes needed
+1. Add the locale to `lingui.config.ts` `locales` array
+2. Run `bun lingui extract` to generate PO files for the new locale
+3. Translate the strings in each `locales/{locale}/messages.po`
+4. Run `bun lingui compile` (or `bun ok` from root) to compile
+5. Auth error translations flow through automatically — no code changes needed
 
 ### How Auth Error i18n Works
 
-The [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) is conditionally added in `packages/auth/auth.ts`. English uses Better Auth's built-in defaults — no duplication. The `auth_*` keys in `en.json` serve as Paraglide's canonical key list and translation reference for future locales.
+The [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) is conditionally added in `packages/auth/auth.ts`. English uses Better Auth's built-in defaults — no duplication. The `auth_*` keys in `en/messages.po` serve as Lingui's canonical key list and translation reference for future locales.
 
-When a non-English locale is added, `buildAuthTranslations()` (`packages/auth/auth-i18n.ts`) dynamically maps `auth_*` Paraglide messages to error codes. The plugin activates automatically — no code changes needed.
+When a non-English locale is added, `buildAuthTranslations()` (`packages/auth/auth-i18n.ts`) dynamically maps `auth_*` Lingui messages to error codes. The plugin activates automatically — no code changes needed.
 
 ```
 English only:     i18n plugin NOT added (zero overhead)
-With new locale:  Paraglide fr.json auth_* keys  →  buildAuthTranslations()  →  i18n plugin
-                    "Utilisateur non trouvé"         { fr: { USER_NOT_FOUND:     session locale
-                                                       "...", ... } }            → Accept-Language
+With new locale:  Lingui fr/messages.po auth_* →  buildAuthTranslations()  →  i18n plugin
+                    "Utilisateur non trouvé"       { fr: { USER_NOT_FOUND:     session locale
+                                                     "...", ... } }            → Accept-Language
 ```
 
 ## Tech Stack
@@ -210,7 +215,7 @@ With new locale:  Paraglide fr.json auth_* keys  →  buildAuthTranslations()  �
 | Auth            | [Better Auth](https://better-auth.com/) (email/password, passkeys, admin)                                                                                |
 | UI              | [shadcn v4](https://ui.shadcn.com/) + Tailwind CSS 4 + [Base UI](https://base-ui.com/)                                                                   |
 | Email           | [React Email](https://react.email/) + [Resend](https://resend.com/)                                                                                      |
-| i18n            | [Paraglide JS](https://inlang.com/m/gerre34r/library-inlang-paraglideJs) (full-stack)                                                                    |
+| i18n            | [Lingui](https://lingui.dev/) (full-stack)                                                                                                               |
 | Logging         | Structured console logger (Cloudflare Logpush compatible)                                                                                                |
 | Analytics       | [PostHog](https://posthog.com/) (client + server, error tracking)                                                                                        |
 | Linting         | [Vite+](https://vite.dev/plus/) (Oxlint + Oxfmt)                                                                                                         |

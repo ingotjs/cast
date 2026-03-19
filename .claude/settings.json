@@ -15,7 +15,8 @@
   "enabledPlugins": {
     "claude-md-management@claude-plugins-official": true,
     "chrome-devtools-mcp@claude-plugins-official": true,
-    "playwright@claude-plugins-official": true
+    "playwright@claude-plugins-official": true,
+    "impeccable@impeccable": true
   },
   "mcpServers": {
     "vite-plus": {

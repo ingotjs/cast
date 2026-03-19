@@ -10,11 +10,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@ingot/ui/components/dropdown-menu";
+import { Trans, useLingui } from "@lingui/react/macro";
 import { usePostHog } from "@posthog/react";
 import { Link } from "@tanstack/react-router";
 
 import { signOut, useSession } from "@/lib/auth-client";
-import { m } from "@/paraglide/messages";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -26,6 +26,7 @@ const getInitials = (name: string) => {
 export const UserMenu = () => {
   const { data: session } = useSession();
   const posthog = usePostHog();
+  const { t } = useLingui();
 
   if (!session?.user) {
     return (
@@ -35,7 +36,7 @@ export const UserMenu = () => {
         className="rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 font-semibold text-[var(--sea-ink)] text-sm shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition hover:-translate-y-0.5"
         data-testid="header-link-signin"
       >
-        {m.user_menu_signin()}
+        <Trans>Sign in</Trans>
       </Link>
     );
   }
@@ -68,7 +69,7 @@ export const UserMenu = () => {
               window.location.href = "/account";
             }}
           >
-            {m.user_menu_account()}
+            {t`Account`}
           </DropdownMenuItem>
           <DropdownMenuItem data-testid="user-menu-button-signout">
             <button
@@ -86,7 +87,7 @@ export const UserMenu = () => {
                 });
               }}
             >
-              {m.user_menu_signout()}
+              {t`Sign out`}
             </button>
           </DropdownMenuItem>
         </DropdownMenuGroup>

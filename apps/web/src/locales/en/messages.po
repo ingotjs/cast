@@ -1,0 +1,462 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-03-19 09:30-0300\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#. placeholder {0}: consts.appName
+#: apps/web/src/routes/terms.tsx:38
+msgid "{0} provides a web application platform. We reserve the right to modify, suspend, or discontinue any part of the service at any time."
+msgstr "{0} provides a web application platform. We reserve the right to modify, suspend, or discontinue any part of the service at any time."
+
+#: apps/web/src/routes/__root.tsx:22
+msgid "{appName}"
+msgstr "{appName}"
+
+#: apps/web/src/routes/index.tsx:12
+msgid "{appName} — The Modern Full-Stack Starter"
+msgstr "{appName} — The Modern Full-Stack Starter"
+
+#: apps/web/src/routes/faq.tsx:18
+msgid "{appName} is a production-ready, full-stack TypeScript starter built on TanStack Start, Bun, and Turborepo. It comes with authentication, API layer, database, transactional emails, internationalization, logging, CI/CD, and deployment pre-configured and working together."
+msgstr "{appName} is a production-ready, full-stack TypeScript starter built on TanStack Start, Bun, and Turborepo. It comes with authentication, API layer, database, transactional emails, internationalization, logging, CI/CD, and deployment pre-configured and working together."
+
+#: apps/web/src/routes/terms.tsx:25
+msgid "1. Acceptance of Terms"
+msgstr "1. Acceptance of Terms"
+
+#: apps/web/src/routes/terms.tsx:35
+msgid "2. Description of Service"
+msgstr "2. Description of Service"
+
+#: apps/web/src/routes/terms.tsx:45
+msgid "3. User Accounts"
+msgstr "3. User Accounts"
+
+#: apps/web/src/routes/terms.tsx:55
+msgid "4. Acceptable Use"
+msgstr "4. Acceptable Use"
+
+#: apps/web/src/routes/terms.tsx:76
+msgid "5. Intellectual Property"
+msgstr "5. Intellectual Property"
+
+#: apps/web/src/routes/terms.tsx:86
+msgid "6. Limitation of Liability"
+msgstr "6. Limitation of Liability"
+
+#: apps/web/src/routes/terms.tsx:96
+msgid "7. Changes to Terms"
+msgstr "7. Changes to Terms"
+
+#: apps/web/src/routes/terms.tsx:106
+msgid "8. Contact"
+msgstr "8. Contact"
+
+#: apps/web/src/routes/about.tsx:21
+msgid "A small starter with room to grow."
+msgstr "A small starter with room to grow."
+
+#: apps/web/src/routes/about.tsx:18
+msgid "About"
+msgstr "About"
+
+#: apps/web/src/routes/about.tsx:11
+msgid "About — {appName}"
+msgstr "About — {appName}"
+
+#: apps/web/src/routes/index.tsx:57
+msgid "About This Starter"
+msgstr "About This Starter"
+
+#: apps/web/src/routes/privacy.tsx:112
+msgid "Access your personal information"
+msgstr "Access your personal information"
+
+#: apps/web/src/components/user-menu.tsx:72
+msgid "Account"
+msgstr "Account"
+
+#: apps/web/src/routes/index.tsx:96
+msgid "Add routes in <0>src/routes</0> and tweak visual tokens in <1>src/styles.css</1>."
+msgstr "Add routes in <0>src/routes</0> and tweak visual tokens in <1>src/styles.css</1>."
+
+#: apps/web/src/routes/terms.tsx:79
+msgid "All content, features, and functionality of the service are owned by us and are protected by copyright, trademark, and other intellectual property laws."
+msgstr "All content, features, and functionality of the service are owned by us and are protected by copyright, trademark, and other intellectual property laws."
+
+#: apps/web/src/routes/privacy.tsx:128
+msgid "Analytics"
+msgstr "Analytics"
+
+#: apps/web/src/routes/terms.tsx:65
+msgid "Attempt to gain unauthorized access to any part of the service"
+msgstr "Attempt to gain unauthorized access to any part of the service"
+
+#. placeholder {0}: consts.appName
+#: apps/web/src/routes/terms.tsx:28
+msgid "By accessing or using {0}, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the service."
+msgstr "By accessing or using {0}, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the service."
+
+#: apps/web/src/routes/index.tsx:65
+msgid "Call server code from your UI without creating API boilerplate."
+msgstr "Call server code from your UI without creating API boilerplate."
+
+#: apps/web/src/routes/privacy.tsx:163
+msgid "Changes to This Policy"
+msgstr "Changes to This Policy"
+
+#: apps/web/src/routes/faq.tsx:28
+msgid "Cloudflare Workers is the deployment target. Create a D1 database, set your BETTER_AUTH_SECRET, and deploy with wrangler. Migrations are applied via 'wrangler d1 migrations apply'. The deployment is pre-configured in wrangler.jsonc."
+msgstr "Cloudflare Workers is the deployment target. Create a D1 database, set your BETTER_AUTH_SECRET, and deploy with wrangler. Migrations are applied via 'wrangler d1 migrations apply'. The deployment is pre-configured in wrangler.jsonc."
+
+#: apps/web/src/routes/privacy.tsx:173
+msgid "Contact"
+msgstr "Contact"
+
+#: apps/web/src/routes/privacy.tsx:153
+msgid "Cookies"
+msgstr "Cookies"
+
+#: apps/web/src/routes/privacy.tsx:115
+msgid "Correct inaccurate data"
+msgstr "Correct inaccurate data"
+
+#: apps/web/src/routes/privacy.tsx:95
+msgid "Data Retention"
+msgstr "Data Retention"
+
+#: apps/web/src/routes/privacy.tsx:85
+msgid "Data Security"
+msgstr "Data Security"
+
+#: apps/web/src/routes/index.tsx:67
+msgid "Design quickly with utility-first styling and reusable tokens."
+msgstr "Design quickly with utility-first styling and reusable tokens."
+
+#: apps/web/src/routes/privacy.tsx:60
+msgid "Detect, investigate, and prevent fraudulent or unauthorized activity"
+msgstr "Detect, investigate, and prevent fraudulent or unauthorized activity"
+
+#: apps/web/src/routes/privacy.tsx:39
+msgid "Device and browser information"
+msgstr "Device and browser information"
+
+#: apps/web/src/routes/index.tsx:86
+msgid "Edit <0>src/routes/index.tsx</0> to customize the home page."
+msgstr "Edit <0>src/routes/index.tsx</0> to customize the home page."
+
+#: apps/web/src/routes/faq.tsx:24
+msgid "Email/password authentication and passkeys (WebAuthn) out of the box, powered by Better Auth. Additional providers like Google OAuth and magic links are available via feature flags."
+msgstr "Email/password authentication and passkeys (WebAuthn) out of the box, powered by Better Auth. Additional providers like Google OAuth and magic links are available via feature flags."
+
+#: apps/web/src/routes/faq.tsx:15
+msgid "Everything you need to know about {appName}."
+msgstr "Everything you need to know about {appName}."
+
+#: apps/web/src/routes/privacy.tsx:121
+msgid "Export your data"
+msgstr "Export your data"
+
+#: apps/web/src/components/footer.tsx:15
+msgid "FAQ"
+msgstr "FAQ"
+
+#: apps/web/src/routes/faq.tsx:11
+msgid "FAQ — {appName}"
+msgstr "FAQ — {appName}"
+
+#: apps/web/src/routes/faq.tsx:14
+msgid "Frequently Asked Questions"
+msgstr "Frequently Asked Questions"
+
+#: apps/web/src/routes/faq.tsx:12
+msgid "Frequently asked questions about {appName}, the modern full-stack TypeScript starter."
+msgstr "Frequently asked questions about {appName}, the modern full-stack TypeScript starter."
+
+#: apps/web/src/routes/privacy.tsx:13
+msgid "How {appName} handles your personal information and data."
+msgstr "How {appName} handles your personal information and data."
+
+#: apps/web/src/routes/faq.tsx:27
+msgid "How do I deploy {appName}?"
+msgstr "How do I deploy {appName}?"
+
+#: apps/web/src/routes/faq.tsx:21
+msgid "How do I get started?"
+msgstr "How do I get started?"
+
+#: apps/web/src/routes/privacy.tsx:44
+msgid "How We Use Your Information"
+msgstr "How We Use Your Information"
+
+#: apps/web/src/routes/terms.tsx:109
+msgid "If you have questions about these terms, please contact us through the application."
+msgstr "If you have questions about these terms, please contact us through the application."
+
+#: apps/web/src/routes/privacy.tsx:176
+msgid "If you have questions about this privacy policy, please contact us through the application."
+msgstr "If you have questions about this privacy policy, please contact us through the application."
+
+#: apps/web/src/routes/privacy.tsx:65
+msgid "Information Sharing"
+msgstr "Information Sharing"
+
+#: apps/web/src/routes/privacy.tsx:26
+msgid "Information We Collect"
+msgstr "Information We Collect"
+
+#: apps/web/src/routes/terms.tsx:68
+msgid "Interfere with the proper functioning of the service"
+msgstr "Interfere with the proper functioning of the service"
+
+#: apps/web/src/routes/privacy.tsx:139
+msgid "International Data Transfers"
+msgstr "International Data Transfers"
+
+#: apps/web/src/routes/faq.tsx:25
+msgid "Is {appName} free and open source?"
+msgstr "Is {appName} free and open source?"
+
+#: apps/web/src/routes/privacy.tsx:21
+#: apps/web/src/routes/terms.tsx:20
+msgid "Last updated: March 16, 2026"
+msgstr "Last updated: March 16, 2026"
+
+#: apps/web/src/routes/about.tsx:12
+msgid "Learn about {appName}, the full-stack TypeScript starter built on TanStack Start, Bun, and Turborepo."
+msgstr "Learn about {appName}, the full-stack TypeScript starter built on TanStack Start, Bun, and Turborepo."
+
+#: apps/web/src/routes/privacy.tsx:33
+msgid "Name and email address when you create an account"
+msgstr "Name and email address when you create an account"
+
+#: apps/web/src/components/footer.tsx:18
+msgid "Privacy"
+msgstr "Privacy"
+
+#: apps/web/src/routes/privacy.tsx:18
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+#: apps/web/src/routes/privacy.tsx:12
+msgid "Privacy Policy — {appName}"
+msgstr "Privacy Policy — {appName}"
+
+#: apps/web/src/routes/privacy.tsx:51
+msgid "Provide, maintain, and improve the service"
+msgstr "Provide, maintain, and improve the service"
+
+#: apps/web/src/routes/index.tsx:82
+msgid "Quick Start"
+msgstr "Quick Start"
+
+#: apps/web/src/routes/privacy.tsx:118
+msgid "Request deletion of your data"
+msgstr "Request deletion of your data"
+
+#: apps/web/src/routes/privacy.tsx:57
+msgid "Respond to your comments and questions"
+msgstr "Respond to your comments and questions"
+
+#: apps/web/src/routes/index.tsx:64
+msgid "Routes and links stay in sync across every page."
+msgstr "Routes and links stay in sync across every page."
+
+#: apps/web/src/routes/faq.tsx:22
+msgid "Run 'bun install' and 'bun dev'. PGlite creates a local PostgreSQL database automatically — no Docker or external services needed. Your app will be running at localhost:2000 in seconds."
+msgstr "Run 'bun install' and 'bun dev'. PGlite creates a local PostgreSQL database automatically — no Docker or external services needed. Your app will be running at localhost:2000 in seconds."
+
+#: apps/web/src/routes/privacy.tsx:54
+msgid "Send you technical notices and support messages"
+msgstr "Send you technical notices and support messages"
+
+#: apps/web/src/routes/index.tsx:65
+msgid "Server Functions"
+msgstr "Server Functions"
+
+#: apps/web/src/routes/index.tsx:13
+msgid "Ship production TypeScript apps in minutes. Auth, API, database, email, i18n, and deployment — all wired up and ready."
+msgstr "Ship production TypeScript apps in minutes. Auth, API, database, email, i18n, and deployment — all wired up and ready."
+
+#: apps/web/src/routes/index.tsx:66
+msgid "Ship progressively rendered responses for faster experiences."
+msgstr "Ship progressively rendered responses for faster experiences."
+
+#: apps/web/src/components/user-menu.tsx:39
+msgid "Sign in"
+msgstr "Sign in"
+
+#: apps/web/src/routes/index.tsx:50
+msgid "Sign In"
+msgstr "Sign In"
+
+#: apps/web/src/components/user-menu.tsx:90
+msgid "Sign out"
+msgstr "Sign out"
+
+#: apps/web/src/routes/index.tsx:26
+msgid "Start simple, ship quickly."
+msgstr "Start simple, ship quickly."
+
+#: apps/web/src/routes/index.tsx:66
+msgid "Streaming by Default"
+msgstr "Streaming by Default"
+
+#: apps/web/src/routes/index.tsx:67
+msgid "Tailwind Native"
+msgstr "Tailwind Native"
+
+#: apps/web/src/routes/faq.tsx:20
+msgid "TanStack Start (Vite + TanStack Router + Nitro) for the framework, Drizzle ORM with PGlite/PostgreSQL for the database, Better Auth for authentication, oRPC for type-safe APIs, React Email + Resend for transactional emails, Lingui for i18n, and Tailwind CSS + shadcn for the UI."
+msgstr "TanStack Start (Vite + TanStack Router + Nitro) for the framework, Drizzle ORM with PGlite/PostgreSQL for the database, Better Auth for authentication, oRPC for type-safe APIs, React Email + Resend for transactional emails, Lingui for i18n, and Tailwind CSS + shadcn for the UI."
+
+#: apps/web/src/routes/about.tsx:24
+msgid "TanStack Start gives you type-safe routing, server functions, and modern SSR defaults. Use this as a clean foundation, then layer in your own routes, styling, and add-ons."
+msgstr "TanStack Start gives you type-safe routing, server functions, and modern SSR defaults. Use this as a clean foundation, then layer in your own routes, styling, and add-ons."
+
+#: apps/web/src/components/footer.tsx:21
+msgid "Terms"
+msgstr "Terms"
+
+#: apps/web/src/routes/terms.tsx:12
+msgid "Terms and conditions for using {appName}."
+msgstr "Terms and conditions for using {appName}."
+
+#: apps/web/src/routes/terms.tsx:17
+msgid "Terms of Service"
+msgstr "Terms of Service"
+
+#: apps/web/src/routes/terms.tsx:11
+msgid "Terms of Service — {appName}"
+msgstr "Terms of Service — {appName}"
+
+#: apps/web/src/routes/__root.tsx:23
+msgid "The modern full-stack starter"
+msgstr "The modern full-stack starter"
+
+#: apps/web/src/routes/index.tsx:29
+msgid "This base starter intentionally keeps things light: two routes, clean structure, and the essentials you need to build from scratch."
+msgstr "This base starter intentionally keeps things light: two routes, clean structure, and the essentials you need to build from scratch."
+
+#: apps/web/src/routes/privacy.tsx:77
+msgid "To comply with legal obligations"
+msgstr "To comply with legal obligations"
+
+#: apps/web/src/routes/privacy.tsx:80
+msgid "To protect our rights, privacy, safety, or property"
+msgstr "To protect our rights, privacy, safety, or property"
+
+#: apps/web/src/routes/terms.tsx:89
+msgid "To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the service."
+msgstr "To the maximum extent permitted by law, we shall not be liable for any indirect, incidental, special, consequential, or punitive damages resulting from your use of the service."
+
+#: apps/web/src/routes/index.tsx:64
+msgid "Type-Safe Routing"
+msgstr "Type-Safe Routing"
+
+#: apps/web/src/routes/index.tsx:91
+msgid "Update <0>src/components/Header.tsx</0> and <1>src/components/Footer.tsx</1> for brand links."
+msgstr "Update <0>src/components/Header.tsx</0> and <1>src/components/Footer.tsx</1> for brand links."
+
+#: apps/web/src/routes/terms.tsx:71
+msgid "Upload malicious code or content"
+msgstr "Upload malicious code or content"
+
+#: apps/web/src/routes/privacy.tsx:36
+msgid "Usage data and interaction with the service"
+msgstr "Usage data and interaction with the service"
+
+#: apps/web/src/routes/terms.tsx:62
+msgid "Use the service for any unlawful purpose"
+msgstr "Use the service for any unlawful purpose"
+
+#: apps/web/src/routes/privacy.tsx:29
+msgid "We collect information you provide directly to us, including:"
+msgstr "We collect information you provide directly to us, including:"
+
+#: apps/web/src/routes/privacy.tsx:68
+msgid "We do not sell your personal information. We may share your information only in the following circumstances:"
+msgstr "We do not sell your personal information. We may share your information only in the following circumstances:"
+
+#: apps/web/src/routes/privacy.tsx:88
+msgid "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction."
+msgstr "We implement appropriate technical and organizational measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction."
+
+#: apps/web/src/routes/terms.tsx:99
+msgid "We may update these terms from time to time. Continued use of the service after changes constitutes acceptance of the new terms."
+msgstr "We may update these terms from time to time. Continued use of the service after changes constitutes acceptance of the new terms."
+
+#: apps/web/src/routes/privacy.tsx:166
+msgid "We may update this privacy policy from time to time. We will notify you of significant changes by posting a notice on the service."
+msgstr "We may update this privacy policy from time to time. We will notify you of significant changes by posting a notice on the service."
+
+#: apps/web/src/routes/privacy.tsx:98
+msgid "We retain your personal information for as long as your account is active or as needed to provide services. You can request deletion of your account and associated data at any time."
+msgstr "We retain your personal information for as long as your account is active or as needed to provide services. You can request deletion of your account and associated data at any time."
+
+#: apps/web/src/routes/privacy.tsx:156
+msgid "We use essential cookies to maintain your session and preferences. We may also use analytics cookies to understand how you use the service."
+msgstr "We use essential cookies to maintain your session and preferences. We may also use analytics cookies to understand how you use the service."
+
+#: apps/web/src/routes/privacy.tsx:131
+msgid "We use PostHog for product analytics, error tracking, and to understand how you interact with the service. PostHog may collect usage data, device information, and performance metrics. You can opt out of tracking by using a browser ad blocker."
+msgstr "We use PostHog for product analytics, error tracking, and to understand how you interact with the service. PostHog may collect usage data, device information, and performance metrics. You can opt out of tracking by using a browser ad blocker."
+
+#: apps/web/src/routes/privacy.tsx:47
+msgid "We use the information we collect to:"
+msgstr "We use the information we collect to:"
+
+#. placeholder {0}: session.user.name
+#: apps/web/src/routes/index.tsx:41
+msgid "Welcome, {0}"
+msgstr "Welcome, {0}"
+
+#: apps/web/src/routes/faq.tsx:23
+msgid "What authentication methods are supported?"
+msgstr "What authentication methods are supported?"
+
+#: apps/web/src/routes/faq.tsx:17
+msgid "What is {appName}?"
+msgstr "What is {appName}?"
+
+#: apps/web/src/routes/faq.tsx:19
+msgid "What tech stack does {appName} use?"
+msgstr "What tech stack does {appName} use?"
+
+#: apps/web/src/routes/privacy.tsx:74
+msgid "With your consent"
+msgstr "With your consent"
+
+#: apps/web/src/routes/faq.tsx:26
+msgid "Yes, {appName} is completely free and open source. You can use it for personal projects, commercial applications, or anything in between."
+msgstr "Yes, {appName} is completely free and open source. You can use it for personal projects, commercial applications, or anything in between."
+
+#: apps/web/src/routes/terms.tsx:58
+msgid "You agree not to:"
+msgstr "You agree not to:"
+
+#: apps/web/src/routes/terms.tsx:48
+msgid "You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You must notify us immediately of any unauthorized use."
+msgstr "You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You must notify us immediately of any unauthorized use."
+
+#: apps/web/src/routes/privacy.tsx:108
+msgid "You have the right to:"
+msgstr "You have the right to:"
+
+#: apps/web/src/routes/privacy.tsx:142
+msgid "Your information may be transferred to and processed in the United States, where our analytics provider (PostHog) operates. These transfers are protected by Standard Contractual Clauses (SCCs) approved by the European Commission, ensuring your data receives an adequate level of protection regardless of where it is processed."
+msgstr "Your information may be transferred to and processed in the United States, where our analytics provider (PostHog) operates. These transfers are protected by Standard Contractual Clauses (SCCs) approved by the European Commission, ensuring your data receives an adequate level of protection regardless of where it is processed."
+
+#: apps/web/src/routes/privacy.tsx:105
+msgid "Your Rights"
+msgstr "Your Rights"

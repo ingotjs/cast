@@ -7,8 +7,7 @@ import { MagicLinkEmail } from "./emails/magic-link";
 import { PasswordChangedEmail } from "./emails/password-changed";
 import { ResetPasswordEmail } from "./emails/reset-password";
 import { WelcomeEmail } from "./emails/welcome";
-import { loc } from "./locale";
-import * as m from "./paraglide/messages";
+import { createEmailI18n } from "./i18n";
 
 type CommonProps = {
   appName: string;
@@ -35,15 +34,15 @@ export const renderWelcomeEmail = (props: CommonProps) => render(createElement(W
 /** Localized email subject lines */
 export const getEmailSubject = {
   resetPassword: ({ appName, locale }: { appName: string; locale?: string }) =>
-    m.email_subject_reset_password({ appName }, loc(locale ?? "en")),
+    createEmailI18n(locale)._("Reset your {appName} password", { appName }),
   magicLink: ({ appName, locale }: { appName: string; locale?: string }) =>
-    m.email_subject_magic_link({ appName }, loc(locale ?? "en")),
+    createEmailI18n(locale)._("Your {appName} login link", { appName }),
   verification: ({ appName, locale }: { appName: string; locale?: string }) =>
-    m.email_subject_verification({ appName }, loc(locale ?? "en")),
+    createEmailI18n(locale)._("Verify your {appName} email", { appName }),
   passwordChanged: ({ appName, locale }: { appName: string; locale?: string }) =>
-    m.email_subject_password_changed({ appName }, loc(locale ?? "en")),
+    createEmailI18n(locale)._("Your {appName} password was changed", { appName }),
   accountDeleted: ({ appName, locale }: { appName: string; locale?: string }) =>
-    m.email_subject_account_deleted({ appName }, loc(locale ?? "en")),
+    createEmailI18n(locale)._("Your {appName} account has been deleted", { appName }),
   welcome: ({ appName, locale }: { appName: string; locale?: string }) =>
-    m.email_subject_welcome({ appName }, loc(locale ?? "en")),
+    createEmailI18n(locale)._("Welcome to {appName}", { appName }),
 };

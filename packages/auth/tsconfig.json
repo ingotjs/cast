@@ -8,5 +8,5 @@
     "jsx": "react-jsx"
   },
   "include": ["."],
-  "exclude": ["node_modules", "**/__tests__"]
+  "exclude": ["node_modules", "**/__tests__", "lingui.config.ts"]
 }

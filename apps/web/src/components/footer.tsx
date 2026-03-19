@@ -1,6 +1,5 @@
+import { Trans } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
-
-import { m } from "../paraglide/messages";
 
 export const Footer = () => {
   const year = new Date().getFullYear();
@@ -13,13 +12,13 @@ export const Footer = () => {
       </div>
       <nav className="mt-4 flex justify-center gap-6 text-sm">
         <Link to="/faq" className="transition hover:text-[var(--sea-ink)]">
-          {m.footer_faq()}
+          <Trans>FAQ</Trans>
         </Link>
         <Link to="/privacy" className="transition hover:text-[var(--sea-ink)]">
-          {m.footer_privacy()}
+          <Trans>Privacy</Trans>
         </Link>
         <Link to="/terms" className="transition hover:text-[var(--sea-ink)]">
-          {m.footer_terms()}
+          <Trans>Terms</Trans>
         </Link>
       </nav>
       <div className="mt-4 flex justify-center gap-4">

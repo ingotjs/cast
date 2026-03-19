@@ -11,13 +11,14 @@
   },
   "scripts": {
     "dev:email": "email dev --port 3002",
-    "build": "paraglide-js compile --project ./project.inlang --outdir ./paraglide",
+    "build": "lingui compile",
     "build:email": "email build",
-    "clean": "rm -rf .react-email .etc/.email-captures paraglide",
+    "clean": "rm -rf .react-email .etc/.email-captures locales/*/messages.ts",
     "export": "email export",
     "ts": "tsgo --noEmit"
   },
   "dependencies": {
+    "@lingui/core": "catalog:",
     "@react-email/components": "1.0.9",
     "@react-email/tailwind": "2.0.5",
     "react": "catalog:",
@@ -27,9 +28,7 @@
   "devDependencies": {
     "@ingot/config": "*",
     "@ingot/utils": "*",
-    "@inlang/paraglide-js": "catalog:",
-    "@inlang/plugin-m-function-matcher": "catalog:",
-    "@inlang/plugin-message-format": "catalog:",
+    "@lingui/cli": "catalog:",
     "@react-email/preview-server": "5.2.9",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",

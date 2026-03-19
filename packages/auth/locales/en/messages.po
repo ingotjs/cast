@@ -1,0 +1,169 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "auth_USER_NOT_FOUND"
+msgstr "User not found"
+
+msgid "auth_FAILED_TO_CREATE_USER"
+msgstr "Failed to create user"
+
+msgid "auth_FAILED_TO_CREATE_SESSION"
+msgstr "Failed to create session"
+
+msgid "auth_FAILED_TO_UPDATE_USER"
+msgstr "Failed to update user"
+
+msgid "auth_FAILED_TO_GET_SESSION"
+msgstr "Failed to get session"
+
+msgid "auth_INVALID_PASSWORD"
+msgstr "Invalid password"
+
+msgid "auth_INVALID_EMAIL"
+msgstr "Invalid email"
+
+msgid "auth_INVALID_EMAIL_OR_PASSWORD"
+msgstr "Invalid email or password"
+
+msgid "auth_INVALID_USER"
+msgstr "Invalid user"
+
+msgid "auth_SOCIAL_ACCOUNT_ALREADY_LINKED"
+msgstr "Social account already linked"
+
+msgid "auth_PROVIDER_NOT_FOUND"
+msgstr "Provider not found"
+
+msgid "auth_INVALID_TOKEN"
+msgstr "Invalid token"
+
+msgid "auth_TOKEN_EXPIRED"
+msgstr "Token expired"
+
+msgid "auth_ID_TOKEN_NOT_SUPPORTED"
+msgstr "id_token not supported"
+
+msgid "auth_FAILED_TO_GET_USER_INFO"
+msgstr "Failed to get user info"
+
+msgid "auth_USER_EMAIL_NOT_FOUND"
+msgstr "User email not found"
+
+msgid "auth_EMAIL_NOT_VERIFIED"
+msgstr "Email not verified"
+
+msgid "auth_PASSWORD_TOO_SHORT"
+msgstr "Password too short"
+
+msgid "auth_PASSWORD_TOO_LONG"
+msgstr "Password too long"
+
+msgid "auth_USER_ALREADY_EXISTS"
+msgstr "User already exists"
+
+msgid "auth_USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL"
+msgstr "User already exists. Use another email."
+
+msgid "auth_EMAIL_CAN_NOT_BE_UPDATED"
+msgstr "Email can not be updated"
+
+msgid "auth_CREDENTIAL_ACCOUNT_NOT_FOUND"
+msgstr "Credential account not found"
+
+msgid "auth_SESSION_EXPIRED"
+msgstr "Session expired. Re-authenticate to perform this action."
+
+msgid "auth_FAILED_TO_UNLINK_LAST_ACCOUNT"
+msgstr "You can't unlink your last account"
+
+msgid "auth_ACCOUNT_NOT_FOUND"
+msgstr "Account not found"
+
+msgid "auth_USER_ALREADY_HAS_PASSWORD"
+msgstr "User already has a password. Provide that to delete the account."
+
+msgid "auth_CROSS_SITE_NAVIGATION_LOGIN_BLOCKED"
+msgstr "Cross-site navigation login blocked. This request appears to be a CSRF attack."
+
+msgid "auth_VERIFICATION_EMAIL_NOT_ENABLED"
+msgstr "Verification email isn't enabled"
+
+msgid "auth_EMAIL_ALREADY_VERIFIED"
+msgstr "Email is already verified"
+
+msgid "auth_EMAIL_MISMATCH"
+msgstr "Email mismatch"
+
+msgid "auth_SESSION_NOT_FRESH"
+msgstr "Session is not fresh"
+
+msgid "auth_LINKED_ACCOUNT_ALREADY_EXISTS"
+msgstr "Linked account already exists"
+
+msgid "auth_INVALID_ORIGIN"
+msgstr "Invalid origin"
+
+msgid "auth_INVALID_CALLBACK_URL"
+msgstr "Invalid callback URL"
+
+msgid "auth_INVALID_REDIRECT_URL"
+msgstr "Invalid redirect URL"
+
+msgid "auth_INVALID_ERROR_CALLBACK_URL"
+msgstr "Invalid error callback URL"
+
+msgid "auth_INVALID_NEW_USER_CALLBACK_URL"
+msgstr "Invalid new user callback URL"
+
+msgid "auth_MISSING_OR_NULL_ORIGIN"
+msgstr "Missing or null Origin"
+
+msgid "auth_CALLBACK_URL_REQUIRED"
+msgstr "Callback URL is required"
+
+msgid "auth_FAILED_TO_CREATE_VERIFICATION"
+msgstr "Unable to create verification"
+
+msgid "auth_FIELD_NOT_ALLOWED"
+msgstr "Field not allowed to be set"
+
+msgid "auth_ASYNC_VALIDATION_NOT_SUPPORTED"
+msgstr "Async validation is not supported"
+
+msgid "auth_VALIDATION_ERROR"
+msgstr "Validation error"
+
+msgid "auth_MISSING_FIELD"
+msgstr "Field is required"
+
+msgid "auth_METHOD_NOT_ALLOWED_DEFER_SESSION_REQUIRED"
+msgstr "POST method requires deferSessionRefresh to be enabled in session config"
+
+msgid "auth_BODY_MUST_BE_AN_OBJECT"
+msgstr "Body must be an object"
+
+msgid "auth_PASSWORD_ALREADY_SET"
+msgstr "User already has a password set"
+
+msgid "auth_CHALLENGE_NOT_FOUND"
+msgstr "Challenge not found"
+
+msgid "auth_YOU_ARE_NOT_ALLOWED_TO_REGISTER_THIS_PASSKEY"
+msgstr "You are not allowed to register this passkey"
+
+msgid "auth_FAILED_TO_VERIFY_REGISTRATION"
+msgstr "Failed to verify registration"
+
+msgid "auth_PASSKEY_NOT_FOUND"
+msgstr "Passkey not found"
+
+msgid "auth_AUTHENTICATION_FAILED"
+msgstr "Authentication failed"
+
+msgid "auth_UNABLE_TO_CREATE_SESSION"
+msgstr "Unable to create session"
+
+msgid "auth_FAILED_TO_UPDATE_PASSKEY"
+msgstr "Failed to update passkey"

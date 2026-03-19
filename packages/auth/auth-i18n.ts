@@ -1,30 +1,29 @@
 // Reference: https://better-auth.com/docs/plugins/i18n
 // Reference: https://better-auth.com/docs/reference/errors
 
-import * as messages from "./paraglide/messages";
-import { baseLocale, locales } from "./paraglide/runtime";
+import { setupI18n } from "@lingui/core";
 
 const AUTH_PREFIX = "auth_";
+const locales = ["en"] as const;
+const baseLocale = "en";
 
 /**
- * Build Better Auth i18n translations from Paraglide server messages.
+ * Build Better Auth i18n translations from Lingui catalogs.
  *
  * Skips the base locale (English) — Better Auth already provides English defaults.
- * Only generates translations for non-default locales. The `auth_*` keys in
- * `packages/auth/messages/en.json` serve as the canonical key list and
- * translation reference for Paraglide, not as runtime English overrides.
+ * Only generates translations for non-default locales.
  *
  * Returns `null` when only the base locale is configured (no translations needed).
  * The i18n plugin should not be added in this case.
  *
- * When a new locale is added to `project.inlang/settings.json` with `auth_*`
- * translations, they automatically flow through — no code changes needed.
+ * When a new locale is added, import its compiled catalog, add it to the `catalogs`
+ * map, and add it to the `locales` array. The `auth_*` messages in the PO file
+ * automatically flow through — no code changes needed beyond the import.
  *
  * This file only covers base + passkey error codes — not admin or other plugin
  * codes. Admin errors are internal and don't need i18n. To add error codes from
- * another Better Auth plugin, add `auth_{ERROR_CODE}` keys to `en.json` matching
- * the plugin's `$ERROR_CODES` export, then compile Paraglide (`bun run build`
- * in `packages/auth`).
+ * another Better Auth plugin, add `auth_{ERROR_CODE}` entries to the PO catalog
+ * and recompile.
  */
 export const buildAuthTranslations = (): Record<string, Record<string, string>> | null => {
   const translations: Record<string, Record<string, string>> = {};
@@ -35,12 +34,20 @@ export const buildAuthTranslations = (): Record<string, Record<string, string>> 
       continue;
     }
 
+    // For non-English locales, dynamically import the compiled catalog
+    // and iterate auth_ prefixed messages
+    const catalog = getCatalog(locale);
+    if (!catalog) continue;
+
+    const i18n = setupI18n();
+    i18n.load(locale, catalog as Record<string, string>);
+    i18n.activate(locale);
     translations[locale] = {};
 
-    for (const [key, fn] of Object.entries(messages)) {
-      if (key.startsWith(AUTH_PREFIX) && typeof fn === "function") {
+    for (const key of Object.keys(catalog)) {
+      if (key.startsWith(AUTH_PREFIX)) {
         const errorCode = key.slice(AUTH_PREFIX.length);
-        translations[locale][errorCode] = (fn as (options: { locale: string }) => string)({ locale });
+        translations[locale][errorCode] = i18n._(key);
       }
     }
   }
@@ -51,4 +58,11 @@ export const buildAuthTranslations = (): Record<string, Record<string, string>> 
   }
 
   return translations;
+};
+
+/** Get a compiled catalog for the given locale. Add imports here when adding locales. */
+const getCatalog = (_locale: string): Record<string, unknown> | null => {
+  // Currently only English is configured — non-English catalogs can be added here:
+  // if (locale === "fr") return frMessages;
+  return null;
 };

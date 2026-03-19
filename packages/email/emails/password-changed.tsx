@@ -1,7 +1,6 @@
 import { Button, Text } from "@react-email/components";
 
-import { loc } from "../locale";
-import * as m from "../paraglide/messages";
+import { createEmailI18n } from "../i18n";
 import { EmailLayout } from "./email-layout";
 
 type PasswordChangedEmailProps = {
@@ -16,26 +15,34 @@ export const PasswordChangedEmail = ({
   appName,
   appUrl,
   locale = "en",
-}: PasswordChangedEmailProps) => (
-  <EmailLayout
-    locale={locale}
-    previewText={m.email_password_changed_preview({ appName }, loc(locale))}
-    appName={appName}
-    appUrl={appUrl}
-  >
-    <Text className="mt-7 mb-0 font-bold text-3xl text-[#1d1c1d]">
-      {m.email_password_changed_heading({}, loc(locale))}
-    </Text>
-    <Text className="mt-8 mb-6 text-black text-lg leading-7">{m.email_password_changed_body({}, loc(locale))}</Text>
-    <Button
-      href={resetPasswordLink}
-      className="mt-3.5 mb-0 box-border inline-block w-full rounded-lg bg-black px-4 py-3 text-center font-semibold text-white no-underline"
+}: PasswordChangedEmailProps) => {
+  const i18n = createEmailI18n(locale);
+
+  return (
+    <EmailLayout
+      locale={locale}
+      previewText={i18n._("Your {appName} password was changed", { appName })}
+      appName={appName}
+      appUrl={appUrl}
     >
-      {m.email_password_changed_button({}, loc(locale))}
-    </Button>
-    <Text className="mt-5 mb-0 text-[#444] text-sm">{m.email_password_changed_disclaimer({}, loc(locale))}</Text>
-  </EmailLayout>
-);
+      <Text className="mt-7 mb-0 font-bold text-3xl text-[#1d1c1d]">{i18n._("Password changed")}</Text>
+      <Text className="mt-8 mb-6 text-black text-lg leading-7">
+        {i18n._(
+          "Your password has been successfully changed. If you did not make this change, please reset your password immediately."
+        )}
+      </Text>
+      <Button
+        href={resetPasswordLink}
+        className="mt-3.5 mb-0 box-border inline-block w-full rounded-lg bg-black px-4 py-3 text-center font-semibold text-white no-underline"
+      >
+        {i18n._("Reset Password")}
+      </Button>
+      <Text className="mt-5 mb-0 text-[#444] text-sm">
+        {i18n._("If you made this change, no further action is required.")}
+      </Text>
+    </EmailLayout>
+  );
+};
 
 PasswordChangedEmail.PreviewProps = {
   resetPasswordLink: "https://example.com/auth/forgot-password",

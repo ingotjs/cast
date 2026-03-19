@@ -1,6 +1,7 @@
 import { consts } from "@ingot/utils/consts";
 import { Link } from "@tanstack/react-router";
 
+import { LocaleSwitcher } from "./locale-switcher";
 import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
@@ -47,6 +48,7 @@ export const Header = () => (
           </svg>
         </a>
 
+        <LocaleSwitcher />
         <ThemeToggle />
         <UserMenu />
       </div>
