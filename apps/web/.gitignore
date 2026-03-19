@@ -1,13 +1,12 @@
 node_modules
 .DS_Store
-dist
-dist-ssr
 *.local
 .env
+
+# Build/dev artifacts
+dist
 .nitro
+.output
 .tanstack
 .wrangler
-.output
-.vinxi
-__unconfig*
-todos.json
+.alchemy

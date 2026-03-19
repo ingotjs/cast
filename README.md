@@ -165,7 +165,7 @@ Three separate Paraglide projects keep bundles lean and concerns separated:
 
 | Project  | Path                            | Covers                                                          |
 | -------- | ------------------------------- | --------------------------------------------------------------- |
-| Frontend | `apps/web/messages/`            | UI labels, buttons, forms, toasts, meta tags, validation errors |
+| Frontend | `apps/web/.etc/messages/`       | UI labels, buttons, forms, toasts, meta tags, validation errors |
 | Backend  | `packages/auth/messages/`       | Auth error messages, API responses, validation errors           |
 | Email    | `packages/email/.etc/messages/` | Subject lines, body copy, CTAs, transactional email content     |
 
