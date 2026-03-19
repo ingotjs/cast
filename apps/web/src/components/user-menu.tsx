@@ -33,7 +33,7 @@ export const UserMenu = () => {
         to="/auth/$path"
         params={{ path: "sign-in" }}
         className="rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 font-semibold text-[var(--sea-ink)] text-sm shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition hover:-translate-y-0.5"
-        data-testid="header-signin-link"
+        data-testid="header-link-signin"
       >
         {m.user_menu_signin()}
       </Link>
@@ -45,7 +45,7 @@ export const UserMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        data-testid="user-menu-trigger"
+        data-testid="user-menu-button-trigger"
         className="cursor-pointer rounded-full outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
       >
         <Avatar size="sm">
@@ -63,14 +63,14 @@ export const UserMenu = () => {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            data-testid="user-menu-account"
+            data-testid="user-menu-button-account"
             onSelect={() => {
               window.location.href = "/account";
             }}
           >
             {m.user_menu_account()}
           </DropdownMenuItem>
-          <DropdownMenuItem data-testid="user-menu-signout">
+          <DropdownMenuItem data-testid="user-menu-button-signout">
             <button
               type="button"
               className="w-full text-left"

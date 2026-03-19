@@ -30,19 +30,19 @@ test.describe("Delete Account", () => {
     await expect(page.getByText("Loading sessions...")).not.toBeVisible();
 
     // Click the initial delete trigger button
-    await expect(page.getByTestId(testId.deleteAccount.trigger)).toBeVisible();
-    await page.getByTestId(testId.deleteAccount.trigger).click();
+    await expect(page.getByTestId(testId.deleteAccount.buttonTrigger)).toBeVisible();
+    await page.getByTestId(testId.deleteAccount.buttonTrigger).click();
 
     // Verify the confirmation form appears
-    await expect(page.getByTestId(testId.deleteAccount.form)).toBeVisible();
+    await expect(page.getByTestId(testId.deleteAccount.buttonConfirm)).toBeVisible();
 
     // Enter password and confirm deletion
     await page.locator("#delete-password").fill(authenticatedPage.password);
-    await page.getByTestId(testId.deleteAccount.confirm).click();
+    await page.getByTestId(testId.deleteAccount.buttonConfirm).click();
 
     // Auth redirect involves server-side session invalidation + redirect
     await expect(page).toHaveURL("/", { timeout: 15_000 });
-    await expect(page.getByTestId(testId.header.signinLink)).toBeVisible();
+    await expect(page.getByTestId(testId.header.linkSignin)).toBeVisible();
 
     // Verify account-deleted email was captured
     await expectEmail(authenticatedPage.email, "deleted");

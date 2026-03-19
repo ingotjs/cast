@@ -19,16 +19,16 @@ test.describe("Sign Out", () => {
   test("should sign out via user menu and show unauthenticated state", async ({ page, authenticatedPage: _setup }) => {
     // Navigate to home page and verify authenticated state
     await page.goto("/");
-    await expect(page.getByTestId(testId.userMenu.trigger)).toBeVisible();
+    await expect(page.getByTestId(testId.userMenu.buttonTrigger)).toBeVisible();
 
     // Open the user menu dropdown
-    await page.getByTestId(testId.userMenu.trigger).click();
+    await page.getByTestId(testId.userMenu.buttonTrigger).click();
 
     // Click the sign-out menu item
-    await page.getByTestId(testId.userMenu.signout).click();
+    await page.getByTestId(testId.userMenu.buttonSignout).click();
 
     // Verify unauthenticated state — header shows "Sign in" link
-    await expect(page.getByTestId(testId.header.signinLink)).toBeVisible();
+    await expect(page.getByTestId(testId.header.linkSignin)).toBeVisible();
 
     // _setup activates the authenticatedPage fixture (unused directly)
   });

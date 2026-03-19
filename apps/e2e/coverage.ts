@@ -15,96 +15,92 @@ import { defineE2ECoverage, interactions } from "@packages/e2e-coverage";
 
 const testId = {
   header: {
-    logo: "header-logo",
-    navHome: "header-nav-home",
-    navAbout: "header-nav-about",
-    signinLink: "header-signin-link",
-    themeToggle: "theme-toggle",
+    linkLogo: "header-link-logo",
+    linkHome: "header-link-home",
+    linkAbout: "header-link-about",
+    linkSignin: "header-link-signin",
+    buttonThemeToggle: "header-button-theme-toggle",
   },
   userMenu: {
-    trigger: "user-menu-trigger",
-    account: "user-menu-account",
-    signout: "user-menu-signout",
+    buttonTrigger: "user-menu-button-trigger",
+    buttonAccount: "user-menu-button-account",
+    buttonSignout: "user-menu-button-signout",
   },
   footer: {
-    faq: "footer-faq",
-    privacy: "footer-privacy",
-    terms: "footer-terms",
+    linkFaq: "footer-link-faq",
+    linkPrivacy: "footer-link-privacy",
+    linkTerms: "footer-link-terms",
   },
   home: {
-    userLink: "home-user-link",
-    signinLink: "home-signin-link",
-    aboutLink: "home-about-link",
+    linkUser: "home-link-user",
+    linkSignin: "home-link-signin",
+    linkAbout: "home-link-about",
   },
   authCard: {
-    tabSignin: "auth-tab-signin",
-    tabSignup: "auth-tab-signup",
-    legalTerms: "auth-legal-terms",
-    legalPrivacy: "auth-legal-privacy",
+    linkTabSignin: "auth-link-tab-signin",
+    linkTabSignup: "auth-link-tab-signup",
+    linkLegalTerms: "auth-link-legal-terms",
+    linkLegalPrivacy: "auth-link-legal-privacy",
   },
   signin: {
-    form: "signin-form",
-    email: "signin-email",
-    password: "signin-password",
-    submit: "signin-submit",
-    forgotPassword: "signin-forgot-password",
+    inputEmail: "signin-input-email",
+    inputPassword: "signin-input-password",
+    buttonSubmit: "signin-button-submit",
+    linkForgotPassword: "signin-link-forgot-password",
   },
   signup: {
-    form: "signup-form",
-    firstname: "signup-firstname",
-    lastname: "signup-lastname",
-    email: "signup-email",
-    password: "signup-password",
-    confirmPassword: "signup-confirm-password",
-    submit: "signup-submit",
+    inputFirstname: "signup-input-firstname",
+    inputLastname: "signup-input-lastname",
+    inputEmail: "signup-input-email",
+    inputPassword: "signup-input-password",
+    inputConfirmPassword: "signup-input-confirm-password",
+    buttonSubmit: "signup-button-submit",
   },
   socialAuth: {
-    google: "google-oauth-button",
+    buttonGoogle: "social-auth-button-google",
   },
   magicLink: {
-    email: "magic-link-email",
-    submit: "magic-link-submit",
+    inputEmail: "magic-link-input-email",
+    buttonSubmit: "magic-link-button-submit",
   },
   forgotPassword: {
-    email: "forgot-password-email",
-    submit: "forgot-password-submit",
-    back: "forgot-password-back",
+    inputEmail: "forgot-password-input-email",
+    buttonSubmit: "forgot-password-button-submit",
+    linkBack: "forgot-password-link-back",
   },
   resetPassword: {
-    password: "reset-password-password",
-    confirm: "reset-password-confirm",
-    submit: "reset-password-submit",
-    back: "reset-password-back",
-    requestNew: "reset-password-request-new",
+    inputPassword: "reset-password-input-password",
+    inputConfirm: "reset-password-input-confirm",
+    buttonSubmit: "reset-password-button-submit",
+    linkBack: "reset-password-link-back",
+    linkRequestNew: "reset-password-link-request-new",
   },
   updateProfile: {
-    name: "update-profile-name",
-    submit: "update-profile-submit",
+    inputName: "update-profile-input-name",
+    buttonSubmit: "update-profile-button-submit",
   },
   changePassword: {
-    form: "change-password-form",
-    current: "change-password-current",
-    new: "change-password-new",
-    confirm: "change-password-confirm",
-    submit: "change-password-submit",
+    inputCurrent: "change-password-input-current",
+    inputNew: "change-password-input-new",
+    inputConfirm: "change-password-input-confirm",
+    buttonSubmit: "change-password-button-submit",
   },
   sessions: {
-    revoke: "session-revoke",
+    buttonRevoke: "session-button-revoke",
   },
   passkeys: {
-    add: "passkey-add",
-    delete: "passkey-delete",
+    buttonAdd: "passkey-button-add",
+    buttonDelete: "passkey-button-delete",
   },
   deleteAccount: {
-    trigger: "delete-account-trigger",
-    form: "delete-account-form",
-    password: "delete-account-password",
-    confirm: "delete-account-confirm",
-    cancel: "delete-account-cancel",
+    buttonTrigger: "delete-account-button-trigger",
+    inputPassword: "delete-account-input-password",
+    buttonConfirm: "delete-account-button-confirm",
+    buttonCancel: "delete-account-button-cancel",
   },
   admin: {
-    navMain: "admin-nav-main",
-    navAnalytics: "admin-nav-analytics",
+    linkMain: "admin-link-main",
+    linkAnalytics: "admin-link-analytics",
   },
 } as const;
 
@@ -128,33 +124,33 @@ const t = testId;
 const f = testFile;
 
 const userMenu = interactions({
-  [t.userMenu.trigger]: [
+  [t.userMenu.buttonTrigger]: [
     { condition: "authenticated", visible: true, test: f.signOut },
     { condition: "unauthenticated", visible: false, test: f.signOut },
   ],
-  [t.header.signinLink]: [
+  [t.header.linkSignin]: [
     { condition: "unauthenticated", visible: true, test: f.signOut },
     { condition: "authenticated", visible: false, test: f.signOut },
   ],
-  [t.userMenu.account]: [{ context: null, expected: "navigates to /account", test: null }],
-  [t.userMenu.signout]: [{ context: null, expected: "signs out, redirects to /", test: f.signOut }],
+  [t.userMenu.buttonAccount]: [{ context: null, expected: "navigates to /account", test: null }],
+  [t.userMenu.buttonSignout]: [{ context: null, expected: "signs out, redirects to /", test: f.signOut }],
 });
 
 const header = interactions({
-  [t.header.logo]: [{ context: null, expected: "navigates to /", test: null }],
-  [t.header.navHome]: [{ context: null, expected: "navigates to /", test: null }],
-  [t.header.navAbout]: [{ context: null, expected: "navigates to /about", test: null }],
-  [t.header.themeToggle]: [{ context: null, expected: "cycles auto → dark → light → auto", test: null }],
+  [t.header.linkLogo]: [{ context: null, expected: "navigates to /", test: null }],
+  [t.header.linkHome]: [{ context: null, expected: "navigates to /", test: null }],
+  [t.header.linkAbout]: [{ context: null, expected: "navigates to /about", test: null }],
+  [t.header.buttonThemeToggle]: [{ context: null, expected: "cycles auto → dark → light → auto", test: null }],
 });
 
 const footer = interactions({
-  [t.footer.faq]: [{ context: null, expected: "navigates to /faq", test: null }],
-  [t.footer.privacy]: [{ context: null, expected: "navigates to /privacy", test: null }],
-  [t.footer.terms]: [{ context: null, expected: "navigates to /terms", test: null }],
+  [t.footer.linkFaq]: [{ context: null, expected: "navigates to /faq", test: null }],
+  [t.footer.linkPrivacy]: [{ context: null, expected: "navigates to /privacy", test: null }],
+  [t.footer.linkTerms]: [{ context: null, expected: "navigates to /terms", test: null }],
 });
 
 const socialAuth = interactions({
-  [t.socialAuth.google]: [
+  [t.socialAuth.buttonGoogle]: [
     { condition: "googleOAuth enabled", visible: true, test: null },
     { condition: "googleOAuth disabled", visible: false, test: null },
     { context: null, expected: "initiates Google OAuth flow", test: null },
@@ -162,33 +158,33 @@ const socialAuth = interactions({
 });
 
 const magicLinkAuth = interactions({
-  [t.magicLink.email]: [
+  [t.magicLink.inputEmail]: [
     { condition: "magicLink enabled", visible: true, test: null },
     { condition: "magicLink disabled", visible: false, test: null },
   ],
-  [t.magicLink.submit]: [
+  [t.magicLink.buttonSubmit]: [
     { context: "valid email", expected: "sends magic link, shows confirmation", test: null },
     { context: "empty email", expected: "validation error", test: null },
   ],
 });
 
 const authCardTabs = interactions({
-  [t.authCard.tabSignin]: [{ context: null, expected: "navigates to /auth/sign-in", test: null }],
-  [t.authCard.tabSignup]: [{ context: null, expected: "navigates to /auth/sign-up", test: null }],
+  [t.authCard.linkTabSignin]: [{ context: null, expected: "navigates to /auth/sign-in", test: null }],
+  [t.authCard.linkTabSignup]: [{ context: null, expected: "navigates to /auth/sign-up", test: null }],
 });
 
 const authCardLegal = interactions({
-  [t.authCard.legalTerms]: [{ context: null, expected: "navigates to /terms", test: null }],
-  [t.authCard.legalPrivacy]: [{ context: null, expected: "navigates to /privacy", test: null }],
+  [t.authCard.linkLegalTerms]: [{ context: null, expected: "navigates to /terms", test: null }],
+  [t.authCard.linkLegalPrivacy]: [{ context: null, expected: "navigates to /privacy", test: null }],
 });
 
 const deleteAccountModal = interactions({
-  [t.deleteAccount.password]: [{ context: null, expected: "accepts password input", test: f.deleteAccount }],
-  [t.deleteAccount.confirm]: [
+  [t.deleteAccount.inputPassword]: [{ context: null, expected: "accepts password input", test: f.deleteAccount }],
+  [t.deleteAccount.buttonConfirm]: [
     { context: "correct password", expected: "deletes account, redirects to /", test: f.deleteAccount },
     { context: "wrong password", expected: "shows error", test: null },
   ],
-  [t.deleteAccount.cancel]: [{ context: null, expected: "hides confirmation form", test: null }],
+  [t.deleteAccount.buttonCancel]: [{ context: null, expected: "hides confirmation form", test: null }],
 });
 
 // ---------------------------------------------------------------------------
@@ -203,15 +199,15 @@ const e2e = defineE2ECoverage({
         ...header,
         ...userMenu,
         ...footer,
-        [t.home.userLink]: [
+        [t.home.linkUser]: [
           { condition: "authenticated", visible: true, test: null },
           { context: null, expected: "navigates to /admin", test: null },
         ],
-        [t.home.signinLink]: [
+        [t.home.linkSignin]: [
           { condition: "unauthenticated", visible: true, test: null },
           { context: null, expected: "navigates to /auth/sign-in", test: null },
         ],
-        [t.home.aboutLink]: [{ context: null, expected: "navigates to /about", test: null }],
+        [t.home.linkAbout]: [{ context: null, expected: "navigates to /about", test: null }],
       },
     },
 
@@ -224,14 +220,14 @@ const e2e = defineE2ECoverage({
         ...authCardLegal,
         ...socialAuth,
         ...magicLinkAuth,
-        [t.signin.email]: [{ context: null, expected: "accepts email input", test: f.signIn }],
-        [t.signin.password]: [{ context: null, expected: "accepts password input", test: f.signIn }],
-        [t.signin.submit]: [
+        [t.signin.inputEmail]: [{ context: null, expected: "accepts email input", test: f.signIn }],
+        [t.signin.inputPassword]: [{ context: null, expected: "accepts password input", test: f.signIn }],
+        [t.signin.buttonSubmit]: [
           { context: "valid credentials", expected: "signs in, redirects to /", test: f.signIn },
           { context: "invalid credentials", expected: "stays on page, shows error", test: f.signIn },
           { context: "empty form", expected: "validation errors", test: f.signIn },
         ],
-        [t.signin.forgotPassword]: [{ context: null, expected: "navigates to /auth/forgot-password", test: null }],
+        [t.signin.linkForgotPassword]: [{ context: null, expected: "navigates to /auth/forgot-password", test: null }],
       },
     },
 
@@ -244,14 +240,16 @@ const e2e = defineE2ECoverage({
         ...authCardLegal,
         ...socialAuth,
         ...magicLinkAuth,
-        [t.signup.firstname]: [{ context: null, expected: "accepts first name input", test: f.signUp }],
-        [t.signup.lastname]: [{ context: null, expected: "accepts last name input", test: f.signUp }],
-        [t.signup.email]: [{ context: null, expected: "accepts email input", test: f.signUp }],
-        [t.signup.password]: [
+        [t.signup.inputFirstname]: [{ context: null, expected: "accepts first name input", test: f.signUp }],
+        [t.signup.inputLastname]: [{ context: null, expected: "accepts last name input", test: f.signUp }],
+        [t.signup.inputEmail]: [{ context: null, expected: "accepts email input", test: f.signUp }],
+        [t.signup.inputPassword]: [
           { context: null, expected: "accepts password input, shows requirements", test: f.signUp },
         ],
-        [t.signup.confirmPassword]: [{ context: null, expected: "accepts confirm password input", test: f.signUp }],
-        [t.signup.submit]: [
+        [t.signup.inputConfirmPassword]: [
+          { context: null, expected: "accepts confirm password input", test: f.signUp },
+        ],
+        [t.signup.buttonSubmit]: [
           { context: "valid form", expected: "creates account, redirects to /", test: f.signUp },
           { context: "empty form", expected: "validation errors", test: f.signUp },
           { context: "password mismatch", expected: "validation error", test: f.signUp },
@@ -264,12 +262,12 @@ const e2e = defineE2ECoverage({
         ...header,
         ...userMenu,
         ...footer,
-        [t.forgotPassword.email]: [{ context: null, expected: "accepts email input", test: null }],
-        [t.forgotPassword.submit]: [
+        [t.forgotPassword.inputEmail]: [{ context: null, expected: "accepts email input", test: null }],
+        [t.forgotPassword.buttonSubmit]: [
           { context: "valid email", expected: "sends reset link, shows confirmation", test: null },
           { context: "empty email", expected: "validation error", test: null },
         ],
-        [t.forgotPassword.back]: [{ context: null, expected: "navigates to /auth/sign-in", test: null }],
+        [t.forgotPassword.linkBack]: [{ context: null, expected: "navigates to /auth/sign-in", test: null }],
       },
     },
 
@@ -278,21 +276,21 @@ const e2e = defineE2ECoverage({
         ...header,
         ...userMenu,
         ...footer,
-        [t.resetPassword.password]: [
+        [t.resetPassword.inputPassword]: [
           { condition: "valid token", visible: true, test: null },
           { context: null, expected: "accepts new password input, shows requirements", test: null },
         ],
-        [t.resetPassword.confirm]: [
+        [t.resetPassword.inputConfirm]: [
           { condition: "valid token", visible: true, test: null },
           { context: null, expected: "accepts confirm password input", test: null },
         ],
-        [t.resetPassword.submit]: [
+        [t.resetPassword.buttonSubmit]: [
           { condition: "valid token", visible: true, test: null },
           { context: "valid passwords", expected: "resets password, redirects to /auth/sign-in", test: null },
           { context: "password mismatch", expected: "validation error", test: null },
         ],
-        [t.resetPassword.back]: [{ context: null, expected: "navigates to /auth/sign-in", test: null }],
-        [t.resetPassword.requestNew]: [
+        [t.resetPassword.linkBack]: [{ context: null, expected: "navigates to /auth/sign-in", test: null }],
+        [t.resetPassword.linkRequestNew]: [
           { condition: "invalid/missing token", visible: true, test: null },
           { context: null, expected: "navigates to /auth/forgot-password", test: null },
         ],
@@ -308,31 +306,27 @@ const e2e = defineE2ECoverage({
         ...header,
         ...userMenu,
         ...footer,
-        [t.updateProfile.name]: [
+        [t.updateProfile.inputName]: [
           { context: null, expected: "accepts name input, pre-filled from session", test: null },
         ],
-        [t.updateProfile.submit]: [
+        [t.updateProfile.buttonSubmit]: [
           { context: "valid name", expected: "updates profile, success toast", test: null },
           { context: "empty name", expected: "validation error", test: null },
         ],
-        [t.changePassword.form]: [
-          { condition: "password auth enabled", visible: true, test: f.changePassword },
-          { condition: "password auth disabled", visible: false, test: null },
-        ],
-        [t.changePassword.current]: [
+        [t.changePassword.inputCurrent]: [
           { context: null, expected: "accepts current password input", test: f.changePassword },
         ],
-        [t.changePassword.new]: [
+        [t.changePassword.inputNew]: [
           {
             context: null,
             expected: "accepts new password input, shows requirements",
             test: f.changePassword,
           },
         ],
-        [t.changePassword.confirm]: [
+        [t.changePassword.inputConfirm]: [
           { context: null, expected: "accepts confirm password input", test: f.changePassword },
         ],
-        [t.changePassword.submit]: [
+        [t.changePassword.buttonSubmit]: [
           {
             context: "correct current password",
             expected: "changes password, success toast",
@@ -340,17 +334,17 @@ const e2e = defineE2ECoverage({
           },
           { context: "wrong current password", expected: "shows error", test: f.changePassword },
         ],
-        [t.sessions.revoke]: [{ context: null, expected: "revokes session, removes from list", test: null }],
-        [t.passkeys.add]: [
+        [t.sessions.buttonRevoke]: [{ context: null, expected: "revokes session, removes from list", test: null }],
+        [t.passkeys.buttonAdd]: [
           { condition: "passkey auth enabled", visible: true, test: null },
           { condition: "passkey auth disabled", visible: false, test: null },
           { context: null, expected: "initiates WebAuthn registration", test: null },
         ],
-        [t.passkeys.delete]: [
+        [t.passkeys.buttonDelete]: [
           { condition: "passkey auth enabled", visible: true, test: null },
           { context: null, expected: "deletes passkey, removes from list", test: null },
         ],
-        [t.deleteAccount.trigger]: [
+        [t.deleteAccount.buttonTrigger]: [
           {
             context: null,
             expected: "reveals confirmation form",
@@ -371,8 +365,8 @@ const e2e = defineE2ECoverage({
         ...header,
         ...userMenu,
         ...footer,
-        [t.admin.navMain]: [{ context: null, expected: "navigates to /admin", test: null }],
-        [t.admin.navAnalytics]: [{ context: null, expected: "navigates to /admin/analytics", test: null }],
+        [t.admin.linkMain]: [{ context: null, expected: "navigates to /admin", test: null }],
+        [t.admin.linkAnalytics]: [{ context: null, expected: "navigates to /admin/analytics", test: null }],
       },
     },
 

@@ -83,12 +83,7 @@ export const SignUp = () => {
   return (
     <AuthCard title="Sign Up" description="Enter your email below to create an account" showTabs showLegal>
       <SocialAuth />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4"
-        data-testid="signup-form"
-        data-hydrated={hydrated || undefined}
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-hydrated={hydrated || undefined}>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="firstName">First name</Label>
@@ -139,7 +134,7 @@ export const SignUp = () => {
           {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
         </div>
 
-        <Button type="submit" className="w-full" size="lg" loading={isSubmitting} data-testid="signup-submit">
+        <Button type="submit" className="w-full" size="lg" loading={isSubmitting} data-testid="signup-button-submit">
           Create an account
         </Button>
       </form>

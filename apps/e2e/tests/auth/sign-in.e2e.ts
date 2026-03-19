@@ -31,7 +31,7 @@ test.describe("Sign In", () => {
   test("should sign in with valid credentials and redirect to home", async ({ page, testUser }) => {
     // Navigate to sign-in page and wait for form hydration
     await page.goto("/auth/sign-in");
-    await page.waitForSelector(`[data-testid='${testId.signin.form}'][data-hydrated]`);
+    await page.waitForSelector("[data-hydrated]");
 
     // Fill in credentials using input id selectors (PasswordInput wraps input
     // inside a div alongside a toggle button, so getByLabel resolves to 2 elements)
@@ -39,21 +39,21 @@ test.describe("Sign In", () => {
     await page.locator("#password").fill(testUser.password);
 
     // Submit the form
-    await page.getByTestId(testId.signin.submit).click();
+    await page.getByTestId(testId.signin.buttonSubmit).click();
 
     // Auth redirect involves server-side session creation + redirect
     await expect(page).toHaveURL("/");
-    await expect(page.getByTestId(testId.userMenu.trigger)).toBeVisible();
+    await expect(page.getByTestId(testId.userMenu.buttonTrigger)).toBeVisible();
   });
 
   test("should show error for invalid credentials", async ({ page }) => {
     await page.goto("/auth/sign-in");
-    await expect(page.getByTestId(testId.header.signinLink)).toBeVisible();
+    await expect(page.getByTestId(testId.header.linkSignin)).toBeVisible();
 
     await page.getByLabel("Email").fill("nonexistent@e2e.test");
     await page.locator("#password").fill("WrongPassword123!");
 
-    await page.getByTestId(testId.signin.submit).click();
+    await page.getByTestId(testId.signin.buttonSubmit).click();
 
     // Should stay on the sign-in page
     await expect(page).toHaveURL(/\/auth\/sign-in/);
@@ -63,7 +63,7 @@ test.describe("Sign In", () => {
     await page.goto("/auth/sign-in");
 
     // Submit empty form
-    await page.getByTestId(testId.signin.submit).click();
+    await page.getByTestId(testId.signin.buttonSubmit).click();
 
     // Should remain on sign-in page
     await expect(page).toHaveURL(/\/auth\/sign-in/);

@@ -64,7 +64,7 @@ export const ChangePasswordCard = () => {
 
   return (
     <SettingsCard title="Password" description="Change your account password.">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-testid="change-password-form">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="currentPassword">Current Password</Label>
           <PasswordInput id="currentPassword" autoComplete="current-password" {...register("currentPassword")} />
@@ -102,7 +102,7 @@ export const ChangePasswordCard = () => {
           {errors.confirmPassword && <p className="text-sm text-destructive">{errors.confirmPassword.message}</p>}
         </div>
 
-        <Button type="submit" loading={isSubmitting} data-testid="change-password-submit">
+        <Button type="submit" loading={isSubmitting} data-testid="change-password-button-submit">
           Change password
         </Button>
       </form>

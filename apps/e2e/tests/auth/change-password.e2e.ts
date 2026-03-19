@@ -36,7 +36,7 @@ test.describe("Change Password", () => {
 
     // Navigate to account settings
     await page.goto("/account");
-    await expect(page.getByTestId(testId.changePassword.form)).toBeVisible();
+    await expect(page.getByTestId(testId.changePassword.buttonSubmit)).toBeVisible();
 
     // Wait for the page to fully settle (session data loading causes re-renders
     // that reset form fields). The "Sessions" card shows "Loading sessions..." then
@@ -49,7 +49,7 @@ test.describe("Change Password", () => {
     await page.locator("#confirmPassword").fill(newPassword);
 
     // Submit the form
-    await page.getByTestId(testId.changePassword.submit).click();
+    await page.getByTestId(testId.changePassword.buttonSubmit).click();
 
     // Verify success toast
     await expect(page.getByText("Password changed successfully")).toBeVisible();
@@ -64,7 +64,7 @@ test.describe("Change Password", () => {
 
   test("should reject incorrect current password", async ({ page, authenticatedPage: _setup }) => {
     await page.goto("/account");
-    await expect(page.getByTestId(testId.changePassword.form)).toBeVisible();
+    await expect(page.getByTestId(testId.changePassword.buttonSubmit)).toBeVisible();
 
     // Wait for page to settle (session data loading)
     await expect(page.getByText("Loading sessions...")).not.toBeVisible();
@@ -74,7 +74,7 @@ test.describe("Change Password", () => {
     await page.locator("#newPassword").fill("NewPassword456!");
     await page.locator("#confirmPassword").fill("NewPassword456!");
 
-    await page.getByTestId(testId.changePassword.submit).click();
+    await page.getByTestId(testId.changePassword.buttonSubmit).click();
 
     // Should show an error, not success
     await expect(page.getByText("Password changed successfully")).not.toBeVisible();

@@ -59,12 +59,7 @@ export const SignIn = () => {
   return (
     <AuthCard title="Sign In" description="Enter your credentials to sign in" showTabs showLegal>
       <SocialAuth />
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="space-y-4"
-        data-testid="signin-form"
-        data-hydrated={hydrated || undefined}
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" data-hydrated={hydrated || undefined}>
         <div className="space-y-2">
           <Label htmlFor="email">Email</Label>
           <Input id="email" type="email" placeholder="you@example.com" autoComplete="email" {...register("email")} />
@@ -86,7 +81,7 @@ export const SignIn = () => {
           {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
         </div>
 
-        <Button type="submit" className="w-full" size="lg" loading={isSubmitting} data-testid="signin-submit">
+        <Button type="submit" className="w-full" size="lg" loading={isSubmitting} data-testid="signin-button-submit">
           Sign in
         </Button>
       </form>

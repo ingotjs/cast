@@ -82,7 +82,7 @@ export const MagicLinkAuth = () => {
           variant="outline"
           className="w-full"
           loading={isSubmitting}
-          data-testid="magic-link-submit"
+          data-testid="magic-link-button-submit"
         >
           Send magic link
         </Button>
