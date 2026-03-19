@@ -28,6 +28,8 @@ jobs:
           key: playwright-${{ hashFiles('bun.lock') }}
       - run: bunx playwright install --with-deps chromium
       - run: bun e2e
+        env:
+          ALCHEMY_CI_STATE_STORE_CHECK: false
 
   # Deploy to Cloudflare Workers + apply D1 migrations
   deploy:
