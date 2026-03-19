@@ -1,5 +1,5 @@
 {
-  "name": "@packages/e2e-coverage",
+  "name": "@packages/prospect",
   "version": "0.0.0",
   "private": true,
   "type": "module",

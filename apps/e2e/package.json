@@ -9,7 +9,7 @@
     "e2e:headed": "playwright test --headed"
   },
   "devDependencies": {
-    "@packages/e2e-coverage": "*",
+    "@packages/prospect": "*",
     "@packages/utils": "*",
     "@playwright/test": "1.52.0"
   }

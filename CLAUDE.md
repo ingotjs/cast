@@ -51,7 +51,7 @@
 | `packages/email`        | `@packages/email`        | React Email templates + Resend + email capture (E2E)                       |
 | `packages/ui`           | `@packages/ui`           | shadcn v4 + Tailwind CSS + Base UI                                         |
 | `apps/e2e`              | —                        | Playwright E2E tests (auth flows, email verification)                      |
-| `packages/e2e-coverage` | `@packages/e2e-coverage` | E2E coverage framework (defineE2ECoverage, testId, setup validation)       |
+| `packages/prospect` | `@packages/prospect` | E2E coverage framework (defineE2ECoverage, testId, setup validation)       |
 | `packages/config`       | `@packages/config`       | Shared TypeScript configs                                                  |
 
 **Dependency graph:** `@packages/db` (leaf) ← `@packages/auth` (+ `@packages/email`, `@packages/utils`) ← `@packages/api`

@@ -67,6 +67,6 @@
       "ignoreDependencies": ["postcss-load-config"]
     },
     "packages/utils": {},
-    "packages/e2e-coverage": {}
+    "packages/prospect": {}
   }
 }

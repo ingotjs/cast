@@ -18,7 +18,7 @@
       "name": "e2e",
       "version": "0.0.0",
       "devDependencies": {
-        "@packages/e2e-coverage": "*",
+        "@packages/prospect": "*",
         "@packages/utils": "*",
         "@playwright/test": "1.52.0",
       },
@@ -137,16 +137,6 @@
         "typescript": "catalog:",
       },
     },
-    "packages/e2e-coverage": {
-      "name": "@packages/e2e-coverage",
-      "version": "0.0.0",
-      "devDependencies": {
-        "@packages/config": "*",
-        "@types/bun": "catalog:",
-        "@types/node": "catalog:",
-        "typescript": "catalog:",
-      },
-    },
     "packages/email": {
       "name": "@packages/email",
       "version": "0.0.0",
@@ -177,6 +167,16 @@
       "version": "0.0.0",
       "devDependencies": {
         "alchemy": "0.89.0",
+      },
+    },
+    "packages/prospect": {
+      "name": "@packages/prospect",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@packages/config": "*",
+        "@types/bun": "catalog:",
+        "@types/node": "catalog:",
+        "typescript": "catalog:",
       },
     },
     "packages/ui": {
@@ -906,11 +906,11 @@
 
     "@packages/db": ["@packages/db@workspace:packages/db"],
 
-    "@packages/e2e-coverage": ["@packages/e2e-coverage@workspace:packages/e2e-coverage"],
-
     "@packages/email": ["@packages/email@workspace:packages/email"],
 
     "@packages/infra": ["@packages/infra@workspace:packages/infra"],
+
+    "@packages/prospect": ["@packages/prospect@workspace:packages/prospect"],
 
     "@packages/ui": ["@packages/ui@workspace:packages/ui"],
 
