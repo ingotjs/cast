@@ -1,5 +1,8 @@
 /** App constants — product decisions that don't change per environment. */
 
+export const DEV_PORT = 2000;
+export const DEV_URL = `http://localhost:${DEV_PORT}`;
+
 export const consts = {
   appName: "OmegaStart",
   /** Production URL — update before deploying (used for sitemap, robots.txt, JSON-LD) */

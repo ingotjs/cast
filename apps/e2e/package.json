@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "@packages/omega-e2e": "*",
+    "@packages/utils": "*",
     "@playwright/test": "1.52.0"
   }
 }

@@ -1,4 +1,5 @@
 import { paraglideVitePlugin } from "@inlang/paraglide-js";
+import { DEV_PORT } from "@packages/utils/consts";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
@@ -12,7 +13,7 @@ import { emailCapturePlugin } from "./vite-email-capture-plugin";
 // Reference: https://alchemy.run/guides/cloudflare-tanstack-start/
 
 const config = defineConfig({
-  server: { port: 2000 },
+  server: { port: DEV_PORT },
   resolve: {
     tsconfigPaths: true,
   },

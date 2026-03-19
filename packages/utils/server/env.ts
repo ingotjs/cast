@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { DEV_URL } from "../shared/consts";
+
 // oxlint-disable-next-line node/no-process-env -- env module reads raw process.env
 const { env } = process;
 
@@ -22,7 +24,7 @@ const parseEnv = <T>(key: string, schema: z.ZodType<T>): T => {
  * - Leave it unset → group is `undefined` (service disabled)
  */
 export const serverEnv = {
-  URL: env.URL ?? "http://localhost:2000",
+  URL: env.URL ?? DEV_URL,
   NODE_ENV: (env.NODE_ENV ?? "development") as "development" | "test" | "production",
   BETTER_AUTH_SECRET:
     env.BETTER_AUTH_SECRET ??

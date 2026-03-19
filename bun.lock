@@ -19,6 +19,7 @@
       "version": "0.0.0",
       "devDependencies": {
         "@packages/omega-e2e": "*",
+        "@packages/utils": "*",
         "@playwright/test": "1.52.0",
       },
     },
@@ -151,6 +152,7 @@
         "@inlang/plugin-m-function-matcher": "catalog:",
         "@inlang/plugin-message-format": "catalog:",
         "@packages/config": "*",
+        "@packages/utils": "*",
         "@react-email/preview-server": "5.2.9",
         "@types/bun": "catalog:",
         "@types/node": "catalog:",

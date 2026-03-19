@@ -1,11 +1,12 @@
 import { existsSync, readFileSync, readdirSync, unlinkSync } from "node:fs";
 import { join, resolve } from "node:path";
 
+import { DEV_URL } from "@packages/utils/consts";
 import { test as base, expect } from "@playwright/test";
 
 // Reference: https://playwright.dev/docs/test-fixtures
 
-const BASE_URL = "http://localhost:2000";
+const BASE_URL = DEV_URL;
 const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../../../packages/email/.etc/.email-captures");
 const TEST_PASSWORD = "TestPassword123!";
 

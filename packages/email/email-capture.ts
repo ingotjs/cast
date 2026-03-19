@@ -8,7 +8,10 @@
 // oxlint-disable-next-line node/no-process-env -- email capture needs to check environment
 const isDev = process.env.NODE_ENV !== "production";
 
-const CAPTURE_ENDPOINT = "http://localhost:2000/__email-capture";
+// oxlint-disable-next-line -- dev-only import for email capture endpoint
+import { DEV_URL } from "@packages/utils/consts";
+
+const CAPTURE_ENDPOINT = `${DEV_URL}/__email-capture`;
 const DIR_SUFFIX = ".etc/.email-captures";
 
 /** Capture an email to a JSON file for E2E test verification */

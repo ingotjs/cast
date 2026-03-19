@@ -48,9 +48,8 @@ test.describe("Delete Account", () => {
     await expectEmail(authenticatedPage.email, "deleted");
 
     // Verify deleted user cannot sign in via API (faster than UI sign-in)
-    const res = await page.request.post("http://localhost:2000/api/auth/sign-in/email", {
+    const res = await page.request.post("/api/auth/sign-in/email", {
       data: { email: authenticatedPage.email, password: authenticatedPage.password },
-      headers: { Origin: "http://localhost:2000" },
     });
     expect(res.ok()).toBe(false);
   });

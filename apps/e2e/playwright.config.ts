@@ -1,3 +1,4 @@
+import { DEV_URL } from "@packages/utils/consts";
 // oxlint-disable node/no-process-env
 import { defineConfig } from "@playwright/test";
 
@@ -14,13 +15,13 @@ export default defineConfig({
   retries: 0,
   reporter: [["list"]],
   use: {
-    baseURL: "http://localhost:2000",
+    baseURL: DEV_URL,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
   webServer: {
     command: "bun dev",
-    url: "http://localhost:2000",
+    url: DEV_URL,
     reuseExistingServer: true,
     cwd: "../..",
     timeout: 60_000,
