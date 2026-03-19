@@ -199,6 +199,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 - GitHub ops: ALWAYS use `gh` CLI
 - **When given a GitHub PR link**, checkout its branch as the **ABSOLUTE FIRST ACTION** — before reading code, before analyzing. Use `gh pr view <number> --json headRefName --jq '.headRefName'` to get the branch name, then checkout.
 - **When committing: MUST update CLAUDE.md AND README.md**
+- **NEVER add Co-Authored-By or any AI attribution to commit messages**
 
 ---
 
