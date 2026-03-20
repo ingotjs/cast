@@ -72,19 +72,19 @@
     "compileNamespace": "es",
     "catalogs": [
       {
-        "path": "<rootDir>/apps/web/src/locales/{locale}/messages",
+        "path": "<rootDir>/apps/web/src/_etc/locales/{locale}/messages",
         "include": [
           "apps/web/src/**/*.{ts,tsx}"
         ]
       },
       {
-        "path": "<rootDir>/packages/email/locales/{locale}/messages",
+        "path": "<rootDir>/packages/email/_etc/locales/{locale}/messages",
         "include": [
           "packages/email/**/*.{ts,tsx}"
         ],
         "exclude": [
           "**/node_modules/**",
-          "**/locales/**"
+          "**/_etc/locales/**"
         ]
       }
     ]

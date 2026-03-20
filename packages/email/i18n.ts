@@ -1,6 +1,6 @@
 import { type I18n, setupI18n } from "@lingui/core";
 
-import { messages as enMessages } from "./locales/en/messages.js";
+import { messages as enMessages } from "./_etc/locales/en/messages.js";
 
 const catalogs: Record<string, Record<string, string>> = { en: enMessages as Record<string, string> };
 

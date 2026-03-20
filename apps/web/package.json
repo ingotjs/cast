@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "clean": "rm -rf .nitro .output .tanstack .wrangler dist src/locales/*/messages.ts",
+    "clean": "rm -rf .nitro .output .tanstack .wrangler dist src/_etc/locales/*/messages.ts",
     "vite": "vp",
     "ts": "tsgo --noEmit"
   },

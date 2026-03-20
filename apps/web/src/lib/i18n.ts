@@ -16,7 +16,7 @@ export type RouterContext = { i18n: I18n };
 
 /** Load a catalog for the given locale and return a configured i18n instance */
 export const loadCatalog = async (locale: string): Promise<I18n> => {
-  const { messages } = await import(`../locales/${locale}/messages.po`);
+  const { messages } = await import(`../_etc/locales/${locale}/messages.po`);
   const i18n = setupI18n({ locale, messages: { [locale]: messages } });
   return i18n;
 };

@@ -3,7 +3,7 @@
 
 import { type I18n, setupI18n } from "@lingui/core";
 
-import { messages as enMessages } from "./locales/en/messages";
+import { messages as enMessages } from "./_etc/locales/en/messages";
 
 const catalogs: Record<string, Record<string, string>> = { en: enMessages as Record<string, string> };
 

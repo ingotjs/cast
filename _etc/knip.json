@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "ignoreFiles": [".agents/**", ".claude/**", "**/_etc/tests/**"],
   "ignoreIssues": {
-    "**/locales/**": ["exports"],
+    "**/_etc/locales/**": ["exports"],
     "apps/e2e/coverage.ts": ["exports"],
     "bunfig.toml": ["unresolved"]
   },

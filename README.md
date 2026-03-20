@@ -168,11 +168,11 @@ Cast is **i18n-ready from day one** — every user-facing string flows through [
 
 Three separate Lingui catalogs keep bundles lean and concerns separated:
 
-| Catalog  | Path                      | Covers                                                          |
-| -------- | ------------------------- | --------------------------------------------------------------- |
-| Frontend | `apps/web/src/locales/`   | UI labels, buttons, forms, toasts, meta tags, validation errors |
-| Backend  | `packages/auth/locales/`  | Auth error messages, API responses, validation errors           |
-| Email    | `packages/email/locales/` | Subject lines, body copy, CTAs, transactional email content     |
+| Catalog  | Path                           | Covers                                                          |
+| -------- | ------------------------------ | --------------------------------------------------------------- |
+| Frontend | `apps/web/src/_etc/locales/`   | UI labels, buttons, forms, toasts, meta tags, validation errors |
+| Backend  | `packages/auth/_etc/locales/`  | Auth error messages, API responses, validation errors           |
+| Email    | `packages/email/_etc/locales/` | Subject lines, body copy, CTAs, transactional email content     |
 
 Each catalog compiles independently. Server strings never leak into the client bundle.
 
@@ -196,7 +196,7 @@ Each catalog compiles independently. Server strings never leak into the client b
 
 The [`@better-auth/i18n` plugin](https://better-auth.com/docs/plugins/i18n) is conditionally added in `packages/auth/auth.ts`. English uses Better Auth's built-in defaults — no duplication. The `auth_*` keys in `en/messages.po` serve as Lingui's canonical key list and translation reference for future locales.
 
-When a non-English locale is added, `buildAuthTranslations()` (`packages/auth/auth-i18n.ts`) dynamically maps `auth_*` Lingui messages to error codes. The plugin activates automatically — no code changes needed.
+When a non-English locale is added, `buildAuthTranslations()` (`packages/auth/i18n.ts`) dynamically maps `auth_*` Lingui messages to error codes. The plugin activates automatically — no code changes needed.
 
 ```
 English only:     i18n plugin NOT added (zero overhead)
