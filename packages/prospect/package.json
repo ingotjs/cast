@@ -2,6 +2,17 @@
   "name": "@ingot/prospect",
   "version": "0.0.0",
   "description": "E2E interactive element coverage framework for route-based apps",
+  "keywords": [
+    "coverage",
+    "e2e",
+    "ingot",
+    "interactive-elements",
+    "playwright",
+    "prospect",
+    "test-coverage",
+    "test-ids",
+    "testing"
+  ],
   "license": "MIT",
   "files": [
     "dist"

@@ -1,18 +1,36 @@
 {
   "name": "@ingot/cast",
   "version": "0.0.1",
-  "description": "Scaffold a Cast project — the modern full-stack TypeScript starter",
+  "description": "Cast and deploy the definitive TanStack Start & Cloudflare app in one command",
+  "keywords": [
+    "better-auth",
+    "bun",
+    "cast",
+    "cloudflare-workers",
+    "d1",
+    "drizzle",
+    "ingot",
+    "lingui",
+    "orpc",
+    "react",
+    "starter",
+    "tanstack-start"
+  ],
   "license": "MIT",
   "bin": {
     "cast": "./bin.js"
   },
   "files": [
     "bin.js",
-    "bin.ts"
+    "bin.ts",
+    "README.md"
   ],
   "type": "module",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "cp ../../README.md ."
   },
   "dependencies": {
     "@inquirer/prompts": "7.5.3"

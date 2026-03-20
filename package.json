@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "build": "vp run build -r",
-    "setup": "bun meta/cast/setup.ts",
+    "setup": "bun _etc/setup.ts",
     "dev": "bun install --silent && bun run --cwd apps/web vite dev",
     "deploy": "npx wrangler deploy",
     "db:auth": "bun run --cwd packages/auth db:auth",
