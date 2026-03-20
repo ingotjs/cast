@@ -1,4 +1,5 @@
 {
+  "project_name": "@ingot/cast",
   "lsp": {
     "oxlint": {
       "initialization_options": {

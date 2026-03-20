@@ -27,7 +27,7 @@ description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), Drizzle-Zod
 
 ## How It Works
 
-- D1 binding `DB` + KV binding `SESSION_KV` defined in `apps/web/wrangler.toml`, initialized in `apps/web/src/server.ts`
+- D1 binding `DB` + KV binding `SESSION_KV` defined in `wrangler.jsonc`, initialized in `apps/web/src/server.ts`
 - No `DATABASE_URL` — D1 is accessed via native Worker binding, not a connection string
 - KV used as Better Auth secondary storage (sessions + rate limiting) for globally-replicated sub-10ms reads
 - Local dev: D1 + KV simulated by miniflare via `@cloudflare/vite-plugin`

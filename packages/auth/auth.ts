@@ -64,7 +64,6 @@ export const auth = betterAuth({
     },
   },
   secret: serverEnv.BETTER_AUTH_SECRET,
-  baseURL: serverEnv.BETTER_AUTH_URL ?? serverEnv.URL,
   trustedOrigins: [serverEnv.URL],
   // Reference: https://better-auth.com/docs/authentication/social
   socialProviders: serverEnv.googleOAuth

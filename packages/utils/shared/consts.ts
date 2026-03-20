@@ -18,5 +18,7 @@ export const consts = {
     password: true,
     /** Enable passkey (WebAuthn) authentication */
     passkey: true,
+    /** Enable magic link sign-in (requires email service) */
+    magicLink: true,
   },
 } as const;

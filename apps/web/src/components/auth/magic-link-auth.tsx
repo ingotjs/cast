@@ -39,6 +39,7 @@ export const MagicLinkAuth = () => {
     const result = await signIn.magicLink({ email: data.email });
 
     if (result.error) {
+      console.error("Magic link error:", result.error.message);
       toast.error(result.error.message ?? "Failed to send magic link");
       return;
     }

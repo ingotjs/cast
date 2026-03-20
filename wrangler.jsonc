@@ -1,0 +1,32 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Reference: https://developers.cloudflare.com/workers/wrangler/configuration/
+  "name": "app",
+  "compatibility_date": "2026-03-01",
+  "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "db",
+      "database_id": "NOT_SET",
+      "migrations_dir": "packages/db/drizzle",
+    },
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "SESSION_KV",
+      "id": "NOT_SET",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "BUCKET",
+      "bucket_name": "bucket",
+    },
+  ],
+  "queues": {
+    "producers": [{ "binding": "QUEUE", "queue": "queue" }],
+    "consumers": [{ "queue": "queue", "max_batch_size": 1, "max_batch_timeout": 0 }],
+  },
+}

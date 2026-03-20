@@ -1,6 +1,6 @@
 ---
 name: infra
-description: Infrastructure and deployment — wrangler, @cloudflare/vite-plugin, Cloudflare Workers, D1, KV, CI/CD pipeline. Use when modifying wrangler.toml, deployment config, CI pipeline, or infrastructure-related settings.
+description: Infrastructure and deployment — wrangler, @cloudflare/vite-plugin, Cloudflare Workers, D1, KV, CI/CD pipeline. Use when modifying wrangler.jsonc, deployment config, CI pipeline, or infrastructure-related settings.
 ---
 
 > **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
@@ -15,7 +15,7 @@ description: Infrastructure and deployment — wrangler, @cloudflare/vite-plugin
 
 | What           | Where                                                                                |
 | :------------- | :----------------------------------------------------------------------------------- |
-| Worker config  | `apps/web/wrangler.toml` — D1 + KV bindings, compatibility flags, observability      |
+| Worker config  | `wrangler.jsonc` — D1 + KV bindings, compatibility flags, observability      |
 | Vite plugin    | `apps/web/vite.config.ts` — `cloudflare({ viteEnvironment: { name: "ssr" } })`       |
 | Deploy         | `bun deploy` → `cd apps/web && npx wrangler deploy`                                 |
 | Dev server     | `bun dev` → `vite dev` with `@cloudflare/vite-plugin` (Miniflare for D1/KV)         |
@@ -26,7 +26,7 @@ description: Infrastructure and deployment — wrangler, @cloudflare/vite-plugin
 ## How It Works
 
 - `@cloudflare/vite-plugin` wraps Miniflare for local dev — D1 + KV emulated automatically
-- `wrangler deploy` builds + deploys the Worker with all bindings from `wrangler.toml`
+- `wrangler deploy` builds + deploys the Worker with all bindings from `wrangler.jsonc`
 - `wrangler secret put` stores production secrets on Cloudflare (not in files or CI)
 - `wrangler d1 migrations apply` runs Drizzle migrations against D1
 
@@ -34,8 +34,8 @@ description: Infrastructure and deployment — wrangler, @cloudflare/vite-plugin
 
 | Type              | Where                                       | Example                                 |
 | :---------------- | :------------------------------------------ | :-------------------------------------- |
-| D1/KV bindings    | `wrangler.toml`                             | `[[d1_databases]]`, `[[kv_namespaces]]` |
-| Non-secret vars   | `wrangler.toml` `[vars]`                    | `URL = "https://..."`                   |
+| D1/KV bindings    | `wrangler.jsonc`                             | `[[d1_databases]]`, `[[kv_namespaces]]` |
+| Non-secret vars   | `wrangler.jsonc` `[vars]`                    | `URL = "https://..."`                   |
 | Production secrets| `wrangler secret put`                       | `BETTER_AUTH_SECRET`                    |
 | Local dev secrets | `.dev.vars` (gitignored)                    | `BETTER_AUTH_SECRET=...`                |
 | Local dev bindings| Auto-emulated by Miniflare                  | D1, KV                                  |
@@ -58,6 +58,6 @@ wrangler secret put URL
 
 ## Rules
 
-- **NEVER hardcode secrets in `wrangler.toml`** — use `wrangler secret put` for sensitive values
-- **MUST keep `wrangler.toml` bindings in sync** with what `apps/web/src/server.ts` expects (`env.DB`, `env.SESSION_KV`)
+- **NEVER hardcode secrets in `wrangler.jsonc`** — use `wrangler secret put` for sensitive values
+- **MUST keep `wrangler.jsonc` bindings in sync** with what `apps/web/src/server.ts` expects (`env.DB`, `env.SESSION_KV`)
 - **NEVER run `wrangler d1 migrations apply --remote` via Claude Code** — user MUST run manually

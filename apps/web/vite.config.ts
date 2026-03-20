@@ -26,7 +26,7 @@ const config = defineConfig({
     emailCapturePlugin(),
     devtools(),
     tailwindcss(),
-    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    cloudflare({ configPath: "../../wrangler.jsonc", viteEnvironment: { name: "ssr" } }),
     tanstackStart(),
     viteReact({
       babel: {

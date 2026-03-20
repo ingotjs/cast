@@ -61,18 +61,19 @@ Zero-config, zero-compromise. Every layer of the stack is guarded by automated t
 1. Set `CLOUDFLARE_API_TOKEN`
 2. Deploy: `bun deploy`
 
-That's it. Wrangler applies D1 migrations and deploys the Worker — all from `wrangler.toml`.
+That's it. Wrangler applies D1 migrations and deploys the Worker — all from `wrangler.jsonc`.
 
 CI auto-deploys on push to `main`. Pre-configured in `.github/workflows/ci.yml`.
 
 ## Quick Start
 
+Requires [Bun](https://bun.sh/).
+
 ```sh
-bun setup  # Generate .env + check GitHub secrets
-bun dev    # Start dev server
+bunx @ingot/cast
 ```
 
-`bun dev` auto-installs deps and starts Vite with D1 + KV simulated locally via Miniflare. Open `http://localhost:2000`.
+Scaffolds the project, runs setup, and starts the dev server. Open `http://localhost:2000`.
 
 > **Note:** The `.env` file is only needed for feature-flagged services (PostHog, Resend, Google OAuth). The app runs without it — disabled features are simply skipped.
 
@@ -105,26 +106,31 @@ packages/config   → Shared TypeScript configs
 | `bun db:studio`         | Open Drizzle Studio                              |
 | `bun knip`              | Find unused files, deps, and exports             |
 
-## Environment Variables
+## Deploy
 
-### Required (Production)
+CI auto-deploys on push to `main`. Add this one GitHub Actions secret:
 
-| Variable               | Description                                             |
-| ---------------------- | ------------------------------------------------------- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token (CI deploy)                        |
-| `BETTER_AUTH_SECRET`   | Auth encryption secret (`wrangler secret put`, min 32c) |
-| `URL`                  | Production URL (`wrangler secret put`)                  |
+```sh
+gh secret set CLOUDFLARE_API_TOKEN  # paste your token from dash.cloudflare.com → API Tokens
+```
+
+### Production Secrets
+
+Production secrets are stored on Cloudflare — not in files, not in CI:
+
+```sh
+npx wrangler secret put BETTER_AUTH_SECRET   # openssl rand -base64 32
+```
 
 ### Optional (Service Features)
 
 Services activate when their env vars are set. Leave them out and the service is simply off — no code changes needed.
 
-| Service      | Env Vars                                                               |
-| ------------ | ---------------------------------------------------------------------- |
-| Email        | `RESEND_API_KEY`, `EMAIL_FROM`                                         |
-| Google OAuth | `VITE_PUBLIC_GOOGLE_OAUTH`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
-| Magic Link   | `VITE_PUBLIC_MAGIC_LINK` (requires Email env vars)                     |
-| PostHog      | `VITE_PUBLIC_POSTHOG_KEY` (host defaults to US Cloud)                  |
+| Service      | Env Vars                                               |
+| ------------ | ------------------------------------------------------ |
+| Email        | `RESEND_API_KEY`, `EMAIL_FROM`                         |
+| Google OAuth | `VITE_PUBLIC_GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
+| PostHog      | `VITE_PUBLIC_POSTHOG_KEY` (host defaults to US Cloud)  |
 
 ## Observability
 

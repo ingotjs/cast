@@ -1,3 +1,4 @@
+import { consts } from "@ingot/utils/consts";
 import { z } from "zod";
 
 // oxlint-disable-next-line node/no-process-env -- env module reads import.meta.env
@@ -17,8 +18,8 @@ const parseEnv = <T>(key: string, schema: z.ZodType<T>): T => {
  * Service env groups are enabled by env var presence.
  */
 export const clientEnv = {
-  googleOAuth: !!env.VITE_PUBLIC_GOOGLE_OAUTH,
-  magicLink: !!env.VITE_PUBLIC_MAGIC_LINK,
+  googleOAuth: !!env.VITE_PUBLIC_GOOGLE_CLIENT_ID,
+  magicLink: consts.auth.magicLink,
 
   posthog: env.VITE_PUBLIC_POSTHOG_KEY
     ? {

@@ -137,7 +137,7 @@ Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap +
 
 ### Infrastructure & CI/CD
 
-[Wrangler](https://developers.cloudflare.com/workers/wrangler/) + [@cloudflare/vite-plugin](https://www.npmjs.com/package/@cloudflare/vite-plugin) for Cloudflare Workers + D1 + KV. Config: `apps/web/wrangler.toml`. Deploy: `bun deploy` (`wrangler deploy`). Dev: Miniflare via Vite plugin. Secrets: `wrangler secret put` (stored on Cloudflare). CI: `.github/workflows/ci.yml`. Only CI secret: `CLOUDFLARE_API_TOKEN`. Full details in **`_infra` skill**.
+[Wrangler](https://developers.cloudflare.com/workers/wrangler/) + [@cloudflare/vite-plugin](https://www.npmjs.com/package/@cloudflare/vite-plugin) for Cloudflare Workers + D1 + KV. Config: `wrangler.jsonc`. Deploy: `bun deploy` (`wrangler deploy`). Dev: Miniflare via Vite plugin. Secrets: `wrangler secret put` (stored on Cloudflare). CI: `.github/workflows/ci.yml`. Only CI secret: `CLOUDFLARE_API_TOKEN`. Full details in **`_infra` skill**.
 
 ---
 
@@ -278,7 +278,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `apps/web/src/server.ts`                 | Server entry — Lingui i18n middleware for per-request locale                         |
 | `apps/web/src/router.tsx`                | TanStack Router config                                                               |
 | `apps/web/vite.config.ts`                | Vite config (lingui, tailwind, tanstack, cloudflare, react compiler)                 |
-| `apps/web/wrangler.toml`                 | Wrangler config — D1 + KV bindings, compatibility flags, observability               |
+| `wrangler.jsonc`                         | Wrangler config — D1 + KV bindings, compatibility flags, observability               |
 | `vite.config.ts`                         | Root Vite+ config (staged linting, oxlint options — NOT used for Vite dev/build)     |
 | `.oxlintrc.json`                         | Oxlint config                                                                        |
 | `.oxfmtrc.jsonc`                         | Oxfmt config                                                                         |

@@ -67,7 +67,7 @@ const filesToReplace = [
   "apps/web/messages/en.json",
   "apps/web/public/manifest.json",
   "apps/web/public/llms.txt",
-  "apps/web/wrangler.toml",
+  "wrangler.jsonc",
   "packages/db/drizzle.config.ts",
   ".github/workflows/ci.yml",
 ];
@@ -99,8 +99,8 @@ if (existsSync(constsPath)) {
 // Install & init
 // ---------------------------------------------------------------------------
 
-console.log("\nInstalling dependencies...");
-execSync("bun install", { cwd: dir, stdio: "inherit" });
+console.log("\nRunning setup...");
+execSync("bun setup", { cwd: dir, stdio: "inherit" });
 
 console.log("\nInitializing git...");
 execSync("git init && git add -A && git commit -m 'Initial commit'", {
@@ -108,9 +108,5 @@ execSync("git init && git add -A && git commit -m 'Initial commit'", {
   stdio: "pipe",
 });
 
-console.log(`
-Done! Your ${appName} project is ready.
-
-  cd ${dest}
-  bun dev
-`);
+console.log(`\n${appName} is ready. Starting dev server...\n`);
+execSync("bun dev", { cwd: dir, stdio: "inherit" });

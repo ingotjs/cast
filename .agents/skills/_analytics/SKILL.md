@@ -72,4 +72,4 @@ Structured console logger — Cloudflare Workers compatible. JSON in prod (Cloud
 | Logger instance | `packages/utils/server/logger.ts`              |
 | Methods         | `logger.info()`, `.warn()`, `.error()`, `.debug()` |
 
-Cloudflare Workers observability is enabled via `apps/web/wrangler.toml` (`[observability] enabled = true`).
+Cloudflare Workers observability is enabled via `wrangler.jsonc` (`[observability] enabled = true`).

@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { DEV_URL } from "../shared/consts";
+import { consts, DEV_URL } from "../shared/consts";
 
 // oxlint-disable-next-line node/no-process-env -- env module reads raw process.env
 const { env } = process;
@@ -24,12 +24,11 @@ const parseEnv = <T>(key: string, schema: z.ZodType<T>): T => {
  * - Leave it unset → group is `undefined` (service disabled)
  */
 export const serverEnv = {
-  URL: env.URL ?? DEV_URL,
+  URL: isDev ? DEV_URL : consts.siteUrl,
   NODE_ENV: (env.NODE_ENV ?? "development") as "development" | "test" | "production",
   BETTER_AUTH_SECRET:
     env.BETTER_AUTH_SECRET ??
     (isDev ? "dev-secret-at-least-32-characters-long" : parseEnv("BETTER_AUTH_SECRET", z.string().min(32))),
-  BETTER_AUTH_URL: env.BETTER_AUTH_URL,
 
   // Service env groups — enabled by env var presence
   email: env.RESEND_API_KEY
@@ -39,9 +38,9 @@ export const serverEnv = {
       }
     : undefined,
 
-  googleOAuth: env.GOOGLE_CLIENT_ID
+  googleOAuth: env.VITE_PUBLIC_GOOGLE_CLIENT_ID
     ? {
-        GOOGLE_CLIENT_ID: parseEnv("GOOGLE_CLIENT_ID", z.string().min(1)),
+        GOOGLE_CLIENT_ID: parseEnv("VITE_PUBLIC_GOOGLE_CLIENT_ID", z.string().min(1)),
         GOOGLE_CLIENT_SECRET: parseEnv("GOOGLE_CLIENT_SECRET", z.string().min(1)),
       }
     : undefined,
