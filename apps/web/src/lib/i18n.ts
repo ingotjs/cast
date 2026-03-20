@@ -18,11 +18,25 @@ export const LOCALE_LABELS: Record<Locale, string> = {
 let clientI18n: I18n | undefined;
 
 // Cloudflare Workers supports AsyncLocalStorage with nodejs_compat
-const { AsyncLocalStorage } = globalThis as unknown as {
-  AsyncLocalStorage: typeof import("node:async_hooks").AsyncLocalStorage | undefined;
-};
+// Dynamic import avoids breaking client-side bundles
+let i18nStorage: InstanceType<typeof import("node:async_hooks").AsyncLocalStorage<I18n>> | undefined;
 
-const i18nStorage = AsyncLocalStorage ? new AsyncLocalStorage<I18n>() : undefined;
+try {
+  // Available in Node.js and Cloudflare Workers (nodejs_compat)
+  // Not available in browsers — caught and ignored
+  const { AsyncLocalStorage } = await import("node:async_hooks");
+  i18nStorage = new AsyncLocalStorage<I18n>();
+} catch {
+  // Client-side: async_hooks not available
+}
+
+// On the client, eagerly load the default locale catalog so getI18n() works
+// before I18nProvider mounts (e.g. during hydration when head() is called).
+if (!i18nStorage) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- .po resolved by Lingui Vite plugin
+  const mod = await import(`../locales/${"en"}/messages.po`);
+  clientI18n = setupI18n({ locale: "en", messages: { en: (mod as { messages: Record<string, string> }).messages } });
+}
 
 /** Get the current i18n instance (server: per-request, client: singleton) */
 export const getI18n = (): I18n => {

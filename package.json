@@ -69,6 +69,7 @@
       "en"
     ],
     "sourceLocale": "en",
+    "compileNamespace": "es",
     "catalogs": [
       {
         "path": "<rootDir>/apps/web/src/locales/{locale}/messages",

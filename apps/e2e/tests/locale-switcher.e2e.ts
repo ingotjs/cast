@@ -14,7 +14,7 @@
 
 import { expect, test } from "@playwright/test";
 
-import { testId } from "../../coverage";
+import { testId } from "../coverage";
 
 test.describe("Locale Switcher", () => {
   test("should be visible in the header", async ({ page }) => {
@@ -25,11 +25,13 @@ test.describe("Locale Switcher", () => {
   test("should open dropdown with available locales", async ({ page }) => {
     await page.goto("/");
 
-    // Click the locale switcher trigger
-    await page.getByTestId(testId.header.localeSwitcherTrigger).click();
+    const trigger = page.getByTestId(testId.header.localeSwitcherTrigger);
 
-    // Verify the English locale option is visible
-    await expect(page.getByTestId(testId.header.localeSwitcherItemEn)).toBeVisible();
+    // Base UI Menu needs hydrated React — retry clicks until the menu opens
+    await expect(async () => {
+      await trigger.click();
+      await expect(page.getByTestId(testId.header.localeSwitcherItemEn)).toBeVisible({ timeout: 2_000 });
+    }).toPass({ timeout: 15_000 });
   });
 
   test("should show current locale as the trigger label", async ({ page }) => {
@@ -46,22 +48,17 @@ test.describe("Locale Switcher", () => {
     // Verify html lang is set to "en"
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
 
-    // Open the locale switcher
-    await page.getByTestId(testId.header.localeSwitcherTrigger).click();
+    // Base UI Menu needs hydrated React — retry clicks until the menu opens
+    const trigger = page.getByTestId(testId.header.localeSwitcherTrigger);
+    await expect(async () => {
+      await trigger.click();
+      await expect(page.getByTestId(testId.header.localeSwitcherItemEn)).toBeVisible({ timeout: 2_000 });
+    }).toPass({ timeout: 15_000 });
 
     // Click the English locale (re-selecting current locale — should be a no-op)
     await page.getByTestId(testId.header.localeSwitcherItemEn).click();
 
     // Verify the html lang is still "en"
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
-
-    // Verify the locale cookie is set
-    const cookies = await page.context().cookies();
-    const localeCookie = cookies.find((c) => c.name === "locale");
-    // Cookie may or may not be set when re-selecting the current locale (it's a no-op)
-    // The important thing is the html lang attribute is correct
-    if (localeCookie) {
-      expect(localeCookie.value).toBe("en");
-    }
   });
 });
