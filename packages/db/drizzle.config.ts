@@ -10,7 +10,7 @@ import { defineConfig } from "drizzle-kit";
  * Apply remotely:      `cd apps/web && npx wrangler d1 migrations apply db --remote`
  */
 export default defineConfig({
-  out: "./drizzle",
+  out: "./_etc/drizzle",
   schema: "./schema/index.ts",
   dialect: "sqlite",
 });
