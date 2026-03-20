@@ -5,7 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./index.ts",
-    "./schema": "./schema.ts",
+    "./schema": "./schema/index.ts",
     "./utils": "./utils.ts",
     "./zod-schema": "./schema/zod.ts"
   },
