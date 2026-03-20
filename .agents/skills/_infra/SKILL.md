@@ -1,40 +1,63 @@
 ---
 name: infra
-description: Infrastructure and deployment — Alchemy IaC, Cloudflare Workers, D1 provisioning, CI/CD pipeline, and deployment workflow. Use when modifying alchemy.run.ts, deployment config, CI pipeline, or infrastructure-related settings.
+description: Infrastructure and deployment — wrangler, @cloudflare/vite-plugin, Cloudflare Workers, D1, KV, CI/CD pipeline. Use when modifying wrangler.toml, deployment config, CI pipeline, or infrastructure-related settings.
 ---
 
 > **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
 >
-> **Keep this skill in sync:** When making changes to Alchemy config, Cloudflare Workers setup, CI/CD pipeline, or deployment workflow, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
+> **Keep this skill in sync:** When making changes to wrangler config, Cloudflare Workers setup, CI/CD pipeline, or deployment workflow, this skill MUST be updated to reflect the current state. Outdated skills are worse than no skills.
 
 # Infrastructure & Deployment
 
-[Alchemy](https://alchemy.run/) — TypeScript-native IaC for [Cloudflare Workers](https://workers.cloudflare.com/) + [D1](https://developers.cloudflare.com/d1/) (SQLite). Alchemy wraps `@cloudflare/vite-plugin` and `wrangler`, providing typed infrastructure definitions in pure TypeScript.
+[Wrangler](https://developers.cloudflare.com/workers/wrangler/) + [@cloudflare/vite-plugin](https://developers.cloudflare.com/workers/frameworks/framework-guides/tanstack-start/) for Cloudflare Workers + D1 + KV. No IaC framework — just wrangler config and CLI.
 
 ## Key Files
 
-| What           | Config                                                                                                      |
-| :------------- | :---------------------------------------------------------------------------------------------------------- |
-| IaC definition | `alchemy.run.ts` — D1 database + TanStack Start worker                                                      |
-| Build/Deploy   | `cd apps/web && bun run deploy` (`alchemy deploy` — builds, provisions D1, applies migrations, deploys)     |
-| Dev server     | `bun dev` → `alchemy dev` → generates wrangler config → runs `vite dev`                                     |
-| Migrations     | Applied automatically by Alchemy on `dev`/`deploy` via `migrationsDir` in D1Database                        |
-| Health check   | `/api/auth/ok`                                                                                              |
-| State          | `.alchemy/cast/` — encrypted resource state (committed). `.alchemy/miniflare/` — local data (ignored) |
-| Wrangler       | `apps/web/wrangler.jsonc` — kept for manual wrangler CLI use (db:studio, db:migrate)                        |
+| What           | Where                                                                                |
+| :------------- | :----------------------------------------------------------------------------------- |
+| Worker config  | `apps/web/wrangler.toml` — D1 + KV bindings, compatibility flags, observability      |
+| Vite plugin    | `apps/web/vite.config.ts` — `cloudflare({ viteEnvironment: { name: "ssr" } })`       |
+| Deploy         | `bun deploy` → `cd apps/web && npx wrangler deploy`                                 |
+| Dev server     | `bun dev` → `vite dev` with `@cloudflare/vite-plugin` (Miniflare for D1/KV)         |
+| Migrations     | `bun db:migrate` → `wrangler d1 migrations apply db --local`                        |
+| CI pipeline    | `.github/workflows/ci.yml` — check → e2e → deploy                                   |
+| Setup          | `bun setup` → generates `.env` + checks GitHub secrets                               |
 
 ## How It Works
 
-- `alchemy dev` evaluates `alchemy.run.ts`, generates `.alchemy/local/wrangler.jsonc`, then runs `vite dev`
-- `alchemy deploy` evaluates `alchemy.run.ts`, provisions/updates D1 + Worker, applies migrations, deploys
-- The Alchemy Vite plugin (`alchemy/cloudflare/tanstack-start`) wraps `@cloudflare/vite-plugin`, pointing it at the generated wrangler config
-- `ALCHEMY_PASSWORD` env var required for state encryption (generate with `openssl rand -base64 32`)
-- `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` required for deploy (not needed for local dev)
+- `@cloudflare/vite-plugin` wraps Miniflare for local dev — D1 + KV emulated automatically
+- `wrangler deploy` builds + deploys the Worker with all bindings from `wrangler.toml`
+- `wrangler secret put` stores production secrets on Cloudflare (not in files or CI)
+- `wrangler d1 migrations apply` runs Drizzle migrations against D1
 
-Reference: https://alchemy.run/guides/cloudflare-tanstack-start/
+## Environment & Secrets
+
+| Type              | Where                                       | Example                                 |
+| :---------------- | :------------------------------------------ | :-------------------------------------- |
+| D1/KV bindings    | `wrangler.toml`                             | `[[d1_databases]]`, `[[kv_namespaces]]` |
+| Non-secret vars   | `wrangler.toml` `[vars]`                    | `URL = "https://..."`                   |
+| Production secrets| `wrangler secret put`                       | `BETTER_AUTH_SECRET`                    |
+| Local dev secrets | `.dev.vars` (gitignored)                    | `BETTER_AUTH_SECRET=...`                |
+| Local dev bindings| Auto-emulated by Miniflare                  | D1, KV                                  |
 
 ## CI/CD
 
-GitHub Actions (`.github/workflows/ci.yml`) — runs `bun ok:ci` on push to `main` and PRs. Uses `oven-sh/setup-bun@v2`.
+GitHub Actions (`.github/workflows/ci.yml`):
 
-On push to `main`: deploys via `alchemy deploy` (provisions D1, applies migrations, deploys Worker), uploads source maps to PostHog, reports CI metrics. Requires GitHub secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ALCHEMY_PASSWORD`, `POSTHOG_PROJECT_ID`, `POSTHOG_CLI_API_KEY`, `POSTHOG_PROJECT_API_KEY`.
+- **Push to main** → check + e2e → D1 migrations → `wrangler deploy`
+- Only GitHub secret needed: `CLOUDFLARE_API_TOKEN`
+
+### Production Secrets
+
+Set once via CLI (stored on Cloudflare, not in CI):
+
+```sh
+wrangler secret put BETTER_AUTH_SECRET
+wrangler secret put URL
+```
+
+## Rules
+
+- **NEVER hardcode secrets in `wrangler.toml`** — use `wrangler secret put` for sensitive values
+- **MUST keep `wrangler.toml` bindings in sync** with what `apps/web/src/server.ts` expects (`env.DB`, `env.SESSION_KV`)
+- **NEVER run `wrangler d1 migrations apply --remote` via Claude Code** — user MUST run manually

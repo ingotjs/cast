@@ -1,16 +1,16 @@
+import { cloudflare } from "@cloudflare/vite-plugin";
 import { DEV_PORT } from "@ingot/utils/consts";
 import { lingui } from "@lingui/vite-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
-import alchemy from "alchemy/cloudflare/tanstack-start";
 import type { PluginOption } from "vite-plus";
 import { defineConfig } from "vite-plus";
 
 import { emailCapturePlugin } from "./vite-email-capture-plugin";
 
-// Reference: https://alchemy.run/guides/cloudflare-tanstack-start/
+// Reference: https://developers.cloudflare.com/workers/frameworks/framework-guides/tanstack-start/
 
 const config = defineConfig({
   server: { port: DEV_PORT },
@@ -26,7 +26,7 @@ const config = defineConfig({
     emailCapturePlugin(),
     devtools(),
     tailwindcss(),
-    alchemy(),
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
     tanstackStart(),
     viteReact({
       babel: {

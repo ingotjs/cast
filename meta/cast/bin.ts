@@ -67,7 +67,7 @@ const filesToReplace = [
   "apps/web/messages/en.json",
   "apps/web/public/manifest.json",
   "apps/web/public/llms.txt",
-  "packages/infra/alchemy.run.ts",
+  "apps/web/wrangler.toml",
   "packages/db/drizzle.config.ts",
   ".github/workflows/ci.yml",
 ];

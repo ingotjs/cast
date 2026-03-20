@@ -21,16 +21,16 @@ description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), Drizzle-Zod
 | Zod schemas | `packages/db/zod-schema.ts` — Drizzle-Zod select/insert/update schemas |
 | ULID helper | `packages/db/utils.ts` — `ulidPrimaryKey` (text + ULID)                 |
 | D1 types    | `packages/db/d1.d.ts` — minimal D1Database type declaration             |
-| Migrations  | `packages/db/drizzle/` — applied automatically by Alchemy on dev/deploy |
-| Local data  | `.alchemy/miniflare/` (gitignored) — miniflare simulates D1+KV locally  |
+| Migrations  | `packages/db/drizzle/` — applied via `wrangler d1 migrations apply`     |
+| Local data  | `.wrangler/state/` (gitignored) — miniflare simulates D1+KV locally     |
 | Test DB     | `packages/db/__tests__/setup.ts` — in-memory bun:sqlite for tests       |
 
 ## How It Works
 
-- D1 binding `DB` + KV binding `SESSION_KV` defined in `alchemy.run.ts`, initialized in `apps/web/src/server.ts`
+- D1 binding `DB` + KV binding `SESSION_KV` defined in `apps/web/wrangler.toml`, initialized in `apps/web/src/server.ts`
 - No `DATABASE_URL` — D1 is accessed via native Worker binding, not a connection string
 - KV used as Better Auth secondary storage (sessions + rate limiting) for globally-replicated sub-10ms reads
-- Local dev: D1 + KV simulated by miniflare via Alchemy's Vite plugin (wraps `@cloudflare/vite-plugin`)
+- Local dev: D1 + KV simulated by miniflare via `@cloudflare/vite-plugin`
 - Tests: in-memory `bun:sqlite` via preload setup (`packages/db/bunfig.toml`). KV no-ops gracefully when uninitialized.
 
 ## CRITICAL

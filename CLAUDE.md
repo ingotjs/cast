@@ -18,6 +18,7 @@
 
 | Command                 | Description                                                      |
 | :---------------------- | :--------------------------------------------------------------- |
+| `bun setup`             | Generate `.env` + set GitHub secrets (interactive)               |
 | `bun dev`               | Start all apps in dev mode (auto-installs deps)                  |
 | `bun dev:email`         | Email template preview (port 3002)                               |
 | `bun ok`                | Type check + lint + tests — **run after every task**             |
@@ -27,6 +28,7 @@
 | `bun db:migrate:remote` | Apply migrations to remote D1 (**user MUST run manually**)       |
 | `bun db:studio`         | Open Drizzle Studio                                              |
 | `bun e2e`               | Run Playwright E2E tests (from `apps/e2e`)                       |
+| `bun deploy`            | Deploy to Cloudflare (`cd apps/web && npx wrangler deploy`)      |
 | `bun knip`              | Find unused files, deps, and exports ([Knip](https://knip.dev/)) |
 
 ### Quality Verification
@@ -64,7 +66,7 @@
 
 [Vite+](https://vite.dev/plus/) (`vite-plus`) for Oxlint + Oxfmt. Config: `.oxlintrc.json` + `.oxfmtrc.jsonc`. Pre-commit hooks via `vp staged` (`.vite-hooks/pre-commit`).
 
-**Note:** Bun remains the package manager and test runner. Vite+ handles linting/formatting (`vp fmt`, `vp lint`, `vp staged`) and monorepo task orchestration (`vp run -r`). `vp install`, `vp test`, `vp dev`, `vp build` are NOT used — Bun and Alchemy handle those.
+**Note:** Bun remains the package manager and test runner. Vite+ handles linting/formatting (`vp fmt`, `vp lint`, `vp staged`) and monorepo task orchestration (`vp run -r`). `vp install`, `vp test`, `vp dev`, `vp build` are NOT used — Bun handles those.
 
 <details>
 <summary><strong>Vite+ usage rules</strong></summary>
@@ -87,7 +89,7 @@
 | `react-perf/jsx-no-new-function-as-prop` | off             | React Compiler handles memoization                 |
 | `typescript/consistent-type-definitions` | error, `"type"` | NEVER use `interface` (except module augmentation) |
 
-**Ignored paths:** `.agents`, `.alchemy`, `.claude`, `**/alchemy.run.ts`, `**/routeTree.gen.ts`, `**/locales/**/messages.js`, `**/*.md`
+**Ignored paths:** `.agents`, `.claude`, `**/routeTree.gen.ts`, `**/locales/**/messages.js`, `**/*.md`
 
 </details>
 
@@ -135,7 +137,7 @@ Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap +
 
 ### Infrastructure & CI/CD
 
-[Alchemy](https://alchemy.run/) IaC for Cloudflare Workers + D1. IaC: `alchemy.run.ts`. Deploy: `cd apps/web && bun run deploy`. CI: `.github/workflows/ci.yml`. Full details in **`_infra` skill**.
+[Wrangler](https://developers.cloudflare.com/workers/wrangler/) + [@cloudflare/vite-plugin](https://www.npmjs.com/package/@cloudflare/vite-plugin) for Cloudflare Workers + D1 + KV. Config: `apps/web/wrangler.toml`. Deploy: `bun deploy` (`wrangler deploy`). Dev: Miniflare via Vite plugin. Secrets: `wrangler secret put` (stored on Cloudflare). CI: `.github/workflows/ci.yml`. Only CI secret: `CLOUDFLARE_API_TOKEN`. Full details in **`_infra` skill**.
 
 ---
 
@@ -166,7 +168,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `_analytics`      | PostHog events, error tracking, logging                                              |
 | `_env`            | Adding env vars, toggling service features or capability flags                       |
 | `_database`       | Schema, migrations, queries, oRPC procedures in `packages/db/` or `packages/api/`    |
-| `_infra`          | Alchemy IaC, deployment, CI/CD pipeline                                              |
+| `_infra`          | Wrangler, @cloudflare/vite-plugin, deployment, CI/CD pipeline                        |
 | `_testing`        | Writing/modifying unit or integration tests                                          |
 | `_linear`         | Working on Linear tickets or given a Linear link                                     |
 | `_skill-creation` | Creating or modifying custom `_` skills                                              |
@@ -275,8 +277,8 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `apps/web/src/components/settings/`      | Account settings cards                                                               |
 | `apps/web/src/server.ts`                 | Server entry — Lingui i18n middleware for per-request locale                         |
 | `apps/web/src/router.tsx`                | TanStack Router config                                                               |
-| `apps/web/vite.config.ts`                | Vite config (lingui, tailwind, tanstack, alchemy, react compiler)                    |
-| `alchemy.run.ts`                         | Alchemy IaC — D1 + KV + TanStack Start worker definition                             |
+| `apps/web/vite.config.ts`                | Vite config (lingui, tailwind, tanstack, cloudflare, react compiler)                 |
+| `apps/web/wrangler.toml`                 | Wrangler config — D1 + KV bindings, compatibility flags, observability               |
 | `vite.config.ts`                         | Root Vite+ config (staged linting, oxlint options — NOT used for Vite dev/build)     |
 | `.oxlintrc.json`                         | Oxlint config                                                                        |
 | `.oxfmtrc.jsonc`                         | Oxfmt config                                                                         |

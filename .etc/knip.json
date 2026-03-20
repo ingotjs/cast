@@ -10,11 +10,8 @@
   "workspaces": {
     ".": {
       "entry": ["vite.config.ts"],
-      "ignoreDependencies": ["@socketsecurity/bun-security-scanner", "ultracite", "@ingot/config"],
+      "ignoreDependencies": ["@lingui/cli", "@socketsecurity/bun-security-scanner", "ultracite", "@ingot/config"],
       "ignoreBinaries": ["wrangler"]
-    },
-    "packages/infra": {
-      "entry": ["alchemy.run.ts"]
     },
     "apps/web": {
       "entry": [

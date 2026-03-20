@@ -1,9 +1,7 @@
 {
   "ignorePatterns": [
     ".agents",
-    ".alchemy",
     ".claude",
-    "**/alchemy.run.ts",
     "**/routeTree.gen.ts",
     "**/worker-configuration.d.ts",
     "**/auth-schema.ts",

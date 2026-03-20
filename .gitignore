@@ -28,15 +28,9 @@ out/
 build
 dist
 
-# Local D1 database (miniflare)
+# Local D1/KV (miniflare)
 .wrangler
-.alchemy/miniflare
-.alchemy/local
-
-
-# Playwright MCP
-.playwright-mcp
-
+.dev.vars
 
 # Debug
 npm-debug.log*
@@ -46,4 +40,3 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
-.alchemy

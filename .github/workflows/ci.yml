@@ -5,9 +5,15 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+    types: [opened, reopened, synchronize, closed]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   check:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -16,6 +22,7 @@ jobs:
       - run: bun ok:ci
 
   e2e:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,14 +35,14 @@ jobs:
           key: playwright-${{ hashFiles('bun.lock') }}
       - run: bunx playwright install --with-deps chromium
       - run: bun e2e
-        env:
-          ALCHEMY_CI_STATE_STORE_CHECK: false
 
-  # Deploy to Cloudflare Workers + apply D1 migrations
   deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event.action != 'closed'
     needs: [check, e2e]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
@@ -44,8 +51,8 @@ jobs:
         run: cd apps/web && npx wrangler d1 migrations apply db --remote
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - name: Build and deploy to Cloudflare
-        run: cd apps/web && bun run deploy
+      - name: Deploy
+        run: cd apps/web && npx wrangler deploy
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
@@ -67,19 +74,3 @@ jobs:
   #         project-id: ${{ secrets.POSTHOG_PROJECT_ID }}
   #         api-key: ${{ secrets.POSTHOG_CLI_API_KEY }}
   #         # host: https://eu.posthog.com  # Uncomment for EU Cloud
-
-  # # Send CI metrics to PostHog (build duration, job status)
-  # # Reference: https://github.com/PostHog/posthog-github-action
-  # ci-metrics:
-  #   needs: [check, deploy, sourcemaps]
-  #   if: always()
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: PostHog/posthog-github-action@v1
-  #       with:
-  #         posthog-token: ${{ secrets.POSTHOG_PROJECT_API_KEY }}
-  #         event: ci_pipeline_completed
-  #         capture-run-duration: true
-  #         capture-job-durations: true
-  #         status-job: check
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}

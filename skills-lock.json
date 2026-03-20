@@ -11,6 +11,11 @@
       "sourceType": "github",
       "computedHash": "5d8f869c7e683e4d4fc7aa7a2b0d370b0ad54a81d9cffb48736ffc47759b3f4d"
     },
+    "agents-sdk": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "computedHash": "921f2a43c0f58851a8bf9faaeb3641fa3108f3a94e787ca8e948626342988658"
+    },
     "ai-seo": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -26,10 +31,25 @@
       "sourceType": "github",
       "computedHash": "a4c830509e85557b59339d8d93a4e243e9e59c686e7678854d39230e12c2a6dc"
     },
+    "building-ai-agent-on-cloudflare": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "computedHash": "e1d8051a52bd96c307a7781fc045a9155f86750e25f151675c19709c88d78468"
+    },
+    "building-mcp-server-on-cloudflare": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "computedHash": "281b2b0870687792fd23a738b2838f6f581b928a96012de57a9ff61f0df24101"
+    },
     "churn-prevention": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "computedHash": "ce389baf7e32cc942143503ecba7068784ca2c790460824c1e5a306d83d1283f"
+    },
+    "cloudflare": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "computedHash": "02ef72b4906d295d03da15d52357babdef06a762f0374b85c89c73c9b22a7bad"
     },
     "cold-email": {
       "source": "coreyhaines31/marketingskills",
@@ -55,6 +75,11 @@
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
       "computedHash": "2e83eda2221e97166172a0798e9b0379e34080595e107e2fc0cf580e9b3bbf7b"
+    },
+    "durable-objects": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "computedHash": "72efa2277fea08f43b393c74abaacc9fa575e20bc63bdc9d46829b8a39352852"
     },
     "email-best-practices": {
       "source": "resend/email-best-practices",
@@ -166,6 +191,11 @@
       "sourceType": "github",
       "computedHash": "aaba13bea7b98c41225a1893d90778ef53044642c3099e42876434f8f3712622"
     },
+    "sandbox-sdk": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "computedHash": "5655f09026204f4b753c9e06dc6483e9f6ddeec18bb3daa8735195c4b2d1f752"
+    },
     "schema-markup": {
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github",
@@ -210,6 +240,21 @@
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
       "computedHash": "afeca00ac2f492d88fdd010e73d91719a5b57c564bb4a73325b0bd77e11323ab"
+    },
+    "web-perf": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "computedHash": "520d36ee93779146266dcdeec31d5e42341c3a40cc35007c1b5e02d6824ff86b"
+    },
+    "workers-best-practices": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "computedHash": "420e1ad3eaeb8ed2016e6b34fff3757de6aa39899ec2bd6e9784a29c38e70f9a"
+    },
+    "wrangler": {
+      "source": "cloudflare/skills",
+      "sourceType": "github",
+      "computedHash": "cd0ac8f97a2f54d19166acfd380fca8236db5e9f37d3b2066f713967e2673d36"
     }
   }
 }

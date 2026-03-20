@@ -51,31 +51,28 @@ Zero-config, zero-compromise. Every layer of the stack is guarded by automated t
 - **Supply chain security** — [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) scans for known vulnerabilities on every `bun install`. Combined with Bun's `install.minimumReleaseAge` (3-day quarantine on new packages) to block supply chain attacks.
 - **Dead code detection** — [Knip](https://knip.dev/) finds unused files, dependencies, and exports across the entire monorepo. Run `bun knip`.
 - **Pre-commit enforcement** — [Vite+](https://vite.dev/plus/) `vp staged` runs format + lint on staged files on every commit.
-- **CI/CD** — GitHub Actions runs `bun ok:ci` on every push and PR. On `main`, also deploys via Alchemy (provisions D1, applies migrations, deploys Worker), uploads source maps to PostHog, and reports CI metrics.
+- **CI/CD** — GitHub Actions runs `bun ok:ci` on every push and PR. On `main`, also deploys via wrangler (applies D1 migrations, deploys Worker).
 - **One command to rule them all** — `bun ok` runs syncpack + type check + lint + test in sequence. If it passes, your code is clean.
 
 ### 6. Deploy in 60 Seconds
 
-**[Cloudflare Workers](https://workers.cloudflare.com/)** + **[Cloudflare D1](https://developers.cloudflare.com/d1/)** via **[Alchemy](https://alchemy.run/)** — TypeScript-native IaC, everything on the edge:
+**[Cloudflare Workers](https://workers.cloudflare.com/)** + **[Cloudflare D1](https://developers.cloudflare.com/d1/)** via **[Wrangler](https://developers.cloudflare.com/workers/wrangler/)** — everything on the edge:
 
-1. Set env vars: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`, `ALCHEMY_PASSWORD`
-2. Deploy: `cd apps/web && bun run deploy`
+1. Set `CLOUDFLARE_API_TOKEN`
+2. Deploy: `bun deploy`
 
-That's it. Alchemy provisions the D1 database, applies migrations, and deploys the Worker — all from `alchemy.run.ts`.
+That's it. Wrangler applies D1 migrations and deploys the Worker — all from `wrangler.toml`.
 
 CI auto-deploys on push to `main`. Pre-configured in `.github/workflows/ci.yml`.
 
 ## Quick Start
 
 ```sh
-cp .env.example .env  # Create your env file, fill in values for enabled features
-bun install
-bun dev
-
-bunx alchemy configure # Sets up Alchemy & CloudFlare
+bun setup  # Generate .env + check GitHub secrets
+bun dev    # Start dev server
 ```
 
-`bun dev` auto-installs deps and starts all apps. Alchemy generates the wrangler config and runs Vite with D1 simulated locally via miniflare. Migrations are applied automatically. Open `http://localhost:2000`.
+`bun dev` auto-installs deps and starts Vite with D1 + KV simulated locally via Miniflare. Open `http://localhost:2000`.
 
 > **Note:** The `.env` file is only needed for feature-flagged services (PostHog, Resend, Google OAuth). The app runs without it — disabled features are simply skipped.
 
@@ -96,29 +93,27 @@ packages/config   → Shared TypeScript configs
 
 ## Commands
 
-| Command                 | Description                                                               |
-| ----------------------- | ------------------------------------------------------------------------- |
-| `bun dev`               | Start all apps in dev mode (Alchemy generates wrangler config, runs Vite) |
-| `bun dev:email`         | Email template preview (port 3002)                                        |
-| `bun ok`                | Type check + lint + test (run before committing)                          |
-| `bun ok:ci`             | Same without auto-fixes (CI)                                              |
-| `bun db:generate`       | Generate database migrations                                              |
-| `bun db:migrate`        | Apply migrations locally (D1)                                             |
-| `bun db:migrate:remote` | Apply migrations to remote D1                                             |
-| `bun db:studio`         | Open Drizzle Studio                                                       |
-| `bun knip`              | Find unused files, deps, and exports                                      |
+| Command                 | Description                                      |
+| ----------------------- | ------------------------------------------------ |
+| `bun dev`               | Start dev server (Vite + Miniflare for D1/KV)    |
+| `bun dev:email`         | Email template preview (port 3002)               |
+| `bun ok`                | Type check + lint + test (run before committing) |
+| `bun ok:ci`             | Same without auto-fixes (CI)                     |
+| `bun db:generate`       | Generate database migrations                     |
+| `bun db:migrate`        | Apply migrations locally (D1)                    |
+| `bun db:migrate:remote` | Apply migrations to remote D1                    |
+| `bun db:studio`         | Open Drizzle Studio                              |
+| `bun knip`              | Find unused files, deps, and exports             |
 
 ## Environment Variables
 
 ### Required (Production)
 
-| Variable                | Description                                      |
-| ----------------------- | ------------------------------------------------ |
-| `ALCHEMY_PASSWORD`      | IaC state encryption (`openssl rand -base64 32`) |
-| `CLOUDFLARE_API_TOKEN`  | Cloudflare API token (for deploy)                |
-| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID (for deploy)               |
-| `BETTER_AUTH_SECRET`    | Auth encryption secret (min 32 chars)            |
-| `URL`                   | Production URL (e.g. https://myapp.com)          |
+| Variable               | Description                                             |
+| ---------------------- | ------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token (CI deploy)                        |
+| `BETTER_AUTH_SECRET`   | Auth encryption secret (`wrangler secret put`, min 32c) |
+| `URL`                  | Production URL (`wrangler secret put`)                  |
 
 ### Optional (Service Features)
 
@@ -221,7 +216,7 @@ With new locale:  Lingui fr/messages.po auth_* →  buildAuthTranslations()  →
 | Linting         | [Vite+](https://vite.dev/plus/) (Oxlint + Oxfmt)                                                                                                         |
 | Package Manager | [Bun](https://bun.sh/)                                                                                                                                   |
 | Monorepo        | [Vite+](https://vite.dev/plus/) (`vp run -r`)                                                                                                            |
-| IaC             | [Alchemy](https://alchemy.run/) (TypeScript-native, wraps Cloudflare APIs directly)                                                                      |
+| Deploy          | [Wrangler](https://developers.cloudflare.com/workers/wrangler/) + [@cloudflare/vite-plugin](https://www.npmjs.com/package/@cloudflare/vite-plugin)       |
 | Deployment      | [Cloudflare Workers](https://workers.cloudflare.com/) + [Cloudflare D1](https://developers.cloudflare.com/d1/)                                           |
 | CI/CD           | GitHub Actions                                                                                                                                           |
 

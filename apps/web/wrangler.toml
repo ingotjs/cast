@@ -1,0 +1,17 @@
+# Reference: https://developers.cloudflare.com/workers/wrangler/configuration/
+name = "cast"
+compatibility_date = "2025-09-24"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "db"
+database_id = "db"
+migrations_dir = "../../packages/db/drizzle"
+
+[[kv_namespaces]]
+binding = "SESSION_KV"
+id = "SESSION_KV"

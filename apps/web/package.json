@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "clean": "rm -rf .alchemy .nitro .output .tanstack .wrangler dist src/locales/*/messages.ts",
+    "clean": "rm -rf .nitro .output .tanstack .wrangler dist src/locales/*/messages.ts",
     "vite": "vp",
     "ts": "tsgo --noEmit"
   },
@@ -51,7 +51,6 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "5.1.4",
-    "alchemy": "0.89.0",
     "babel-plugin-macros": "catalog:",
     "babel-plugin-react-compiler": "1.0.0",
     "typescript": "catalog:",
