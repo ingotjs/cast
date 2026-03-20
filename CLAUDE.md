@@ -58,6 +58,8 @@
 
 **Dependency graph:** `@ingot/db` (leaf) ← `@ingot/auth` (+ `@ingot/email`, `@ingot/utils`) ← `@ingot/api`
 
+**`_etc/` convention:** Secondary files (configs, tests, generated output) live in `_etc/` directories to keep package roots clean. Root: `_etc/knip.json`, `_etc/.syncpackrc`. Packages: `_etc/tests/` for unit tests. Uses `_etc` (underscore) instead of `.etc` (dot) so tools traverse it by default.
+
 ### Type Checking
 
 [typescript-go](https://github.com/microsoft/typescript-go) (`tsgo`) via `@typescript/native-preview`. Regular `typescript` still installed for tooling compatibility.
@@ -127,13 +129,13 @@ Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap +
 
 ### Internationalization (i18n)
 
-[Lingui](https://lingui.dev/) — **ZERO TOLERANCE for non-i18n strings.** All user-facing text MUST use Lingui macros. Components: `<Trans>` from `@lingui/react/macro`. Strings in hooks: `useLingui()` → `t`. head()/server code: `msg` descriptors + `getI18n()._()`. Email/auth: `msg` + `i18n._()`. Catalogs: `apps/web/src/locales/`, `packages/email/locales/`, `packages/auth/locales/`. Full details in **`_i18n` skill**.
+[Lingui](https://lingui.dev/) — **ZERO TOLERANCE for non-i18n strings.** All user-facing text MUST use Lingui macros. Components: `<Trans>` from `@lingui/react/macro`. Strings in hooks: `useLingui()` → `t`. head()/server code: `msg` descriptors + `ctx.match.context.i18n._()`. Email/auth: `msg` + `i18n._()`. i18n flows through TanStack Router context (set in `router.tsx`, accessed via `ctx.match.context.i18n` in `head()` and `Route.useRouteContext()` in components). Catalogs: `apps/web/src/locales/`, `packages/email/locales/`, `packages/auth/locales/`. Full details in **`_i18n` skill**.
 
 ### Dependency Management
 
 - Versions MUST be pinned (no `^` / `~`) — enforced by [syncpack](https://syncpack.dev/) + `bunfig.toml`
 - [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) checks for vulnerabilities on `bun install`
-- [Knip](https://knip.dev/) finds unused files, dependencies, and exports — run `bun knip`. Config: `.etc/knip.json`
+- [Knip](https://knip.dev/) finds unused files, dependencies, and exports — run `bun knip`. Config: `_etc/knip.json`
 
 ### Infrastructure & CI/CD
 
@@ -282,8 +284,8 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `vite.config.ts`                         | Root Vite+ config (staged linting, oxlint options — NOT used for Vite dev/build)     |
 | `.oxlintrc.json`                         | Oxlint config                                                                        |
 | `.oxfmtrc.jsonc`                         | Oxfmt config                                                                         |
-| `.etc/.syncpackrc`                       | Syncpack config                                                                      |
-| `.etc/knip.json`                         | Knip config (unused files, deps, exports)                                            |
+| `_etc/.syncpackrc`                       | Syncpack config                                                                      |
+| `_etc/knip.json`                         | Knip config (unused files, deps, exports)                                            |
 | `.github/workflows/ci.yml`               | CI pipeline                                                                          |
 | `packages/email/email-capture.ts`        | Email capture for E2E test verification (dev/test only)                              |
 | `packages/email/templates.ts`            | Email render functions + localized subject helpers                                   |

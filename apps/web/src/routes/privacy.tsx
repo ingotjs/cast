@@ -4,7 +4,6 @@ import { Trans } from "@lingui/react/macro";
 import { createFileRoute } from "@tanstack/react-router";
 
 import { clientEnv } from "../lib/env";
-import { getI18n } from "../lib/i18n";
 import { seoMeta } from "../lib/seo";
 
 const { appName } = consts;
@@ -180,11 +179,11 @@ const PrivacyPage = () => (
 );
 
 export const Route = createFileRoute("/privacy")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       ...seoMeta({
-        title: getI18n()._(metaPrivacyTitle.id, { appName }),
-        description: getI18n()._(metaPrivacyDescription.id, { appName }),
+        title: ctx.match.context.i18n._(metaPrivacyTitle.id, { appName }),
+        description: ctx.match.context.i18n._(metaPrivacyDescription.id, { appName }),
       }),
     ],
   }),

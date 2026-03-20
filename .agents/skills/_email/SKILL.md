@@ -52,7 +52,7 @@ All email text MUST use `m.email_xxx({...}, loc(locale))` where `loc()` casts th
 
 ## Email Capture (E2E)
 
-`packages/email/email-capture.ts` — captures emails to `packages/email/.etc/.email-captures/` as JSON in dev/test mode. Read via `getEmails` fixture in E2E tests.
+`packages/email/email-capture.ts` — captures emails to `packages/email/_etc/.email-captures/` as JSON in dev/test mode. Read via `getEmails` fixture in E2E tests.
 
 ## Preview
 

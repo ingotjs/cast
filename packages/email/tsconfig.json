@@ -7,5 +7,5 @@
     "allowJs": true
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", ".react-email", ".etc", "lingui.config.ts"]
+  "exclude": ["node_modules", ".react-email", "_etc", "lingui.config.ts"]
 }

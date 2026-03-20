@@ -3,7 +3,7 @@ import { resolve } from "node:path";
 
 import { setup } from "./coverage";
 
-const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../packages/email/.etc/.email-captures");
+const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../packages/email/_etc/.email-captures");
 
 const validateCoverage = setup({
   testDir: resolve(__dirname, "./tests"),

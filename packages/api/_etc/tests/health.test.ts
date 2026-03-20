@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import { createRouterClient } from "@orpc/server";
 
-import { router } from "../router";
+import { router } from "../../router";
 
 const client = createRouterClient(router, {
   context: { headers: new Headers() },

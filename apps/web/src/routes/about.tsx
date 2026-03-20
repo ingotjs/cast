@@ -3,7 +3,6 @@ import { msg } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { getI18n } from "../lib/i18n";
 import { seoMeta } from "../lib/seo";
 
 const { appName } = consts;
@@ -31,11 +30,11 @@ const About = () => (
 );
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       ...seoMeta({
-        title: getI18n()._(metaAboutTitle.id, { appName }),
-        description: getI18n()._(metaAboutDescription.id, { appName }),
+        title: ctx.match.context.i18n._(metaAboutTitle.id, { appName }),
+        description: ctx.match.context.i18n._(metaAboutDescription.id, { appName }),
       }),
     ],
   }),

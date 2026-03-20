@@ -7,7 +7,7 @@
     ".": "./index.ts",
     "./schema": "./schema.ts",
     "./utils": "./utils.ts",
-    "./zod-schema": "./zod-schema.ts"
+    "./zod-schema": "./schema/zod.ts"
   },
   "scripts": {
     "db:generate": "drizzle-kit generate",

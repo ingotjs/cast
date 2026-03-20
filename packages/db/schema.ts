@@ -3,4 +3,4 @@
 // Add custom (non-auth) tables below.
 
 // oxlint-disable-next-line no-barrel-file -- intentional re-export of generated auth schema
-export * from "./auth-schema";
+export * from "./schema/auth";

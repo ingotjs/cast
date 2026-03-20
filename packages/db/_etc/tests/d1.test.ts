@@ -4,7 +4,7 @@ import { describe, expect, test } from "bun:test";
 import { sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/bun-sqlite";
 
-import * as schema from "../schema";
+import * as schema from "../../schema";
 
 describe("D1 (SQLite)", () => {
   test("connects and runs a query", () => {

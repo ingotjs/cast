@@ -6,9 +6,9 @@ import { Database } from "bun:sqlite";
 
 import { drizzle } from "drizzle-orm/bun-sqlite";
 
-import type { Database as DbType } from "../index";
-import { setDb } from "../index";
-import * as schema from "../schema";
+import type { Database as DbType } from "../../index";
+import { setDb } from "../../index";
+import * as schema from "../../schema";
 
 const sqlite = new Database(":memory:");
 sqlite.exec("PRAGMA journal_mode = WAL;");

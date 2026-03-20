@@ -21,7 +21,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createAuthMiddleware } from "better-auth/api";
 import { admin, magicLink } from "better-auth/plugins";
 
-import { buildAuthTranslations } from "./auth-i18n";
+import { buildAuthTranslations } from "./i18n";
 import { kvSecondaryStorage } from "./kv-storage";
 
 // Reference: https://better-auth.com/docs

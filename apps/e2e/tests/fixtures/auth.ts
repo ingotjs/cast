@@ -7,7 +7,7 @@ import { test as base, expect } from "@playwright/test";
 // Reference: https://playwright.dev/docs/test-fixtures
 
 const BASE_URL = DEV_URL;
-const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../../../packages/email/.etc/.email-captures");
+const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../../../packages/email/_etc/.email-captures");
 const TEST_PASSWORD = "TestPassword123!";
 
 const generateEmail = (prefix: string) => `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@e2e.test`;

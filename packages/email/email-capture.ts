@@ -12,7 +12,7 @@ const isDev = process.env.NODE_ENV !== "production";
 import { DEV_URL } from "@ingot/utils/consts";
 
 const CAPTURE_ENDPOINT = `${DEV_URL}/__email-capture`;
-const DIR_SUFFIX = ".etc/.email-captures";
+const DIR_SUFFIX = "_etc/.email-captures";
 
 /** Capture an email to a JSON file for E2E test verification */
 export const captureEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }) => {

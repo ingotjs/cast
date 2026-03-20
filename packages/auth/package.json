@@ -6,10 +6,10 @@
   "exports": {
     ".": "./auth.ts",
     "./kv-storage": "./kv-storage.ts",
-    "./test-utils": "./__tests__/test-utils.ts"
+    "./test-utils": "./_etc/tests/test-utils.ts"
   },
   "scripts": {
-    "db:auth": "better-auth generate --output ../db/auth-schema.ts -y",
+    "db:auth": "better-auth generate --output ../db/schema/auth.ts -y",
     "test": "bun test",
     "ts": "tsgo --noEmit"
   },

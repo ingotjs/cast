@@ -2,9 +2,9 @@ import { afterAll, describe, expect, test } from "bun:test";
 
 import { BASE_ERROR_CODES } from "better-auth";
 
-import { auth } from "../auth";
-import { buildAuthTranslations } from "../auth-i18n";
-import { createAuthI18n } from "../i18n";
+import { auth } from "../../auth";
+import { buildAuthTranslations } from "../../i18n";
+import { createAuthI18n } from "../../i18n";
 import { cleanupTestUser, createTestUser, uniqueEmail } from "./test-utils";
 
 const AUTH_PREFIX = "auth_";

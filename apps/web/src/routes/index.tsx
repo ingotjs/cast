@@ -4,7 +4,6 @@ import { Trans, useLingui } from "@lingui/react/macro";
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { useSession } from "../lib/auth-client";
-import { getI18n } from "../lib/i18n";
 import { seoMeta } from "../lib/seo";
 
 const { appName } = consts;
@@ -104,11 +103,11 @@ const App = () => {
 };
 
 export const Route = createFileRoute("/")({
-  head: () => ({
+  head: (ctx) => ({
     meta: [
       ...seoMeta({
-        title: getI18n()._(metaHomeTitle.id, { appName }),
-        description: getI18n()._(metaHomeDescription.id),
+        title: ctx.match.context.i18n._(metaHomeTitle.id, { appName }),
+        description: ctx.match.context.i18n._(metaHomeDescription.id),
       }),
     ],
   }),

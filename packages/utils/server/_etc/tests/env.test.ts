@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
-import { consts } from "../../shared/consts";
-import { isDevelopment, serverEnv } from "../env";
+import { consts } from "../../../shared/consts";
+import { isDevelopment, serverEnv } from "../../env";
 
 describe("server env", () => {
   test("URL has a default value in dev", () => {

@@ -4,14 +4,14 @@ import { msg } from "@lingui/core/macro";
 import { I18nProvider } from "@lingui/react";
 import { PostHogErrorBoundary, PostHogProvider } from "@posthog/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
 import { Footer } from "../components/footer";
 import { Header } from "../components/header";
 import { Providers } from "../components/providers";
 import { clientEnv } from "../lib/env";
-import { getI18n } from "../lib/i18n";
+import type { RouterContext } from "../lib/i18n";
 
 const { appName } = consts;
 
@@ -40,7 +40,7 @@ const AppContent = ({ children }: { children: React.ReactNode }) => (
 );
 
 const RootDocument = ({ children }: { children: React.ReactNode }) => {
-  const i18n = getI18n();
+  const { i18n } = Route.useRouteContext();
 
   return (
     <html lang={i18n.locale} suppressHydrationWarning>
@@ -78,52 +78,55 @@ const RootDocument = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const Route = createRootRoute({
-  head: () => ({
-    meta: [
-      { charSet: "utf8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: getI18n()._(ogTitle.id, { appName }) },
-      { name: "description", content: getI18n()._(ogDescription.id) },
-      { property: "og:title", content: getI18n()._(ogTitle.id, { appName }) },
-      { property: "og:description", content: getI18n()._(ogDescription.id) },
-      { property: "og:image", content: "/api/og" },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: consts.siteUrl },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: getI18n()._(ogTitle.id, { appName }) },
-      { name: "twitter:description", content: getI18n()._(ogDescription.id) },
-      { name: "twitter:image", content: "/api/og" },
-    ],
-    links: [
-      {
-        rel: "icon",
-        href: "/api/icon?theme=light",
-        media: "(prefers-color-scheme: light)",
-      },
-      {
-        rel: "icon",
-        href: "/api/icon?theme=dark",
-        media: "(prefers-color-scheme: dark)",
-      },
-      { rel: "stylesheet", href: appCss },
-    ],
-    scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "WebSite",
-          name: consts.appName,
-          url: consts.siteUrl,
-          publisher: {
-            "@type": "Organization",
+export const Route = createRootRouteWithContext<RouterContext>()({
+  head: (ctx) => {
+    const { i18n } = ctx.match.context;
+    return {
+      meta: [
+        { charSet: "utf8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title: i18n._(ogTitle.id, { appName }) },
+        { name: "description", content: i18n._(ogDescription.id) },
+        { property: "og:title", content: i18n._(ogTitle.id, { appName }) },
+        { property: "og:description", content: i18n._(ogDescription.id) },
+        { property: "og:image", content: "/api/og" },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: consts.siteUrl },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: i18n._(ogTitle.id, { appName }) },
+        { name: "twitter:description", content: i18n._(ogDescription.id) },
+        { name: "twitter:image", content: "/api/og" },
+      ],
+      links: [
+        {
+          rel: "icon",
+          href: "/api/icon?theme=light",
+          media: "(prefers-color-scheme: light)",
+        },
+        {
+          rel: "icon",
+          href: "/api/icon?theme=dark",
+          media: "(prefers-color-scheme: dark)",
+        },
+        { rel: "stylesheet", href: appCss },
+      ],
+      scripts: [
+        {
+          type: "application/ld+json",
+          children: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
             name: consts.appName,
             url: consts.siteUrl,
-          },
-        }),
-      },
-    ],
-  }),
+            publisher: {
+              "@type": "Organization",
+              name: consts.appName,
+              url: consts.siteUrl,
+            },
+          }),
+        },
+      ],
+    };
+  },
   shellComponent: RootDocument,
 });

@@ -2,7 +2,7 @@
 
 import { createInsertSchema, createSelectSchema, createUpdateSchema } from "drizzle-zod";
 
-import { accounts, passkeys, sessions, users, verifications } from "./auth-schema";
+import { accounts, passkeys, sessions, users, verifications } from "./auth";
 
 // Users
 export const selectUserSchema = createSelectSchema(users);

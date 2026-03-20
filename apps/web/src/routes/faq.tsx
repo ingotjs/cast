@@ -3,7 +3,6 @@ import { msg } from "@lingui/core/macro";
 import { useLingui } from "@lingui/react";
 import { createFileRoute } from "@tanstack/react-router";
 
-import { getI18n } from "../lib/i18n";
 import { seoMeta } from "../lib/seo";
 
 const { appName } = consts;
@@ -57,8 +56,8 @@ const FAQPage = () => {
 };
 
 export const Route = createFileRoute("/faq")({
-  head: () => {
-    const i18n = getI18n();
+  head: (ctx) => {
+    const { i18n } = ctx.match.context;
     const faqs = [
       { question: i18n._(faqQWhatIs.id, { appName }), answer: i18n._(faqAWhatIs.id, { appName }) },
       { question: i18n._(faqQTechStack.id, { appName }), answer: i18n._(faqATechStack.id) },
