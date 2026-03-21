@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, test } from "bun:test";
 import { cleanupTestUser, createTestUser, uniqueEmail } from "@ingot/auth/test-utils";
 import { createRouterClient, ORPCError } from "@orpc/server";
 
-import { router } from "../../router";
+import { router } from "../../index";
 
 // --- Test data ---
 
