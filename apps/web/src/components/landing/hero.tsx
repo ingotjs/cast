@@ -1,21 +1,32 @@
+import { consts } from "@ingot/utils/consts";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { Link } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
 import { useSession } from "../../lib/auth-client";
+import { useAuthModal } from "../auth/auth-modal";
+
+const isCast = consts.appName === "Cast";
 
 export const Hero = () => {
   const { data: session } = useSession();
   const { t } = useLingui();
+  const { open: openAuthModal } = useAuthModal();
 
   return (
-    <section className="px-4 pt-20 pb-16 sm:pt-32 sm:pb-24">
-      <div className="page-wrap flex flex-col items-center text-center">
-        <div className="rise-in mb-8 inline-flex items-center gap-2 rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-4 py-1.5 text-sm text-[var(--sea-ink-soft)]">
-          <span className="h-1.5 w-1.5 rounded-full bg-[var(--lagoon)]" />
-          <Trans>Now open source</Trans>
+    <section className="relative px-4 pt-20 pb-16 sm:pt-32 sm:pb-24">
+      {isCast && (
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <img
+            src="/bg-cast.png"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover opacity-[0.07] dark:opacity-[0.12]"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--bg-base)]" />
         </div>
+      )}
 
+      <div className="page-wrap relative flex flex-col items-center text-center">
         <h1
           className="display-title rise-in mx-auto mb-6 max-w-4xl font-bold text-5xl text-[var(--sea-ink)] leading-[1.05] tracking-tight sm:text-7xl"
           style={{ animationDelay: "60ms" }}
@@ -44,15 +55,15 @@ export const Hero = () => {
               <ArrowRight className="size-4" />
             </Link>
           ) : (
-            <Link
-              to="/auth/$path"
-              params={{ path: "sign-up" }}
-              className="inline-flex items-center gap-2 rounded-full bg-[var(--lagoon-deep)] px-7 py-3.5 font-semibold text-sm text-white no-underline shadow-md transition hover:-translate-y-0.5 hover:bg-[var(--lagoon)] hover:shadow-lg"
+            <button
+              type="button"
+              onClick={openAuthModal}
+              className="inline-flex items-center gap-2 rounded-full bg-[var(--btn-accent)] px-7 py-3.5 font-semibold text-sm text-white shadow-md transition hover:-translate-y-0.5 hover:bg-[var(--btn-accent-hover)] hover:shadow-lg"
               data-testid="home-link-signup"
             >
               <Trans>Get Started</Trans>
               <ArrowRight className="size-4" />
-            </Link>
+            </button>
           )}
           <Link
             to="/about"

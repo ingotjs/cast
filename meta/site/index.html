@@ -115,7 +115,7 @@
         left: 0;
         right: 0;
         z-index: 100;
-        background: rgba(10, 10, 11, 0.92);
+        background: var(--bg);
         border-bottom: 1px solid var(--border);
       }
 
@@ -149,8 +149,10 @@
 
       /* ── Package tab bar ── */
       .tab-bar {
-        position: sticky;
+        position: fixed;
         top: 64px;
+        left: 0;
+        right: 0;
         z-index: 99;
         background: var(--bg-subtle);
         border-bottom: 1px solid var(--border);
@@ -302,10 +304,36 @@
       /* ── Hero ── */
       .hero {
         position: relative;
-        padding: 5.5rem 1.5rem 4rem;
+        padding: 18rem 1.5rem 4rem;
         max-width: var(--max-w);
         margin: 0 auto;
         overflow: hidden;
+      }
+
+      .hero-bg-cast {
+        position: absolute;
+        top: 94px;
+        left: 0;
+        right: 0;
+        height: 900px;
+        z-index: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .hero-bg-cast img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+        opacity: 0.12;
+      }
+
+      .hero-bg-cast::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 50%, var(--bg));
       }
 
       .hero-top {
@@ -379,11 +407,11 @@
       .hero-cmd {
         display: inline-flex;
         align-items: center;
-        gap: 1rem;
+        gap: 0.75rem;
         background: var(--bg-card);
         border: 1px solid var(--border);
         border-radius: 10px;
-        padding: 0.625rem 1.25rem;
+        padding: 0.75rem 1rem 0.75rem 1.25rem;
         font-family: var(--font-mono);
         font-size: 0.9375rem;
         margin-bottom: 2rem;
@@ -401,6 +429,31 @@
 
       .hero-cmd .cmd {
         color: var(--text);
+      }
+
+      .copy-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.375rem;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background: transparent;
+        color: var(--text-dim);
+        cursor: pointer;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+
+      .copy-btn:hover {
+        color: var(--text);
+        border-color: var(--border-hover);
+      }
+
+      .copy-btn svg {
+        width: 14px;
+        height: 14px;
       }
 
       .hero-links {
@@ -432,7 +485,7 @@
 
       /* ── Trust bar ── */
       .trust {
-        padding: 3rem 1.5rem;
+        padding: 0.5rem 1.5rem 2rem;
         text-align: center;
       }
 
@@ -441,7 +494,7 @@
         text-transform: uppercase;
         letter-spacing: 0.1em;
         color: var(--text-dim);
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
       }
 
       .trust-logos {
@@ -475,6 +528,8 @@
 
       /* ── Features ── */
       .features {
+        position: relative;
+        z-index: 1;
         padding: 6rem 1.5rem;
         background: var(--bg-subtle);
         border-top: 1px solid var(--border);
@@ -619,6 +674,27 @@
         font-family: var(--font-mono);
       }
 
+      .macos-dots {
+        display: flex;
+        gap: 6px;
+      }
+
+      .macos-dots span {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+
+      .macos-dots span:nth-child(1) {
+        background: #ff5f57;
+      }
+      .macos-dots span:nth-child(2) {
+        background: #febc2e;
+      }
+      .macos-dots span:nth-child(3) {
+        background: #28c840;
+      }
+
       .showcase-code pre {
         padding: 1.25rem;
         font-family: var(--font-mono);
@@ -646,14 +722,23 @@
 
       /* ── Quick start ── */
       .quickstart {
-        padding: 6rem 1.5rem;
-        background: var(--bg-subtle);
+        position: relative;
+        padding: 3.5rem 1.5rem;
+        background:
+          repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 20px,
+            rgba(255, 255, 255, 0.02) 20px,
+            rgba(255, 255, 255, 0.02) 21px
+          ),
+          var(--bg-subtle);
         border-top: 1px solid var(--border);
         border-bottom: 1px solid var(--border);
       }
 
       .quickstart-inner {
-        max-width: 420px;
+        max-width: 320px;
         margin: 0 auto;
         text-align: center;
       }
@@ -680,6 +765,9 @@
       }
 
       .code-block pre {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
         padding: 1.25rem;
         font-family: var(--font-mono);
         font-size: 0.8125rem;
@@ -703,7 +791,6 @@
 
       /* ── Page toggle ── */
       .pkg-page {
-        animation: pageIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
       }
 
       .pkg-page[hidden] {
@@ -772,7 +859,7 @@
       /* ── Responsive ── */
       @media (max-width: 640px) {
         .hero {
-          padding: 4rem 1.25rem 3rem;
+          padding: 10rem 1.25rem 3rem;
         }
 
         .trust-logos {
@@ -895,7 +982,7 @@
         >
           <div class="tab-btn-top">
             <span class="tab-btn-name">@ingot/cast</span>
-            <span class="tab-badge tab-badge--cast">Stable</span>
+            <span class="tab-badge tab-badge--cast">New</span>
           </div>
           <p class="tab-btn-desc">Full-stack TypeScript starter with AI-first DX</p>
         </button>
@@ -920,26 +1007,36 @@
       <!-- ════════════════════════════════════════════ -->
       <!-- CAST                                        -->
       <!-- ════════════════════════════════════════════ -->
-      <div class="pkg-page" id="page-cast">
+      <div class="pkg-page" id="page-cast" style="position: relative">
+        <div class="hero-bg-cast">
+          <img src="bg-cast.png" alt="" />
+        </div>
         <section class="hero">
-          <div class="hero-top">
-            <svg class="hero-ingot hero-ingot--cast" viewBox="0 0 40 30" fill="none" aria-hidden="true">
-              <path class="ingot-body" d="M2 30L8 12h24l6 18H2z" />
-              <path class="ingot-top" d="M8 12l3-8h18l3 8H8z" />
-            </svg>
-            <div class="hero-label">
-              Open Source
-              <strong class="cast-accent">@ingot/cast</strong>
-            </div>
-          </div>
-          <h1>The TypeScript starter<br />your AI agent already knows.</h1>
+          <h1>Production TypeScript<br />from first commit.</h1>
           <p class="hero-desc">
-            42 Claude Code skills. Strict CLAUDE.md instructions. A codebase AI navigates like it wrote it. Auth, API,
-            database, email, i18n, edge deploy — all wired up.
+            Auth, API, database, email, i18n, edge deploy — all wired up. Built with strict code standards and
+            comprehensive AI coding instructions so your agent writes production-quality code from day one.
           </p>
           <div class="hero-cmd">
             <span class="prompt">$</span>
-            <span class="cmd">bunx @ingot/cast</span>
+            <span class="cmd"><span class="cmd-green">bunx</span> <span class="cmd-amber">@ingot/cast</span></span>
+            <button
+              class="copy-btn"
+              onclick="navigator.clipboard.writeText('bunx @ingot/cast')"
+              aria-label="Copy command"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            </button>
           </div>
           <div class="hero-links">
             <a href="https://github.com/ingotjs/cast" target="_blank" rel="noopener" class="hero-link">
@@ -987,10 +1084,18 @@
               Vite+
             </a>
             <a href="https://workers.cloudflare.com/" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="#F38020" aria-hidden="true">
-                <path
-                  d="m8.213.063 8.879 12.136-8.67 11.739h2.476l8.665-11.735-8.89-12.14Zm4.728 0 9.02 11.992-9.018 11.883h2.496L24 12.656v-1.199L15.434.063ZM7.178 2.02.01 11.398l-.01 1.2 7.203 9.644 1.238-1.676-6.396-8.556 6.361-8.313Z"
-                />
+              <svg viewBox="0 -70 256 256" fill="currentColor" aria-hidden="true">
+                <g transform="translate(0, -1)">
+                  <path
+                    d="M202.357,50.394 L197.046,48.27 C172.085,104.434 72.786,70.289 66.811,86.997 C65.815,98.283 121.038,89.143 160.517,91.056 C172.556,91.639 178.593,100.727 173.481,115.54 L183.55,115.571 C195.165,79.362 232.233,97.841 233.782,85.891 C231.237,78.034 191.181,85.891 202.357,50.394 Z"
+                  />
+                  <path
+                    d="M176.332,109.348 C177.925,104.037 177.394,98.726 174.739,95.539 C172.083,92.352 168.365,90.228 163.585,89.697 L71.17,88.634 C70.639,88.634 70.108,88.103 69.577,88.103 C69.046,87.572 69.046,87.041 69.577,86.51 C70.108,85.448 70.639,84.916 71.701,84.916 L164.647,83.854 C175.801,83.323 187.486,74.294 191.734,63.672 L197.046,49.863 C197.046,49.331 197.577,48.8 197.046,48.269 C191.203,21.182 166.772,0.999 138.091,0.999 C111.535,0.999 88.697,17.995 80.73,41.896 C75.419,38.178 69.046,36.053 61.61,36.585 C48.863,37.647 38.772,48.269 37.178,61.016 C36.647,64.203 37.178,67.39 37.71,70.576 C16.996,71.107 0,88.103 0,109.348 C0,111.472 0,113.066 0.531,115.19 C0.531,116.253 1.593,116.784 2.125,116.784 L172.614,116.784 C173.676,116.784 174.739,116.253 174.739,115.19 L176.332,109.348 Z"
+                  />
+                  <path
+                    d="M205.544,49.863 L202.888,49.863 C202.357,49.863 201.826,50.394 201.295,50.925 L197.577,63.672 C195.984,68.983 196.515,74.295 199.171,77.481 C201.826,80.668 205.544,82.792 210.324,83.324 L229.976,84.386 C230.507,84.386 231.038,84.917 231.569,84.917 C232.1,85.448 232.1,85.979 231.569,86.51 C231.038,87.573 230.507,88.104 229.444,88.104 L209.262,89.166 C198.108,89.697 186.424,98.726 182.175,109.348 L181.112,114.129 C180.581,114.66 181.112,115.722 182.175,115.722 L252.283,115.722 C253.345,115.722 253.876,115.191 253.876,114.129 C254.938,109.88 256,105.1 256,100.319 C256,72.701 233.162,49.863 205.544,49.863"
+                  />
+                </g>
               </svg>
               Cloudflare
             </a>
@@ -1038,8 +1143,8 @@
                 </div>
                 <h3>AI-First Architecture</h3>
                 <p>
-                  42 Claude Code skills, comprehensive CLAUDE.md instructions, and strict code standards that eliminate
-                  ambiguity. AI writes better code here than in most hand-rolled projects.
+                  Comprehensive CLAUDE.md instructions, dozens of Claude Code skills, and strict code standards that
+                  eliminate ambiguity. AI writes better code here than in most hand-rolled projects.
                 </p>
               </div>
               <div class="feature animate-on-scroll">
@@ -1209,8 +1314,10 @@
             <h2>Get started</h2>
             <p class="quickstart-sub">Scaffold, install, dev. Done.</p>
             <div class="code-block">
-              <div class="code-header">Terminal</div>
-              <pre><code><span class="prompt">$</span> <span class="cmd-green">bunx</span> <span class="cmd-amber">@ingot/cast</span></code></pre>
+              <div class="code-header">
+                <div class="macos-dots"><span></span><span></span><span></span></div>
+              </div>
+              <pre><code><span class="prompt">$</span> <span class="cmd-green">bunx</span> <span class="cmd-amber">@ingot/cast</span></code><button class="copy-btn" onclick="navigator.clipboard.writeText('bunx @ingot/cast')" aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></pre>
             </div>
           </div>
         </section>
@@ -1219,18 +1326,11 @@
       <!-- ════════════════════════════════════════════ -->
       <!-- PROSPECT                                    -->
       <!-- ════════════════════════════════════════════ -->
-      <div class="pkg-page" id="page-prospect" hidden>
+      <div class="pkg-page" id="page-prospect" hidden style="position: relative">
+        <div class="hero-bg-cast">
+          <img src="bg-prospect.png" alt="" />
+        </div>
         <section class="hero">
-          <div class="hero-top">
-            <svg class="hero-ingot hero-ingot--prospect" viewBox="0 0 40 30" fill="none" aria-hidden="true">
-              <path class="ingot-body" d="M2 30L8 12h24l6 18H2z" />
-              <path class="ingot-top" d="M8 12l3-8h18l3 8H8z" />
-            </svg>
-            <div class="hero-label">
-              Open Source
-              <strong class="prospect-accent">@ingot/prospect</strong>
-            </div>
-          </div>
           <h1>Know what you<br />haven't tested.</h1>
           <p class="hero-desc">
             Declare every interactive element per route. Mark coverage gaps with <code>test: null</code>. Validate on
@@ -1238,7 +1338,26 @@
           </p>
           <div class="hero-cmd">
             <span class="prompt">$</span>
-            <span class="cmd">bun add @ingot/prospect</span>
+            <span class="cmd"
+              ><span class="cmd-green">bun</span> <span class="cmd-amber">add @ingot/prospect</span></span
+            >
+            <button
+              class="copy-btn"
+              onclick="navigator.clipboard.writeText('bun add @ingot/prospect')"
+              aria-label="Copy command"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="9" y="9" width="13" height="13" rx="2" />
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+              </svg>
+            </button>
           </div>
           <div class="hero-links">
             <a
@@ -1481,8 +1600,10 @@
             <h2>Get started</h2>
             <p class="quickstart-sub">Install, define, validate.</p>
             <div class="code-block">
-              <div class="code-header">Terminal</div>
-              <pre><code><span class="prompt">$</span> <span class="cmd-green">bun</span> <span class="cmd-amber">add @ingot/prospect</span></code></pre>
+              <div class="code-header">
+                <div class="macos-dots"><span></span><span></span><span></span></div>
+              </div>
+              <pre><code><span class="prompt">$</span> <span class="cmd-green">bun</span> <span class="cmd-amber">add @ingot/prospect</span></code><button class="copy-btn" onclick="navigator.clipboard.writeText('bun add @ingot/prospect')" aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></pre>
             </div>
           </div>
         </section>
@@ -1492,10 +1613,6 @@
     <!-- Footer -->
     <footer>
       <div class="footer-inner">
-        <div class="footer-links">
-          <a href="https://github.com/ingotjs" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://www.npmjs.com/org/ingot" target="_blank" rel="noopener">npm</a>
-        </div>
         <p class="footer-copy">
           made with <span class="heart">&#9829;</span> by
           <a href="https://github.com/ftzi" target="_blank" rel="noopener" class="footer-author">ftzi</a>
@@ -1530,17 +1647,12 @@
             btn.setAttribute("tabindex", isTarget ? "0" : "-1");
           });
 
-          /* Toggle pages */
+          /* Toggle pages — hide old first, then show new (avoids flash) */
           pages.forEach(function (page) {
-            var isTarget = page.id === "page-" + name;
-            if (isTarget) {
-              page.removeAttribute("hidden");
-              page.style.animation = "none";
-              page.offsetHeight;
-              page.style.animation = "";
-            } else {
-              page.setAttribute("hidden", "");
-            }
+            if (page.id !== "page-" + name) page.setAttribute("hidden", "");
+          });
+          pages.forEach(function (page) {
+            if (page.id === "page-" + name) page.removeAttribute("hidden");
           });
 
           /* Update nav links */

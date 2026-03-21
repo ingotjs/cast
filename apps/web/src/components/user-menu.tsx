@@ -12,9 +12,10 @@ import {
 } from "@ingot/ui/components/dropdown-menu";
 import { Trans, useLingui } from "@lingui/react/macro";
 import { usePostHog } from "@posthog/react";
-import { Link } from "@tanstack/react-router";
 
 import { signOut, useSession } from "@/lib/auth-client";
+
+import { useAuthModal } from "./auth/auth-modal";
 
 const getInitials = (name: string) => {
   const parts = name.trim().split(/\s+/);
@@ -28,16 +29,18 @@ export const UserMenu = () => {
   const posthog = usePostHog();
   const { t } = useLingui();
 
+  const { open: openAuthModal } = useAuthModal();
+
   if (!session?.user) {
     return (
-      <Link
-        to="/auth/$path"
-        params={{ path: "sign-in" }}
-        className="rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 font-semibold text-[var(--sea-ink)] text-sm shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition hover:-translate-y-0.5"
+      <button
+        type="button"
+        onClick={openAuthModal}
+        className="rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 font-semibold text-[var(--sea-ink)] text-sm shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition"
         data-testid="header-link-signin"
       >
         <Trans>Sign in</Trans>
-      </Link>
+      </button>
     );
   }
 

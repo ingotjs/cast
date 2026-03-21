@@ -22,7 +22,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export const AuthForm = () => {
+export const AuthForm = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
   const navigate = useNavigate();
   const posthog = usePostHog();
   const {
@@ -47,7 +47,8 @@ export const AuthForm = () => {
         posthog?.identify(user.id, { email: user.email, name: user.name });
         posthog?.capture("user_signed_in", { email: user.email });
       }
-      navigate({ to: "/" });
+      if (onSuccess) onSuccess();
+      else navigate({ to: "/" });
       return;
     }
 
@@ -64,7 +65,8 @@ export const AuthForm = () => {
         posthog?.identify(user.id, { email: user.email, name: user.name });
         posthog?.capture("user_signed_up", { email: user.email, name: user.name });
       }
-      navigate({ to: "/" });
+      if (onSuccess) onSuccess();
+      else navigate({ to: "/" });
       return;
     }
 

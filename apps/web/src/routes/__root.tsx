@@ -7,6 +7,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 
+import { AuthModalProvider } from "../components/auth/auth-modal";
 import { Footer } from "../components/footer";
 import { Header } from "../components/header";
 import { Providers } from "../components/providers";
@@ -24,11 +25,18 @@ const ogDescription = msg`The modern full-stack starter`;
 
 const AppContent = ({ children }: { children: React.ReactNode }) => (
   <>
-    <div className="flex min-h-dvh flex-col">
-      <Header />
-      <div className="flex-1">{children}</div>
-      <Footer />
-    </div>
+    <AuthModalProvider>
+      <div className="h-[200px] -mb-[200px] bg-[var(--header-bg)]" aria-hidden="true" />
+      <div className="flex min-h-dvh flex-col">
+        <Header />
+        <div className="flex-1">{children}</div>
+        <Footer />
+      </div>
+      <div
+        className="h-[200px] -mt-[200px] bg-[color-mix(in_oklab,var(--header-bg)_84%,transparent_16%)]"
+        aria-hidden="true"
+      />
+    </AuthModalProvider>
     <TanStackDevtools
       config={{ position: "bottom-right" }}
       plugins={[

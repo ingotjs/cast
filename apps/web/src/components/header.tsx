@@ -7,7 +7,7 @@ import { ThemeToggle } from "./theme-toggle";
 import { UserMenu } from "./user-menu";
 
 export const Header = () => (
-  <header className="site-header sticky top-0 z-50 border-[var(--line)] border-b bg-[var(--header-bg)] px-4 backdrop-blur-lg">
+  <header className="sticky top-0 z-50 border-[var(--line)] border-b bg-[var(--header-bg)] px-4 backdrop-blur-lg">
     <nav className="page-wrap flex items-center justify-between py-3 sm:py-4">
       <div className="flex items-center gap-6">
         <Link to="/" className="no-underline" data-testid="header-link-logo">

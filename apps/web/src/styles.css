@@ -12,6 +12,8 @@
   --sea-ink-soft: #416166;
   --lagoon: #4fb8b2;
   --lagoon-deep: #328f97;
+  --btn-accent: #328f97;
+  --btn-accent-hover: #3a9da5;
   --palm: #2f6a4a;
   --sand: #e7f0e8;
   --foam: #f3faf5;
@@ -34,6 +36,8 @@
   --sea-ink-soft: #afcdc8;
   --lagoon: #60d7cf;
   --lagoon-deep: #8de5db;
+  --btn-accent: #2d8a92;
+  --btn-accent-hover: #35a0a9;
   --palm: #6ec89a;
   --sand: #0f1a1e;
   --foam: #101d22;
@@ -57,6 +61,8 @@
     --sea-ink-soft: #afcdc8;
     --lagoon: #60d7cf;
     --lagoon-deep: #8de5db;
+    --btn-accent: #2d8a92;
+    --btn-accent-hover: #35a0a9;
     --palm: #6ec89a;
     --sand: #0f1a1e;
     --foam: #101d22;
@@ -222,33 +228,8 @@ a {
   color: var(--sea-ink);
 }
 
-.site-header {
-  position: relative;
-}
-
-.site-header::before {
-  content: "";
-  position: absolute;
-  bottom: 100%;
-  left: 0;
-  right: 0;
-  height: 200px;
-  background: var(--header-bg);
-}
-
 .site-footer {
-  position: relative;
   border-top: 1px solid var(--line);
-  background: color-mix(in oklab, var(--header-bg) 84%, transparent 16%);
-}
-
-.site-footer::after {
-  content: "";
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  height: 200px;
   background: color-mix(in oklab, var(--header-bg) 84%, transparent 16%);
 }
 

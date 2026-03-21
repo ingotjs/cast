@@ -178,6 +178,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 
 ### General Rules
 
+- **Take user instructions LITERALLY.** When the user says to change a specific file or location, do EXACTLY that — don't substitute a different file or scope. Read instructions carefully before acting.
 - **ZERO TOLERANCE for warnings, errors, or noise in dev/build output.** If a tool emits warnings, FIX the root cause — don't dismiss as "harmless" or "pre-existing". This project MUST be clean.
 - **NEVER remove features, UI, or existing code unless explicitly asked.** Broken? FIX IT — don't delete it.
 - **NEVER discard unstaged changes** (`git checkout .`, `git restore .`, `git clean`, `git reset --hard`) to "start fresh" when debugging. Fix the problem — don't nuke the work.
