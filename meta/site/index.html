@@ -89,6 +89,14 @@
         text-decoration: none;
       }
 
+      :not(pre) > code {
+        font-family: var(--font-mono);
+        font-size: 0.85em;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 0.15em 0.4em;
+        border-radius: 4px;
+      }
+
       /* ── Skip link ── */
       .skip-link {
         position: absolute;
@@ -133,17 +141,17 @@
       .nav-brand {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
+        gap: 0.625rem;
         font-weight: 700;
-        font-size: 1.125rem;
+        font-size: 1.3rem;
         letter-spacing: -0.02em;
         min-height: 2.75rem;
         flex-shrink: 0;
       }
 
       .nav-brand svg {
-        width: 20px;
-        height: 15px;
+        width: 26px;
+        height: 20px;
         flex-shrink: 0;
       }
 
@@ -304,7 +312,7 @@
       /* ── Hero ── */
       .hero {
         position: relative;
-        padding: 18rem 1.5rem 4rem;
+        padding: 18rem 1.5rem 2rem;
         max-width: var(--max-w);
         margin: 0 auto;
         overflow: hidden;
@@ -312,7 +320,7 @@
 
       .hero-bg-cast {
         position: absolute;
-        top: 94px;
+        top: 110px;
         left: 0;
         right: 0;
         height: 900px;
@@ -422,6 +430,86 @@
         border-color: var(--border-hover);
       }
 
+      .hero-cmd--pm {
+        display: inline-flex;
+        flex-direction: column;
+        padding: 0;
+        gap: 0;
+        min-width: 34ch;
+        text-align: left;
+      }
+
+      .hero-cmd--pm .hero-cmd-line {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem 0.75rem 1.25rem;
+      }
+
+      /* ── Bun link with tooltip ── */
+      .bun-link {
+        position: relative;
+        text-decoration: underline dotted;
+        text-underline-offset: 3px;
+        text-decoration-color: var(--text-dim);
+      }
+
+      .bun-link::after {
+        content: "Install Bun ↗";
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.375rem 0.625rem;
+        font-size: 0.75rem;
+        font-family: var(--font);
+        color: var(--text-muted);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s;
+      }
+
+      .bun-link:hover::after {
+        opacity: 1;
+      }
+
+      /* ── Package manager tabs ── */
+      .pm-tabs {
+        display: flex;
+        justify-content: flex-start;
+        border-bottom: 1px solid var(--border);
+        width: 100%;
+      }
+
+      .pm-tab {
+        appearance: none;
+        border: none;
+        background: transparent;
+        padding: 0.5rem 0.875rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+        transition:
+          color 0.15s,
+          border-color 0.15s;
+      }
+
+      .pm-tab:hover {
+        color: var(--text-muted);
+      }
+
+      .pm-tab[aria-selected="true"] {
+        color: var(--text);
+        border-bottom-color: var(--accent);
+      }
+
       .hero-cmd .prompt {
         color: var(--text-dim);
         user-select: none;
@@ -432,23 +520,50 @@
       }
 
       .copy-btn {
+        position: relative;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         padding: 0.375rem;
         border-radius: 6px;
-        border: 1px solid var(--border);
+        border: none;
         background: transparent;
         color: var(--text-dim);
         cursor: pointer;
-        transition:
-          color 0.15s,
-          border-color 0.15s;
+        transition: color 0.15s;
       }
 
       .copy-btn:hover {
         color: var(--text);
-        border-color: var(--border-hover);
+      }
+
+      .copy-btn::after {
+        content: "Copy";
+        position: absolute;
+        bottom: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.7rem;
+        font-family: var(--font);
+        color: var(--text-muted);
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s;
+      }
+
+      .copy-btn:hover::after {
+        opacity: 1;
+      }
+
+      .copy-btn.copied::after {
+        content: "Copied ✓";
+        opacity: 1;
+        color: #4ade80;
       }
 
       .copy-btn svg {
@@ -512,18 +627,22 @@
         font-size: 0.875rem;
         font-weight: 600;
         color: var(--text-dim);
-        transition: color 0.2s;
+        filter: brightness(0.7);
+        transition:
+          color 0.2s,
+          filter 0.2s;
         padding: 0.625rem 0;
       }
 
       .trust-logos a:hover {
-        color: var(--text-muted);
+        color: var(--text);
+        filter: brightness(1);
       }
 
-      .trust-logos svg {
+      .trust-logos svg,
+      .trust-logos img {
         width: 20px;
         height: 20px;
-        fill: currentColor;
       }
 
       /* ── Features ── */
@@ -583,6 +702,78 @@
       }
 
       .feature p {
+        font-size: 0.875rem;
+        color: var(--text-muted);
+        line-height: 1.7;
+      }
+
+      .feature p a {
+        color: var(--text);
+        text-decoration: underline;
+        text-decoration-color: var(--border);
+        text-underline-offset: 2px;
+        transition: text-decoration-color 0.15s;
+      }
+
+      .feature p a:hover {
+        text-decoration-color: var(--text);
+      }
+
+      /* ── And more section ── */
+      .more {
+        position: relative;
+        z-index: 1;
+        padding: 6rem 1.5rem;
+      }
+
+      .more-inner {
+        max-width: var(--max-w);
+        margin: 0 auto;
+      }
+
+      .more-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+        gap: 1.5rem;
+      }
+
+      .more-item {
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        overflow: hidden;
+      }
+
+      .more-item-img {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: rgba(255, 255, 255, 0.03);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text-dim);
+        font-size: 0.75rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .more-item-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .more-item-body {
+        padding: 1.25rem;
+      }
+
+      .more-item-body h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 0.375rem;
+        letter-spacing: -0.01em;
+      }
+
+      .more-item-body p {
         font-size: 0.875rem;
         color: var(--text-muted);
         line-height: 1.7;
@@ -738,7 +929,7 @@
       }
 
       .quickstart-inner {
-        max-width: 320px;
+        max-width: 360px;
         margin: 0 auto;
         text-align: center;
       }
@@ -930,8 +1121,9 @@
         <div class="nav-inner">
           <a href="/" class="nav-brand">
             <svg viewBox="0 0 24 18" fill="none" aria-hidden="true">
-              <path d="M1 18L5.5 7h13l4.5 11H1z" fill="#D4A04A" />
-              <path d="M5.5 7L8 2h8l2.5 5h-13z" fill="#EDD26B" />
+              <path d="M1 17L15 17L13 11L3 11Z" fill="rgba(255,255,255,0.25)" />
+              <path d="M3 11L13 11L21 5L11 5Z" fill="rgba(255,255,255,0.7)" />
+              <path d="M15 17L23 11L21 5L13 11Z" fill="rgba(255,255,255,0.1)" />
             </svg>
             @ingot
           </a>
@@ -1012,14 +1204,17 @@
           <img src="bg-cast.png" alt="" />
         </div>
         <section class="hero">
-          <h1>Production TypeScript<br />from first commit.</h1>
+          <h1>Setup and deploy<br />in a single command.</h1>
           <p class="hero-desc">
             Auth, API, database, email, i18n, edge deploy — all wired up. Built with strict code standards and
             comprehensive AI coding instructions so your agent writes production-quality code from day one.
           </p>
           <div class="hero-cmd">
             <span class="prompt">$</span>
-            <span class="cmd"><span class="cmd-green">bunx</span> <span class="cmd-amber">@ingot/cast</span></span>
+            <span class="cmd"
+              ><a href="https://bun.sh" target="_blank" rel="noopener" class="cmd-green bun-link">bunx</a>
+              <span class="cmd-amber">@ingot/cast</span></span
+            >
             <button
               class="copy-btn"
               onclick="navigator.clipboard.writeText('bunx @ingot/cast')"
@@ -1060,40 +1255,42 @@
           <p class="trust-label">Built with</p>
           <div class="trust-logos">
             <a href="https://tanstack.com/start" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="#E1553E" aria-hidden="true">
-                <path
-                  d="M11.078.042c.316-.042.65-.014.97-.014 1.181 0 2.341.184 3.472.532a12.3 12.3 0 0 1 3.973 2.086 11.9 11.9 0 0 1 3.432 4.33c1.446 3.15 1.436 6.97-.046 10.107-.958 2.029-2.495 3.727-4.356 4.965-1.518 1.01-3.293 1.629-5.1 1.848-2.298.279-4.784-.129-6.85-1.188-3.88-1.99-6.518-5.994-6.57-10.382-.01-.846.003-1.697.17-2.534.273-1.365.748-2.683 1.463-3.88a12 12 0 0 1 2.966-3.36A12.3 12.3 0 0 1 9.357.3a12 12 0 0 1 1.255-.2l.133-.016zM7.064 19.99c-.535.057-1.098.154-1.557.454.103.025.222 0 .33 0 .258 0 .52-.01.778.002.647.028 1.32.131 1.945.303.8.22 1.505.65 2.275.942.813.307 1.622.402 2.484.402.435 0 .866-.001 1.287-.12-.22-.117-.534-.095-.778-.144a11 11 0 0 1-1.556-.416 12 12 0 0 1-1.093-.467l-.23-.108a15 15 0 0 0-1.012-.44c-.905-.343-1.908-.512-2.873-.408m.808-2.274c-1.059 0-2.13.187-3.083.667q-.346.177-.659.41c-.063.046-.175.106-.199.188s.061.151.11.204c.238-.127.464-.261.718-.357 1.64-.624 3.63-.493 5.268.078.817.285 1.569.712 2.365 1.046.89.374 1.798.616 2.753.74 1.127.147 2.412.028 3.442-.48.362-.179.865-.451 1.018-.847-.189.017-.36.098-.539.154a9 9 0 0 1-.868.222c-.994.2-2.052.24-3.053.06-.943-.17-1.82-.513-2.693-.873l-.111-.046-.223-.092-.112-.046a26 26 0 0 0-1.35-.527c-.89-.31-1.842-.5-2.784-.5M9.728 1.452c-1.27.28-2.407.826-3.502 1.514-.637.4-1.245.81-1.796 1.323-.82.765-1.447 1.695-1.993 2.666-.563 1-.924 2.166-1.098 3.297-.172 1.11-.2 2.277-.004 3.388.245 1.388.712 2.691 1.448 3.897.248-.116.424-.38.629-.557.414-.359.85-.691 1.317-.978a3.5 3.5 0 0 1 .539-.264c.07-.029.187-.055.22-.132.053-.124-.045-.34-.062-.468a7 7 0 0 1-.068-1.109 9.7 9.7 0 0 1 .61-3.177c.29-.76.73-1.45 1.254-2.069.177-.21.365-.405.56-.6.115-.114.258-.212.33-.359-.376 0-.751.108-1.108.218-.769.237-1.518.588-2.155 1.084-.291.226-.504.522-.779.76-.084.073-.235.17-.352.116-.176-.083-.149-.43-.169-.59-.078-.612.154-1.387.45-1.918.473-.852 1.348-1.58 2.376-1.555.444.011.833.166 1.257.266-.107-.153-.252-.264-.389-.39a5.4 5.4 0 0 0-1.107-.8c-.163-.085-.338-.136-.509-.2-.086-.03-.195-.074-.227-.17-.06-.177.26-.342.377-.417.453-.289 1.01-.527 1.556-.54.854-.021 1.688.452 2.04 1.258.123.284.16.583.184.885l.004.057.006.085.002.029.005.057.004.056c.268-.218.457-.54.718-.774.612-.547 1.45-.79 2.245-.544a2.97 2.97 0 0 1 1.71 1.378c.097.173.365.595.171.767-.152.134-.344.03-.504-.026a3 3 0 0 0-.372-.094l-.068-.014-.069-.013a3.9 3.9 0 0 0-1.377-.002c-.282.05-.557.15-.838.192v.06c.768.006 1.51.444 1.89 1.109.157.275.235.59.295.9.075.38.022.796-.082 1.168-.035.125-.098.336-.247.365-.106.02-.195-.085-.256-.155a4.6 4.6 0 0 0-.492-.522 20 20 0 0 0-1.467-1.14c-.267-.19-.56-.44-.868-.556.087.208.171.402.2.63.088.667-.192 1.296-.612 1.798a2.6 2.6 0 0 1-.426.427c-.067.05-.151.114-.24.1-.277-.044-.31-.463-.353-.677-.144-.726-.086-1.447.114-2.158-.178.09-.307.287-.418.45a5.3 5.3 0 0 0-.612 1.138c-.61 1.617-.604 3.51.186 5.066.088.174.221.15.395.15h.157a3 3 0 0 1 .472.018c.08.01.193 0 .257.06.077.072.036.194.018.282-.05.246-.066.469-.066.72.328-.051.419-.576.535-.84.131-.298.265-.597.387-.9.06-.148.14-.314.119-.479-.024-.185-.157-.381-.25-.54-.177-.298-.378-.606-.508-.929-.104-.258-.007-.58.286-.672.161-.05.334.049.439.166.22.244.363.609.523.896l1.249 2.248q.159.286.32.57c.043.074.086.188.173.219.077.028.182-.012.26-.027.198-.04.398-.083.598-.12.24-.043.605-.035.778-.222-.253-.08-.545-.075-.808-.057-.158.01-.333.067-.479-.025-.216-.137-.36-.455-.492-.667-.326-.525-.633-1.057-.945-1.59l-.05-.084-.1-.17q-.075-.126-.149-.255c-.037-.066-.092-.153-.039-.227.056-.076.179-.08.29-.081h.021q.066.001.117-.004a10 10 0 0 1 1.347-.107c-.035-.122-.135-.26-.103-.39.071-.292.49-.383.686-.174.131.14.207.334.292.504.113.223.24.44.361.66.211.383.441.757.658 1.138l.055.094.028.047c.093.156.187.314.238.489-.753-.035-1.318-.909-1.646-1.499-.027.095.016.179.05.27q.103.282.262.54c.152.244.326.495.556.673.408.315.945.317 1.436.283.315-.022.708-.165 1.018-.068s.434.438.25.7c-.138.196-.321.27-.55.3.162.346.373.667.527 1.02.064.146.13.37.283.448.102.051.248.003.358 0-.11-.292-.317-.54-.419-.839.31.015.61.176.898.28.567.202 1.128.424 1.687.648l.258.104c.23.092.462.183.689.283.083.037.198.123.29.07.074-.043.123-.146.169-.215a10.3 10.3 0 0 0 1.393-3.208c.75-2.989.106-6.287-1.695-8.783-.692-.96-1.562-1.789-2.522-2.476-2.401-1.718-5.551-2.407-8.44-1.768m4.908 14.904c-.636.166-1.292.317-1.945.401.086.293.296.577.45.84.059.101.122.237.24.281.132.05.292-.03.417-.072-.058-.158-.155-.3-.235-.45-.033-.06-.084-.133-.056-.206.05-.137.263-.13.381-.153.31-.063.617-.142.928-.204.114-.023.274-.085.389-.047.086.03.138.1.187.174l.022.033q.043.07.097.122c.125.113.313.13.472.162-.097-.219-.259-.41-.362-.63-.06-.127-.11-.315-.242-.388-.182-.102-.557.089-.743.137m-4.01-1.457c-.03.38-.147.689-.33 1.019.21.026.423.036.629.087.154.038.296.11.449.153-.082-.224-.233-.423-.35-.63-.12-.208-.226-.462-.398-.63"
-                />
-              </svg>
+              <img
+                src="https://tanstack.com/images/logos/logo-color-100.png"
+                width="20"
+                height="20"
+                alt=""
+                aria-hidden="true"
+              />
               TanStack Start
             </a>
-            <a href="https://bun.sh/" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="#fbf0df" aria-hidden="true">
-                <path
-                  d="M12 22.596c6.628 0 12-4.338 12-9.688 0-3.318-2.057-6.248-5.219-7.986-1.286-.715-2.297-1.357-3.139-1.89C14.058 2.025 13.08 1.404 12 1.404c-1.097 0-2.334.785-3.966 1.821a49.92 49.92 0 0 1-2.816 1.697C2.057 6.66 0 9.59 0 12.908c0 5.35 5.372 9.687 12 9.687v.001ZM10.599 4.715c.334-.759.503-1.58.498-2.409 0-.145.202-.187.23-.029.658 2.783-.902 4.162-2.057 4.624-.124.048-.199-.121-.103-.209a5.763 5.763 0 0 0 1.432-1.977Zm2.058-.102a5.82 5.82 0 0 0-.782-2.306v-.016c-.069-.123.086-.263.185-.172 1.962 2.111 1.307 4.067.556 5.051-.082.103-.23-.003-.189-.126a5.85 5.85 0 0 0 .23-2.431Zm1.776-.561a5.727 5.727 0 0 0-1.612-1.806v-.014c-.112-.085-.024-.274.114-.218 2.595 1.087 2.774 3.18 2.459 4.407a.116.116 0 0 1-.049.071.11.11 0 0 1-.153-.026.122.122 0 0 1-.022-.083 5.891 5.891 0 0 0-.737-2.331Zm-5.087.561c-.617.546-1.282.76-2.063 1-.117 0-.195-.078-.156-.181 1.752-.909 2.376-1.649 2.999-2.778 0 0 .155-.118.188.085 0 .304-.349 1.329-.968 1.874Zm4.945 11.237a2.957 2.957 0 0 1-.937 1.553c-.346.346-.8.565-1.286.62a2.178 2.178 0 0 1-1.327-.62 2.955 2.955 0 0 1-.925-1.553.244.244 0 0 1 .064-.198.234.234 0 0 1 .193-.069h3.965a.226.226 0 0 1 .19.07c.05.053.073.125.063.197Zm-5.458-2.176a1.862 1.862 0 0 1-2.384-.245 1.98 1.98 0 0 1-.233-2.447c.207-.319.503-.566.848-.713a1.84 1.84 0 0 1 1.092-.11c.366.075.703.261.967.531a1.98 1.98 0 0 1 .408 2.114 1.931 1.931 0 0 1-.698.869v.001Zm8.495.005a1.86 1.86 0 0 1-2.381-.253 1.964 1.964 0 0 1-.547-1.366c0-.384.11-.76.32-1.079.207-.319.503-.567.849-.713a1.844 1.844 0 0 1 1.093-.108c.367.076.704.262.968.534a1.98 1.98 0 0 1 .4 2.117 1.932 1.932 0 0 1-.702.868Z"
-                />
-              </svg>
-              Bun
-            </a>
             <a href="https://vite.dev/plus/" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="#9135FF" aria-hidden="true">
+              <svg viewBox="0 0 36 20" fill="none" aria-hidden="true">
                 <path
-                  d="M13.056 23.238a.57.57 0 0 1-1.02-.355v-5.202c0-.63-.512-1.143-1.144-1.143H5.148a.57.57 0 0 1-.464-.903l3.777-5.29c.54-.753 0-1.804-.93-1.804H.57a.574.574 0 0 1-.543-.746.6.6 0 0 1 .08-.157L5.008.78a.57.57 0 0 1 .467-.24h14.589a.57.57 0 0 1 .466.903l-3.778 5.29c-.54.755 0 1.806.93 1.806h5.745c.238 0 .424.138.513.322a.56.56 0 0 1-.063.603z"
+                  fill="#6254fe"
+                  d="M17.85 19.535a.483.483 0 0 1-.864-.298v-4.403a.967.967 0 0 0-.967-.967h-4.862a.483.483 0 0 1-.393-.764l3.197-4.475a.967.967 0 0 0-.788-1.53H7.29a.483.483 0 0 1-.393-.764L11.04.533a.48.48 0 0 1 .394-.203h12.348c.393 0 .622.445.393.764L20.978 5.57c-.457.64 0 1.53.788 1.53h4.861c.404 0 .63.464.38.782L17.85 19.536"
+                />
+                <path
+                  fill="#9ca3af"
+                  d="M3.644 0c-3.932 5.628-3.955 14.351 0 20H6.3C2.346 14.35 2.37 5.627 6.3 0zM30.625 10h2.657c-.001-3.593-.99-7.184-2.957-10h-2.656c1.966 2.816 2.955 6.407 2.957 10zM35.314 14.907h-2.665a19 19 0 0 0 .453-2.251h-2.657a19 19 0 0 1-.453 2.251h-2.669a17 17 0 0 1-.944 2.658h2.669A15 15 0 0 1 27.668 20h2.656a15 15 0 0 0 1.38-2.435h2.665c.386-.851.7-1.742.944-2.658"
                 />
               </svg>
               Vite+
             </a>
             <a href="https://workers.cloudflare.com/" target="_blank" rel="noopener">
-              <svg viewBox="0 -70 256 256" fill="currentColor" aria-hidden="true">
+              <svg viewBox="0 -70 256 256" aria-hidden="true">
                 <g transform="translate(0, -1)">
                   <path
                     d="M202.357,50.394 L197.046,48.27 C172.085,104.434 72.786,70.289 66.811,86.997 C65.815,98.283 121.038,89.143 160.517,91.056 C172.556,91.639 178.593,100.727 173.481,115.54 L183.55,115.571 C195.165,79.362 232.233,97.841 233.782,85.891 C231.237,78.034 191.181,85.891 202.357,50.394 Z"
+                    fill="#FFFFFF"
                   />
                   <path
                     d="M176.332,109.348 C177.925,104.037 177.394,98.726 174.739,95.539 C172.083,92.352 168.365,90.228 163.585,89.697 L71.17,88.634 C70.639,88.634 70.108,88.103 69.577,88.103 C69.046,87.572 69.046,87.041 69.577,86.51 C70.108,85.448 70.639,84.916 71.701,84.916 L164.647,83.854 C175.801,83.323 187.486,74.294 191.734,63.672 L197.046,49.863 C197.046,49.331 197.577,48.8 197.046,48.269 C191.203,21.182 166.772,0.999 138.091,0.999 C111.535,0.999 88.697,17.995 80.73,41.896 C75.419,38.178 69.046,36.053 61.61,36.585 C48.863,37.647 38.772,48.269 37.178,61.016 C36.647,64.203 37.178,67.39 37.71,70.576 C16.996,71.107 0,88.103 0,109.348 C0,111.472 0,113.066 0.531,115.19 C0.531,116.253 1.593,116.784 2.125,116.784 L172.614,116.784 C173.676,116.784 174.739,116.253 174.739,115.19 L176.332,109.348 Z"
+                    fill="#F4811F"
                   />
                   <path
                     d="M205.544,49.863 L202.888,49.863 C202.357,49.863 201.826,50.394 201.295,50.925 L197.577,63.672 C195.984,68.983 196.515,74.295 199.171,77.481 C201.826,80.668 205.544,82.792 210.324,83.324 L229.976,84.386 C230.507,84.386 231.038,84.917 231.569,84.917 C232.1,85.448 232.1,85.979 231.569,86.51 C231.038,87.573 230.507,88.104 229.444,88.104 L209.262,89.166 C198.108,89.697 186.424,98.726 182.175,109.348 L181.112,114.129 C180.581,114.66 181.112,115.722 182.175,115.722 L252.283,115.722 C253.345,115.722 253.876,115.191 253.876,114.129 C254.938,109.88 256,105.1 256,100.319 C256,72.701 233.162,49.863 205.544,49.863"
+                    fill="#FAAD3F"
                   />
                 </g>
               </svg>
@@ -1106,12 +1303,63 @@
               Better Auth
             </a>
             <a href="https://orm.drizzle.team/" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="#C5F74F" aria-hidden="true">
-                <path
-                  d="M5.353 11.823a1.036 1.036 0 0 0-.395-1.422 1.063 1.063 0 0 0-1.437.399L.138 16.702a1.035 1.035 0 0 0 .395 1.422 1.063 1.063 0 0 0 1.437-.398l3.383-5.903Zm11.216 0a1.036 1.036 0 0 0-.394-1.422 1.064 1.064 0 0 0-1.438.399l-3.382 5.902a1.036 1.036 0 0 0 .394 1.422c.506.283 1.15.104 1.438-.398l3.382-5.903Zm7.293-4.525a1.036 1.036 0 0 0-.395-1.422 1.062 1.062 0 0 0-1.437.399l-3.383 5.902a1.036 1.036 0 0 0 .395 1.422 1.063 1.063 0 0 0 1.437-.399l3.383-5.902Zm-11.219 0a1.035 1.035 0 0 0-.394-1.422 1.064 1.064 0 0 0-1.438.398l-3.382 5.903a1.036 1.036 0 0 0 .394 1.422c.506.282 1.15.104 1.438-.399l3.382-5.902Z"
+              <svg viewBox="0 0 70 55" fill="#C5F74F" aria-hidden="true">
+                <rect
+                  width="5.254"
+                  height="22.283"
+                  rx="2.627"
+                  transform="matrix(0.873 0.488 -0.497 0.868 16.079 30.329)"
+                />
+                <rect width="5.254" height="22.283" rx="2.627" transform="matrix(0.873 0.488 -0.497 0.868 34.33 19)" />
+                <rect width="5.254" height="22.283" rx="2.627" transform="matrix(0.873 0.488 -0.497 0.868 62.413 19)" />
+                <rect
+                  width="5.254"
+                  height="22.283"
+                  rx="2.627"
+                  transform="matrix(0.873 0.488 -0.497 0.868 44.156 30.329)"
                 />
               </svg>
               Drizzle
+            </a>
+            <a href="https://orpc.dev/" target="_blank" rel="noopener">
+              <img src="https://orpc.dev/logo.webp" width="20" height="20" alt="" aria-hidden="true" />
+              oRPC
+            </a>
+            <a href="https://resend.com/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 1800 1800" aria-hidden="true">
+                <path
+                  d="M1000.46 450C1174.77 450 1278.43 553.669 1278.43 691.282C1278.43 828.896 1174.77 932.563 1000.46 932.563H912.382L1350 1350H1040.82L707.794 1033.48C683.944 1011.47 672.936 985.781 672.935 963.765C672.935 932.572 694.959 905.049 737.161 893.122L908.712 847.244C973.85 829.812 1018.81 779.353 1018.81 713.298C1018.8 632.567 952.745 585.78 871.095 585.78H450V450H1000.46Z"
+                  fill="currentColor"
+                />
+              </svg>
+              Resend
+            </a>
+            <a href="https://posthog.com/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 300 300" aria-hidden="true">
+                <path
+                  fill="#fff"
+                  d="M33 179.379L72.004 218.33H33V179.379ZM33 169.641L81.755 218.33H120.759L33 130.689V169.641ZM33 120.951L130.51 218.33H169.513L33 82V120.951ZM81.755 120.951L179.264 218.33V179.379L81.755 82V120.951ZM130.51 82V120.951L179.264 169.641V130.689L130.51 82Z"
+                />
+                <path
+                  fill="#fff"
+                  d="M266.863 203.174C256.87 203.174 247.291 199.208 240.231 192.158L186 138V218.754H266.863V203.174Z"
+                />
+                <circle cx="209.563" cy="194.959" r="7.8" fill="#000" />
+              </svg>
+              PostHog
+            </a>
+            <a href="https://playwright.dev/" target="_blank" rel="noopener">
+              <svg viewBox="0 0 400 400" fill="none" aria-hidden="true">
+                <path
+                  d="M161.661 262.296V239.863L99.332 257.537C99.332 257.537 103.938 230.777 136.444 221.556C146.302 218.762 154.713 218.781 161.661 220.123V128.11H192.869C189.471 117.61 186.184 109.526 183.423 103.909C178.856 94.612 174.174 100.775 163.545 109.665C156.059 115.919 137.139 129.261 108.668 136.933C80.197 144.61 57.179 142.574 47.575 140.911C33.96 138.562 26.839 135.572 27.505 145.928C28.085 155.062 30.261 169.224 35.245 187.928C46.027 228.433 81.663 306.481 149.01 288.342C166.602 283.602 179.019 274.233 187.626 262.291H161.661ZM61.085 188.484L108.946 175.876C108.946 175.876 107.551 194.288 89.609 199.018C71.661 203.743 61.085 188.484 61.085 188.484Z"
+                  fill="#E2574C"
+                />
+                <path
+                  d="M341.786 129.174C329.345 131.355 299.498 134.072 262.612 124.185C225.716 114.304 201.236 97.022 191.537 88.899C177.788 77.383 171.74 69.38 165.788 81.486C160.526 92.163 153.797 109.54 147.284 133.866C133.171 186.543 122.623 297.706 209.867 321.098C297.093 344.47 343.53 242.92 357.644 190.238C364.157 165.917 367.013 147.5 367.799 135.625C368.695 122.173 359.455 126.078 341.786 129.174ZM166.497 172.756C166.497 172.756 180.246 151.372 203.565 158C226.899 164.628 228.706 190.425 228.706 190.425L166.497 172.756ZM223.42 268.713C182.403 256.698 176.077 223.99 176.077 223.99L286.262 254.796C286.262 254.791 264.021 280.578 223.42 268.713ZM262.377 201.495C262.377 201.495 276.107 180.126 299.422 186.773C322.736 193.411 324.572 219.208 324.572 219.208L262.377 201.495Z"
+                  fill="#2EAD33"
+                />
+              </svg>
+              Playwright
             </a>
           </div>
         </section>
@@ -1187,8 +1435,8 @@
                 </div>
                 <h3>Edge-Native</h3>
                 <p>
-                  Cloudflare Workers + D1 + KV. Your app runs on the same global edge network as your database. Sub-10ms
-                  reads, zero egress fees, global replication.
+                  Cloudflare Workers + D1 + KV. Zero config — your app runs on the same global edge network as your
+                  database. Sub-10ms reads, zero egress fees, global replication.
                 </p>
               </div>
               <div class="feature animate-on-scroll">
@@ -1213,8 +1461,9 @@
                 </div>
                 <h3>i18n From Day One</h3>
                 <p>
-                  Every user-facing string flows through Lingui — UI, auth errors, emails, and meta tags. Adding a
-                  language is a PO file, not a refactor.
+                  Every user-facing string flows through
+                  <a href="https://lingui.dev/" target="_blank" rel="noopener">Lingui</a> — UI, auth errors, emails, and
+                  meta tags. Adding a language is a PO file, not a refactor.
                 </p>
               </div>
               <div class="feature animate-on-scroll">
@@ -1235,8 +1484,18 @@
                 </div>
                 <h3>Bulletproof Quality</h3>
                 <p>
-                  Oxlint + Oxfmt + tsgo + syncpack + Knip + Playwright E2E. Pre-commit hooks, supply chain scanning, and
-                  one command (<code>bun ok</code>) that validates everything.
+                  <a href="https://oxc.rs/docs/guide/usage/linter" target="_blank" rel="noopener">Oxlint</a> +
+                  <a href="https://oxc.rs/docs/guide/usage/formatter" target="_blank" rel="noopener">Oxfmt</a> +
+                  <a
+                    href="https://github.com/nicolo-ribaudo/tc39-proposal-type-annotations"
+                    target="_blank"
+                    rel="noopener"
+                    >tsgo</a
+                  >
+                  + <a href="https://syncpack.dev/" target="_blank" rel="noopener">syncpack</a> +
+                  <a href="https://knip.dev/" target="_blank" rel="noopener">Knip</a> +
+                  <a href="https://playwright.dev/" target="_blank" rel="noopener">Playwright</a>. Pre-commit hooks,
+                  supply chain scanning, and one command (<code>bun ok</code>) that validates everything.
                 </p>
               </div>
               <div class="feature animate-on-scroll">
@@ -1259,9 +1518,56 @@
                 </div>
                 <h3>Deploy in 60 Seconds</h3>
                 <p>
-                  Alchemy IaC provisions D1, applies migrations, and deploys the Worker — all from one TypeScript file.
-                  CI auto-deploys on push to main.
+                  Wrangler provisions D1, applies migrations, and deploys the Worker — all in one step. CI auto-deploys
+                  on push to main.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="more">
+          <div class="more-inner">
+            <div class="section-header">
+              <h2>And more</h2>
+              <p>Everything you need, already wired up.</p>
+            </div>
+            <div class="more-grid">
+              <div class="more-item animate-on-scroll">
+                <div class="more-item-img">
+                  <!-- TODO: add OG image screenshot -->
+                </div>
+                <div class="more-item-body">
+                  <h3>Dynamic OG Images with i18n</h3>
+                  <p>
+                    Auto-generated Open Graph images per page with full internationalization support. Every route gets a
+                    unique, localized social preview out of the box.
+                  </p>
+                </div>
+              </div>
+              <div class="more-item animate-on-scroll">
+                <div class="more-item-img">
+                  <!-- TODO: add email template screenshot -->
+                </div>
+                <div class="more-item-body">
+                  <h3>Transactional Emails</h3>
+                  <p>
+                    React Email templates with Resend, fully i18n-ready. Welcome emails, password resets, magic links —
+                    styled, tested, and localized.
+                  </p>
+                </div>
+              </div>
+              <div class="more-item animate-on-scroll">
+                <div class="more-item-img">
+                  <!-- TODO: add auth screenshot -->
+                </div>
+                <div class="more-item-body">
+                  <h3>Auth That Just Works</h3>
+                  <p>
+                    Email/password, passkeys, Google OAuth, magic links, and admin roles. Session storage on Cloudflare
+                    KV with rate limiting built in.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -1317,7 +1623,7 @@
               <div class="code-header">
                 <div class="macos-dots"><span></span><span></span><span></span></div>
               </div>
-              <pre><code><span class="prompt">$</span> <span class="cmd-green">bunx</span> <span class="cmd-amber">@ingot/cast</span></code><button class="copy-btn" onclick="navigator.clipboard.writeText('bunx @ingot/cast')" aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></pre>
+              <pre><code><span class="prompt">$</span> <a href="https://bun.sh" target="_blank" rel="noopener" class="cmd-green bun-link">bunx</a> <span class="cmd-amber">@ingot/cast</span></code><button class="copy-btn" onclick="navigator.clipboard.writeText('bunx @ingot/cast')" aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></pre>
             </div>
           </div>
         </section>
@@ -1333,31 +1639,35 @@
         <section class="hero">
           <h1>Know what you<br />haven't tested.</h1>
           <p class="hero-desc">
-            Declare every interactive element per route. Mark coverage gaps with <code>test: null</code>. Validate on
-            every test run. No interaction left behind.
+            Your AI agent analyzes every route, applies <code>data-test-id</code> to every interactive element, and
+            builds the coverage file automatically. Nothing ships untested.
           </p>
-          <div class="hero-cmd">
-            <span class="prompt">$</span>
-            <span class="cmd"
-              ><span class="cmd-green">bun</span> <span class="cmd-amber">add @ingot/prospect</span></span
-            >
-            <button
-              class="copy-btn"
-              onclick="navigator.clipboard.writeText('bun add @ingot/prospect')"
-              aria-label="Copy command"
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+          <div class="hero-cmd hero-cmd--pm" data-pm-group="prospect-hero">
+            <div class="pm-tabs" role="tablist" aria-label="Package manager">
+              <button role="tab" class="pm-tab" data-pm="bun" aria-selected="true" tabindex="0">bun</button>
+              <button role="tab" class="pm-tab" data-pm="npm" aria-selected="false" tabindex="-1">npm</button>
+              <button role="tab" class="pm-tab" data-pm="yarn" aria-selected="false" tabindex="-1">yarn</button>
+              <button role="tab" class="pm-tab" data-pm="pnpm" aria-selected="false" tabindex="-1">pnpm</button>
+            </div>
+            <div class="hero-cmd-line">
+              <span class="prompt">$</span>
+              <span class="cmd" data-pm-cmd
+                ><span class="cmd-green">bun</span> <span class="cmd-amber">i -d @ingot/prospect</span></span
               >
-                <rect x="9" y="9" width="13" height="13" rx="2" />
-                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-              </svg>
-            </button>
+              <button class="copy-btn" data-pm-copy aria-label="Copy command">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <rect x="9" y="9" width="13" height="13" rx="2" />
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                </svg>
+              </button>
+            </div>
           </div>
           <div class="hero-links">
             <a
@@ -1432,9 +1742,34 @@
               TypeScript
             </a>
             <a href="https://bun.sh/" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" fill="#fbf0df" aria-hidden="true">
+              <svg viewBox="0 0 80 70" fill="none" aria-hidden="true">
                 <path
-                  d="M12 22.596c6.628 0 12-4.338 12-9.688 0-3.318-2.057-6.248-5.219-7.986-1.286-.715-2.297-1.357-3.139-1.89C14.058 2.025 13.08 1.404 12 1.404c-1.097 0-2.334.785-3.966 1.821a49.92 49.92 0 0 1-2.816 1.697C2.057 6.66 0 9.59 0 12.908c0 5.35 5.372 9.687 12 9.687v.001ZM10.599 4.715c.334-.759.503-1.58.498-2.409 0-.145.202-.187.23-.029.658 2.783-.902 4.162-2.057 4.624-.124.048-.199-.121-.103-.209a5.763 5.763 0 0 0 1.432-1.977Zm2.058-.102a5.82 5.82 0 0 0-.782-2.306v-.016c-.069-.123.086-.263.185-.172 1.962 2.111 1.307 4.067.556 5.051-.082.103-.23-.003-.189-.126a5.85 5.85 0 0 0 .23-2.431Zm1.776-.561a5.727 5.727 0 0 0-1.612-1.806v-.014c-.112-.085-.024-.274.114-.218 2.595 1.087 2.774 3.18 2.459 4.407a.116.116 0 0 1-.049.071.11.11 0 0 1-.153-.026.122.122 0 0 1-.022-.083 5.891 5.891 0 0 0-.737-2.331Zm-5.087.561c-.617.546-1.282.76-2.063 1-.117 0-.195-.078-.156-.181 1.752-.909 2.376-1.649 2.999-2.778 0 0 .155-.118.188.085 0 .304-.349 1.329-.968 1.874Zm4.945 11.237a2.957 2.957 0 0 1-.937 1.553c-.346.346-.8.565-1.286.62a2.178 2.178 0 0 1-1.327-.62 2.955 2.955 0 0 1-.925-1.553.244.244 0 0 1 .064-.198.234.234 0 0 1 .193-.069h3.965a.226.226 0 0 1 .19.07c.05.053.073.125.063.197Zm-5.458-2.176a1.862 1.862 0 0 1-2.384-.245 1.98 1.98 0 0 1-.233-2.447c.207-.319.503-.566.848-.713a1.84 1.84 0 0 1 1.092-.11c.366.075.703.261.967.531a1.98 1.98 0 0 1 .408 2.114 1.931 1.931 0 0 1-.698.869v.001Zm8.495.005a1.86 1.86 0 0 1-2.381-.253 1.964 1.964 0 0 1-.547-1.366c0-.384.11-.76.32-1.079.207-.319.503-.567.849-.713a1.844 1.844 0 0 1 1.093-.108c.367.076.704.262.968.534a1.98 1.98 0 0 1 .4 2.117 1.932 1.932 0 0 1-.702.868Z"
+                  d="M73 35.7C73 50.91 57.33 63.24 38 63.24C18.67 63.24 3 50.91 3 35.7C3 26.27 9 17.94 18.22 13C27.44 8.06 33.18 3 38 3C42.82 3 46.94 7.13 57.78 13C67 17.94 73 26.27 73 35.7Z"
+                  fill="#FBF0DF"
+                />
+                <path
+                  d="M73 35.7C72.995 33.746 72.726 31.802 72.2 29.92C69.47 63.22 28.85 64.82 12.88 54.86C20.06 60.42 28.92 63.38 38 63.24C57.3 63.24 73 50.89 73 35.7Z"
+                  fill="#F6DECE"
+                />
+                <path
+                  d="M38 65.75C17.32 65.75.5 52.27.5 35.7.5 25.7 6.68 16.37 17.03 10.78c3-1.6 5.57-3.21 7.86-4.62C26.15 5.38 27.34 4.65 28.49 3.97 32 1.89 35 .5 38 .5s5.62 1.2 8.9 3.14c1 .57 2 1.19 3.07 1.87 2.49 1.54 5.3 3.28 9 5.27C69.32 16.37 75.5 25.69 75.5 35.7c0 16.57-16.82 30.05-37.5 30.05ZM38 3c-2.42 0-5 1.25-8.25 3.13-1.13.66-2.3 1.39-3.54 2.15-2.33 1.44-5 3.07-8 4.7C8.69 18.13 3 26.62 3 35.7 3 50.89 18.7 63.25 38 63.25S73 50.89 73 35.7C73 26.62 67.31 18.13 57.78 13c-3.78-2-6.73-3.88-9.12-5.36-1.09-.67-2.09-1.29-3-1.84C42.63 4 40.42 3 38 3Z"
+                  fill="black"
+                />
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M25.7 38.8a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Zm24.77 0a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11Z"
+                  fill="black"
+                />
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M24 33.64a2.07 2.07 0 1 0 0-4.14 2.07 2.07 0 0 0 0 4.14Zm24.77 0a2.07 2.07 0 1 0 0-4.14 2.07 2.07 0 0 0 0 4.14Z"
+                  fill="white"
+                />
+                <path
+                  d="M45.05 43a7.85 7.85 0 0 1-2.92 4.71 5.33 5.33 0 0 1-4 1.88 5.33 5.33 0 0 1-4.13-1.88A7.85 7.85 0 0 1 31.12 43a.35.35 0 0 1 .8-.01h12.34a.35.35 0 0 1 .79.01Z"
+                  fill="#B71422"
                 />
               </svg>
               Bun
@@ -1494,8 +1829,8 @@
                 </div>
                 <h3>Explicit Gap Tracking</h3>
                 <p>
-                  <code>test: null</code> marks coverage gaps. Searchable with grep, visible in code review, impossible
-                  to ignore. No more hoping you tested everything.
+                  <code>test: null</code> marks coverage gaps. Visible in code review, impossible to ignore. No more
+                  hoping you tested everything.
                 </p>
               </div>
               <div class="feature animate-on-scroll">
@@ -1552,7 +1887,7 @@
         <section class="showcase">
           <div class="showcase-grid">
             <div class="showcase-content">
-              <h2>Coverage as<br /><span class="highlight-green">code</span></h2>
+              <h2>Coverage as <span class="highlight-green">code</span></h2>
               <p>
                 Define what interactions exist on each route. Map them to test files — or mark them <code>null</code> to
                 track the gap explicitly. Prospect validates the whole picture on every test run.
@@ -1568,7 +1903,7 @@
         [testId.signin.submit]: [
           {
             context: <span class="string">"valid"</span>,
-            expected: <span class="string">"→ /dashboard"</span>,
+            expected: <span class="string">"navigate to /dashboard"</span>,
             test: <span class="string">"sign-in.e2e.ts"</span>,
           },
           {
@@ -1599,11 +1934,17 @@
           <div class="quickstart-inner">
             <h2>Get started</h2>
             <p class="quickstart-sub">Install, define, validate.</p>
-            <div class="code-block">
+            <div class="code-block" data-pm-group="prospect-quickstart">
               <div class="code-header">
                 <div class="macos-dots"><span></span><span></span><span></span></div>
+                <div class="pm-tabs" role="tablist" aria-label="Package manager">
+                  <button role="tab" class="pm-tab" data-pm="bun" aria-selected="true" tabindex="0">bun</button>
+                  <button role="tab" class="pm-tab" data-pm="npm" aria-selected="false" tabindex="-1">npm</button>
+                  <button role="tab" class="pm-tab" data-pm="yarn" aria-selected="false" tabindex="-1">yarn</button>
+                  <button role="tab" class="pm-tab" data-pm="pnpm" aria-selected="false" tabindex="-1">pnpm</button>
+                </div>
               </div>
-              <pre><code><span class="prompt">$</span> <span class="cmd-green">bun</span> <span class="cmd-amber">add @ingot/prospect</span></code><button class="copy-btn" onclick="navigator.clipboard.writeText('bun add @ingot/prospect')" aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></pre>
+              <pre><code><span class="prompt">$</span> <span class="cmd" data-pm-cmd><span class="cmd-green">bun</span> <span class="cmd-amber">i -d @ingot/prospect</span></span></code><button class="copy-btn" data-pm-copy aria-label="Copy command"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></pre>
             </div>
           </div>
         </section>
@@ -1695,6 +2036,76 @@
           e.preventDefault();
           switchPkg(btnsArray[newIndex].dataset.pkg);
           btnsArray[newIndex].focus();
+        });
+
+        /* ── Package manager switcher ── */
+        var pmParts = {
+          bun: { bin: "bun", args: "i -d @ingot/prospect" },
+          npm: { bin: "npm", args: "i -D @ingot/prospect" },
+          yarn: { bin: "yarn", args: "i -D @ingot/prospect" },
+          pnpm: { bin: "pnpm", args: "i -D @ingot/prospect" },
+        };
+
+        function switchPm(pm) {
+          var parts = pmParts[pm];
+          var fullCmd = parts.bin + " " + parts.args;
+
+          document.querySelectorAll("[data-pm-group]").forEach(function (group) {
+            group.querySelectorAll(".pm-tab").forEach(function (tab) {
+              var isActive = tab.dataset.pm === pm;
+              tab.setAttribute("aria-selected", isActive ? "true" : "false");
+              tab.setAttribute("tabindex", isActive ? "0" : "-1");
+            });
+
+            var cmdEl = group.querySelector("[data-pm-cmd]");
+            if (cmdEl) {
+              cmdEl.innerHTML =
+                '<span class="cmd-green">' +
+                parts.bin +
+                "</span> " +
+                '<span class="cmd-amber">' +
+                parts.args +
+                "</span>";
+            }
+
+            var copyBtn = group.querySelector("[data-pm-copy]");
+            if (copyBtn) {
+              copyBtn.onclick = function () {
+                navigator.clipboard.writeText(fullCmd);
+              };
+            }
+          });
+        }
+
+        document.querySelectorAll(".pm-tab").forEach(function (tab) {
+          tab.addEventListener("click", function () {
+            switchPm(tab.dataset.pm);
+          });
+        });
+
+        document.querySelectorAll(".pm-tabs").forEach(function (tablist) {
+          tablist.addEventListener("keydown", function (e) {
+            var tabs = Array.from(tablist.querySelectorAll(".pm-tab"));
+            var idx = tabs.indexOf(document.activeElement);
+            if (idx === -1) return;
+            var newIdx;
+            if (e.key === "ArrowRight") newIdx = (idx + 1) % tabs.length;
+            else if (e.key === "ArrowLeft") newIdx = (idx - 1 + tabs.length) % tabs.length;
+            else return;
+            e.preventDefault();
+            switchPm(tabs[newIdx].dataset.pm);
+            tabs[newIdx].focus();
+          });
+        });
+
+        /* ── Copy button feedback ── */
+        document.querySelectorAll(".copy-btn").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            btn.classList.add("copied");
+            setTimeout(function () {
+              btn.classList.remove("copied");
+            }, 1500);
+          });
         });
 
         /* ── IntersectionObserver for scroll animations ── */
