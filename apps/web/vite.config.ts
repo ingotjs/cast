@@ -22,7 +22,11 @@ const config = defineConfig({
     sourcemap: true,
   },
   plugins: [
-    lingui(),
+    // Filter out Lingui's macro error reporter — it throws during dep scanning
+    // before babel transforms apply. Our babel config handles macros correctly.
+    ...lingui().filter(
+      (p) => typeof p === "object" && "name" in p && p.name !== "vite-plugin-lingui-report-macro-error"
+    ),
     emailCapturePlugin(),
     devtools(),
     tailwindcss(),
