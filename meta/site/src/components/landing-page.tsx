@@ -177,7 +177,7 @@ export function LandingPage() {
         {/* ════════════════════════════════════════════ */}
         <div className="pkg-page" id="page-cast" style={{ position: "relative" }} hidden={activePkg !== "cast"}>
           <div className="hero-bg-cast">
-            <img src="bg-cast.png" alt="" />
+            <img src="bg-cast.webp" alt="" />
           </div>
           <section className="hero">
             <h1>
@@ -627,7 +627,7 @@ export function LandingPage() {
         {/* ════════════════════════════════════════════ */}
         <div className="pkg-page" id="page-prospect" style={{ position: "relative" }} hidden={activePkg !== "prospect"}>
           <div className="hero-bg-cast">
-            <img src="bg-prospect.png" alt="" />
+            <img src="bg-prospect.webp" alt="" />
           </div>
           <section className="hero">
             <h1>
