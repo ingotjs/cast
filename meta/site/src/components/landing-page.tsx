@@ -95,9 +95,24 @@ export function LandingPage() {
           <div className="nav-inner">
             <a href="/" className="nav-brand">
               <svg viewBox="0 0 24 18" fill="none" aria-hidden="true">
-                <path d="M1 17L15 17L13 11L3 11Z" fill="rgba(255,255,255,0.25)" />
-                <path d="M3 11L13 11L21 5L11 5Z" fill="rgba(255,255,255,0.7)" />
-                <path d="M15 17L23 11L21 5L13 11Z" fill="rgba(255,255,255,0.1)" />
+                <defs>
+                  <linearGradient id="ingot-top" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#D4A04A" />
+                    <stop offset="100%" stopColor="#C08B30" />
+                  </linearGradient>
+                  <linearGradient id="ingot-front" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#B8892E" />
+                    <stop offset="100%" stopColor="#8B6914" />
+                  </linearGradient>
+                  <linearGradient id="ingot-side" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#A07820" />
+                    <stop offset="100%" stopColor="#7A5C10" />
+                  </linearGradient>
+                </defs>
+                <path d="M1 17L15 17L13 11L3 11Z" fill="url(#ingot-front)" />
+                <path d="M3 11L13 11L21 5L11 5Z" fill="url(#ingot-top)" />
+                <path d="M15 17L23 11L21 5L13 11Z" fill="url(#ingot-side)" />
+                <path d="M3 11L13 11L21 5L11 5Z" fill="rgba(255,255,255,0.15)" />
               </svg>
               @ingot
             </a>
@@ -190,11 +205,11 @@ export function LandingPage() {
               comprehensive AI coding instructions so your agent writes production-quality code from day one.
             </p>
             <div className="hero-cmd">
-              <span className="prompt">$</span>
+              <span className="prompt">$</span>{" "}
               <span className="cmd">
                 <a href="https://bun.sh" target="_blank" rel="noopener" className="cmd-green bun-link">
                   bunx
-                </a>
+                </a>{" "}
                 <span className="cmd-amber">@ingot/cast</span>
               </span>
               <CopyButton text="bunx @ingot/cast" />
@@ -917,7 +932,7 @@ export function LandingPage() {
       <footer>
         <div className="footer-inner">
           <p className="footer-copy">
-            made with <span className="heart">&#9829;</span> by
+            made with <span className="heart">&#9829;</span> by{" "}
             <a href="https://github.com/ftzi" target="_blank" rel="noopener" className="footer-author">
               ftzi
             </a>
