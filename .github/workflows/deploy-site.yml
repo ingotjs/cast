@@ -12,10 +12,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: oven-sh/setup-bun@v2
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build site
+        run: bun run --cwd meta/site build
+
       - name: Push to ingotjs.github.io
         uses: peaceiris/actions-gh-pages@v4
         with:
           personal_token: ${{ secrets.SITE_DEPLOY_TOKEN }}
           external_repository: ingotjs/ingotjs.github.io
           publish_branch: main
-          publish_dir: ./meta/site
+          publish_dir: ./meta/site/dist
