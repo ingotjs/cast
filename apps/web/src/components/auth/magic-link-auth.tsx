@@ -1,93 +1,64 @@
-import { Button } from "@ingot/ui/components/button";
-import { Input } from "@ingot/ui/components/input";
-import { Label } from "@ingot/ui/components/label";
 import { Separator } from "@ingot/ui/components/separator";
 import { usePostHog } from "@posthog/react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { signIn } from "../../lib/auth-client";
 import { clientEnv } from "../../lib/env";
-import { zodFormResolver } from "../../lib/zod-form-resolver";
 
-const schema = z.object({
-  email: z.string().min(1, "Email is required").email("Invalid email"),
-});
-
-type FormValues = z.infer<typeof schema>;
-
-/** Magic link sign-in form. Only renders if magic link is enabled via env var. */
-export const MagicLinkAuth = () => {
+/** Magic link sign-in. Uses the email from the parent form. Only renders if magic link is enabled. */
+export const MagicLinkAuth = ({ email }: { email: string }) => {
   const posthog = usePostHog();
+  const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<FormValues>({
-    resolver: zodFormResolver(schema),
-  });
 
   if (!clientEnv.magicLink) {
     return null;
   }
 
-  const onSubmit = async (data: FormValues) => {
-    const result = await signIn.magicLink({ email: data.email });
+  const handleSend = async () => {
+    if (!email?.includes("@")) {
+      toast.error("Enter a valid email address first");
+      return;
+    }
+
+    setLoading(true);
+    const result = await signIn.magicLink({ email });
+    setLoading(false);
 
     if (result.error) {
-      console.error("Magic link error:", result.error.message);
       toast.error(result.error.message ?? "Failed to send magic link");
       return;
     }
 
-    posthog?.capture("magic_link_requested", { email: data.email });
+    posthog?.capture("magic_link_requested", { email });
     setSent(true);
     toast.success("Check your email for a sign-in link");
   };
 
   if (sent) {
     return (
-      <div className="text-center">
-        <Separator className="mb-4" />
-        <p className="text-sm text-muted-foreground">We sent you a magic link. Check your email to sign in.</p>
-      </div>
+      <>
+        <Separator className="my-4" />
+        <p className="text-center text-sm text-muted-foreground">Magic link sent! Check your email to sign in.</p>
+      </>
     );
   }
 
   return (
-    <div>
-      <div className="relative my-4">
-        <Separator />
-        <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-3 text-xs text-muted-foreground">
-          or
-        </span>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-        <div className="space-y-2">
-          <Label htmlFor="magic-link-email">Sign in with magic link</Label>
-          <Input
-            id="magic-link-email"
-            type="email"
-            placeholder="you@example.com"
-            autoComplete="email"
-            {...register("email")}
-          />
-          {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
-        </div>
-        <Button
-          type="submit"
-          variant="outline"
-          className="w-full"
-          loading={isSubmitting}
-          data-testid="magic-link-button-submit"
-        >
-          Send magic link
-        </Button>
-      </form>
-    </div>
+    <>
+      <Separator className="my-4" />
+      <button
+        type="button"
+        onClick={handleSend}
+        disabled={loading}
+        className="flex w-full items-center justify-center gap-1.5 text-sm text-muted-foreground transition hover:text-foreground disabled:opacity-50"
+        data-testid="magic-link-button-submit"
+      >
+        {loading && <Loader2 className="size-3 animate-spin" />}
+        Email me a sign-in link
+      </button>
+    </>
   );
 };

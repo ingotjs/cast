@@ -1,91 +1,47 @@
+import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
-type ThemeMode = "light" | "dark" | "auto";
+type ThemeMode = "light" | "dark";
 
 const getInitialMode = (): ThemeMode => {
-  if (typeof window === "undefined") {
-    return "auto";
-  }
-
+  if (typeof window === "undefined") return "light";
   const stored = window.localStorage.getItem("theme");
-  if (stored === "light" || stored === "dark" || stored === "auto") {
-    return stored;
-  }
-
-  return "auto";
+  if (stored === "light" || stored === "dark") return stored;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 };
 
 const applyThemeMode = (mode: ThemeMode) => {
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  let resolved: "light" | "dark";
-  if (mode === "auto") {
-    resolved = prefersDark ? "dark" : "light";
-  } else {
-    resolved = mode;
-  }
-
   document.documentElement.classList.remove("light", "dark");
-  document.documentElement.classList.add(resolved);
-
-  if (mode === "auto") {
-    delete document.documentElement.dataset.theme;
-  } else {
-    document.documentElement.dataset.theme = mode;
-  }
-
-  document.documentElement.style.colorScheme = resolved;
+  document.documentElement.classList.add(mode);
+  document.documentElement.dataset.theme = mode;
+  document.documentElement.style.colorScheme = mode;
 };
 
 export const ThemeToggle = () => {
-  const [mode, setMode] = useState<ThemeMode>("auto");
+  const [mode, setMode] = useState<ThemeMode>("light");
 
   useEffect(() => {
-    const initialMode = getInitialMode();
-    setMode(initialMode);
-    applyThemeMode(initialMode);
+    const initial = getInitialMode();
+    setMode(initial);
+    applyThemeMode(initial);
   }, []);
 
-  useEffect(() => {
-    if (mode !== "auto") {
-      return;
-    }
-
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => applyThemeMode("auto");
-
-    media.addEventListener("change", onChange);
-    return () => {
-      media.removeEventListener("change", onChange);
-    };
-  }, [mode]);
-
-  // oxlint-disable-next-line react-perf/jsx-no-new-function-as-prop -- React Compiler handles memoization
   const toggleMode = () => {
-    const modeMap: Record<ThemeMode, ThemeMode> = {
-      light: "dark",
-      dark: "auto",
-      auto: "light",
-    };
-    const nextMode = modeMap[mode];
-    setMode(nextMode);
-    applyThemeMode(nextMode);
-    window.localStorage.setItem("theme", nextMode);
+    const next: ThemeMode = mode === "light" ? "dark" : "light";
+    setMode(next);
+    applyThemeMode(next);
+    window.localStorage.setItem("theme", next);
   };
-
-  const label =
-    mode === "auto"
-      ? "Theme mode: auto (system). Click to switch to light mode."
-      : `Theme mode: ${mode}. Click to switch mode.`;
 
   return (
     <button
       type="button"
       onClick={toggleMode}
-      aria-label={label}
-      title={label}
-      className="rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 font-semibold text-[var(--sea-ink)] text-sm shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition hover:-translate-y-0.5"
+      aria-label={mode === "light" ? "Switch to dark mode" : "Switch to light mode"}
+      data-testid="header-button-theme-toggle"
+      className="rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
     >
-      {{ auto: "Auto", dark: "Dark", light: "Light" }[mode]}
+      {mode === "light" ? <Sun className="size-5" /> : <Moon className="size-5" />}
     </button>
   );
 };

@@ -35,12 +35,12 @@ const testId = {
   },
   home: {
     linkUser: "home-link-user",
-    linkSignin: "home-link-signin",
-    linkAbout: "home-link-about",
+    linkSignup: "home-link-signup",
+    linkLearnMore: "home-link-learn-more",
+    linkFaqAll: "home-link-faq-all",
+    linkCtaSignup: "home-link-cta-signup",
   },
   authCard: {
-    linkTabSignin: "auth-link-tab-signin",
-    linkTabSignup: "auth-link-tab-signup",
     linkLegalTerms: "auth-link-legal-terms",
     linkLegalPrivacy: "auth-link-legal-privacy",
   },
@@ -50,19 +50,11 @@ const testId = {
     buttonSubmit: "signin-button-submit",
     linkForgotPassword: "signin-link-forgot-password",
   },
-  signup: {
-    inputFirstname: "signup-input-firstname",
-    inputLastname: "signup-input-lastname",
-    inputEmail: "signup-input-email",
-    inputPassword: "signup-input-password",
-    inputConfirmPassword: "signup-input-confirm-password",
-    buttonSubmit: "signup-button-submit",
-  },
+  signup: {},
   socialAuth: {
     buttonGoogle: "social-auth-button-google",
   },
   magicLink: {
-    inputEmail: "magic-link-input-email",
     buttonSubmit: "magic-link-button-submit",
   },
   forgotPassword: {
@@ -163,19 +155,12 @@ const socialAuth = interactions({
 });
 
 const magicLinkAuth = interactions({
-  [t.magicLink.inputEmail]: [
+  [t.magicLink.buttonSubmit]: [
     { condition: "magicLink enabled", visible: true, test: null },
     { condition: "magicLink disabled", visible: false, test: null },
+    { context: "valid email in form", expected: "sends magic link, shows confirmation", test: null },
+    { context: "empty/invalid email", expected: "shows error toast", test: null },
   ],
-  [t.magicLink.buttonSubmit]: [
-    { context: "valid email", expected: "sends magic link, shows confirmation", test: null },
-    { context: "empty email", expected: "validation error", test: null },
-  ],
-});
-
-const authCardTabs = interactions({
-  [t.authCard.linkTabSignin]: [{ expected: "navigates to /auth/sign-in", test: null }],
-  [t.authCard.linkTabSignup]: [{ expected: "navigates to /auth/sign-up", test: null }],
 });
 
 const authCardLegal = interactions({
@@ -208,11 +193,13 @@ const e2e = defineE2ECoverage({
           { condition: "authenticated", visible: true, test: null },
           { expected: "navigates to /admin", test: null },
         ],
-        [t.home.linkSignin]: [
+        [t.home.linkSignup]: [
           { condition: "unauthenticated", visible: true, test: null },
-          { expected: "navigates to /auth/sign-in", test: null },
+          { expected: "navigates to /auth/sign-up", test: null },
         ],
-        [t.home.linkAbout]: [{ expected: "navigates to /about", test: null }],
+        [t.home.linkLearnMore]: [{ expected: "navigates to /about", test: null }],
+        [t.home.linkFaqAll]: [{ expected: "navigates to /faq", test: null }],
+        [t.home.linkCtaSignup]: [{ expected: "navigates to /auth/sign-up", test: null }],
       },
     },
 
@@ -221,7 +208,6 @@ const e2e = defineE2ECoverage({
         ...header,
         ...userMenu,
         ...footer,
-        ...authCardTabs,
         ...authCardLegal,
         ...socialAuth,
         ...magicLinkAuth,
@@ -241,19 +227,14 @@ const e2e = defineE2ECoverage({
         ...header,
         ...userMenu,
         ...footer,
-        ...authCardTabs,
         ...authCardLegal,
         ...socialAuth,
         ...magicLinkAuth,
-        [t.signup.inputFirstname]: [{ expected: "accepts first name input", test: f.signUp }],
-        [t.signup.inputLastname]: [{ expected: "accepts last name input", test: f.signUp }],
-        [t.signup.inputEmail]: [{ expected: "accepts email input", test: f.signUp }],
-        [t.signup.inputPassword]: [{ expected: "accepts password input, shows requirements", test: f.signUp }],
-        [t.signup.inputConfirmPassword]: [{ expected: "accepts confirm password input", test: f.signUp }],
-        [t.signup.buttonSubmit]: [
-          { context: "valid form", expected: "creates account, redirects to /", test: f.signUp },
+        [t.signin.inputEmail]: [{ expected: "accepts email input", test: f.signUp }],
+        [t.signin.inputPassword]: [{ expected: "accepts password input", test: f.signUp }],
+        [t.signin.buttonSubmit]: [
+          { context: "new email + password", expected: "creates account, redirects to /", test: f.signUp },
           { context: "empty form", expected: "validation errors", test: f.signUp },
-          { context: "password mismatch", expected: "validation error", test: f.signUp },
         ],
       },
     },

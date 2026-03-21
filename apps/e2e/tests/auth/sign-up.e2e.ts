@@ -1,28 +1,20 @@
 /**
- * E2E Test: Sign Up Flow
+ * E2E Test: Sign Up Flow (Unified Auth Form)
  *
- * This is the ONLY test that exercises the full sign-up UI manually.
- * It generates its own email/password inline since it cannot use the
- * `testUser` fixture (which creates users via API).
+ * The auth form handles both sign-in and sign-up automatically.
+ * When a new email + password is submitted, an account is created.
  *
  * Test 1 — Full sign-up flow:
- * 1. Navigate to the sign-up page at /auth/sign-up
- * 2. Fill in the registration form (first name, last name, email, password, confirm password)
- * 3. Submit the form via the "Create an account" button
- * 4. Verify the user is redirected to the home page after successful registration
- * 5. Verify the home page shows authenticated state (user menu trigger visible)
- * 6. Verify a verification email was captured for the registered email address
+ * 1. Navigate to /auth/sign-up (renders unified auth form)
+ * 2. Fill in email and password
+ * 3. Submit the form via "Continue"
+ * 4. Verify redirect to home and authenticated state
+ * 5. Verify verification email was captured
  *
  * Test 2 — Empty form submission:
- * 1. Navigate to sign-up page
+ * 1. Navigate to /auth/sign-up
  * 2. Submit empty form
- * 3. Verify form stays on sign-up page (client-side validation prevents submission)
- *
- * Test 3 — Password mismatch:
- * 1. Navigate to sign-up page
- * 2. Fill in all fields but with mismatched passwords
- * 3. Submit the form
- * 4. Verify form stays on sign-up page (client-side validation catches mismatch)
+ * 3. Verify form stays on page (client-side validation)
  */
 
 import { testId } from "../../coverage";
@@ -34,22 +26,17 @@ test.describe("Sign Up", () => {
   test("should create an account through the UI and redirect to home", async ({ page, expectEmail }) => {
     const email = generateEmail("signup");
     const password = "TestPassword123!";
-    const firstName = "Test";
-    const lastName = "User";
 
-    // Navigate to the sign-up page and wait for form hydration
+    // Navigate to auth page and wait for form hydration
     await page.goto("/auth/sign-up");
     await page.waitForSelector("[data-hydrated]");
 
-    // Fill in the registration form using id locators for reliability
-    await page.locator("#firstName").fill(firstName);
-    await page.locator("#lastName").fill(lastName);
-    await page.locator("#email").fill(email);
+    // Fill in email and password
+    await page.getByLabel("Email").fill(email);
     await page.locator("#password").fill(password);
-    await page.locator("#confirmPassword").fill(password);
 
     // Submit the form
-    await page.getByTestId(testId.signup.buttonSubmit).click();
+    await page.getByTestId(testId.signin.buttonSubmit).click();
 
     // Auth redirect involves server-side session creation + redirect
     await expect(page).toHaveURL("/", { timeout: 15_000 });
@@ -63,26 +50,9 @@ test.describe("Sign Up", () => {
     await page.goto("/auth/sign-up");
 
     // Submit empty form
-    await page.getByTestId(testId.signup.buttonSubmit).click();
+    await page.getByTestId(testId.signin.buttonSubmit).click();
 
     // Verify form doesn't navigate away
-    await expect(page).toHaveURL(/\/auth\/sign-up/);
-  });
-
-  test("should show error when passwords do not match", async ({ page }) => {
-    const email = generateEmail("signup-mismatch");
-
-    await page.goto("/auth/sign-up");
-
-    await page.locator("#firstName").fill("Test");
-    await page.locator("#lastName").fill("User");
-    await page.locator("#email").fill(email);
-    await page.locator("#password").fill("TestPassword123!");
-    await page.locator("#confirmPassword").fill("DifferentPassword123!");
-
-    await page.getByTestId(testId.signup.buttonSubmit).click();
-
-    // Should stay on the sign-up page due to validation error
     await expect(page).toHaveURL(/\/auth\/sign-up/);
   });
 });

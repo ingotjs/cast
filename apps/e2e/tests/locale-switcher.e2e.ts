@@ -37,9 +37,9 @@ test.describe("Locale Switcher", () => {
   test("should show current locale as the trigger label", async ({ page }) => {
     await page.goto("/");
 
-    // The trigger should display the current locale code
+    // The trigger uses a language icon with an aria-label
     const trigger = page.getByTestId(testId.header.localeSwitcherTrigger);
-    await expect(trigger).toHaveText(/en/i);
+    await expect(trigger).toHaveAttribute("aria-label", "Change language");
   });
 
   test("should set locale cookie and html lang attribute", async ({ page }) => {

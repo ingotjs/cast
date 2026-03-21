@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@ingot/ui/components/dropdown-menu";
 import { useLingui } from "@lingui/react";
+import { Languages } from "lucide-react";
 
 import { type Locale, LOCALE_LABELS, LOCALES } from "@/lib/i18n";
 
@@ -21,9 +22,10 @@ export const LocaleSwitcher = () => {
     <DropdownMenu>
       <DropdownMenuTrigger
         data-testid="locale-switcher-button-trigger"
-        className="cursor-pointer rounded-full border border-[var(--chip-line)] bg-[var(--chip-bg)] px-3 py-1.5 font-semibold text-[var(--sea-ink)] text-sm uppercase shadow-[0_8px_22px_rgba(30,90,72,0.08)] transition hover:-translate-y-0.5"
+        className="cursor-pointer rounded-xl p-2 text-[var(--sea-ink-soft)] transition hover:bg-[var(--link-bg-hover)] hover:text-[var(--sea-ink)]"
+        aria-label="Change language"
       >
-        {currentLocale}
+        <Languages className="size-5" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={8}>
         <DropdownMenuRadioGroup

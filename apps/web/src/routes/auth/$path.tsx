@@ -1,9 +1,8 @@
 import { createFileRoute, useParams, useSearch } from "@tanstack/react-router";
 
+import { AuthForm } from "../../components/auth/auth-form";
 import { ForgotPassword } from "../../components/auth/forgot-password";
 import { ResetPassword } from "../../components/auth/reset-password";
-import { SignIn } from "../../components/auth/sign-in";
-import { SignUp } from "../../components/auth/sign-up";
 
 const AuthPage = () => {
   const { path } = useParams({ strict: false }) as { path: string };
@@ -12,9 +11,6 @@ const AuthPage = () => {
 
   const content = (() => {
     switch (path) {
-      case "sign-up": {
-        return <SignUp />;
-      }
       case "forgot-password": {
         return <ForgotPassword />;
       }
@@ -22,7 +18,7 @@ const AuthPage = () => {
         return <ResetPassword token={token} />;
       }
       default: {
-        return <SignIn />;
+        return <AuthForm />;
       }
     }
   })();
