@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev:email": "email dev --port 3002",
-    "build": "lingui compile",
+    "build": "lingui compile --config _etc/lingui.config.ts",
     "build:email": "email build",
     "clean": "rm -rf .react-email _etc/.email-captures _etc/locales/*/messages.ts",
     "export": "email export",

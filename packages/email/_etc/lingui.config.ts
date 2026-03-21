@@ -5,8 +5,8 @@ export default defineConfig({
   sourceLocale: "en",
   catalogs: [
     {
-      path: "<rootDir>/_etc/locales/{locale}/messages",
-      include: ["."],
+      path: "<rootDir>/locales/{locale}/messages",
+      include: [".."],
       exclude: ["**/node_modules/**"],
     },
   ],
