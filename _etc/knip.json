@@ -53,7 +53,10 @@
       "ignoreDependencies": ["postcss-load-config"]
     },
     "packages/utils": {},
-    "packages/prospect": {},
+    "packages/prospect": {
+      "ignoreDependencies": ["react", "react-dom"]
+    },
+    "packages/e2e-coverage": {},
     "meta/cast": {
       "entry": ["bin.ts"]
     }

@@ -1,17 +1,20 @@
 {
   "name": "@ingot/prospect",
   "version": "0.0.0",
-  "description": "E2E interactive element coverage framework for route-based apps",
+  "description": "The full Playwright companion — coverage, flakiness, artifacts, and a dev overlay",
   "keywords": [
+    "artifacts",
     "coverage",
     "e2e",
+    "flakiness",
     "ingot",
-    "interactive-elements",
+    "overlay",
     "playwright",
     "prospect",
+    "reporter",
     "test-coverage",
-    "test-ids",
-    "testing"
+    "testing",
+    "visual-regression"
   ],
   "license": "MIT",
   "files": [
@@ -19,22 +22,40 @@
   ],
   "type": "module",
   "exports": {
-    ".": "./define-coverage.ts"
+    ".": "./define-coverage.ts",
+    "./setup": "./setup.ts",
+    "./overlay": "./overlay/coverage-overlay.tsx"
   },
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": "./dist/index.mjs"
+      ".": "./dist/index.mjs",
+      "./setup": "./dist/setup.mjs",
+      "./overlay": "./dist/overlay.mjs"
     }
   },
   "scripts": {
     "ts": "tsgo --noEmit",
-    "prepublishOnly": "vp pack define-coverage.ts"
+    "prepublishOnly": "vp pack define-coverage.ts setup.ts overlay/coverage-overlay.tsx"
   },
   "devDependencies": {
     "@ingot/config": "*",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
   }
 }

@@ -1,10 +1,15 @@
 # @ingot/prospect
 
-E2E interactive element coverage framework for TanStack Start apps. Provides `defineE2ECoverage()` for mapping every user-interactive element to its test, and `setup()` for validating coverage integrity on every test run.
+The full Playwright companion. Coverage mapping, flakiness tracking, test artifacts, and a dev overlay — all in one package.
 
-Built for route-based architectures — coverage is organized by route, with shared components (header, footer, user menu) extracted as reusable groups.
+- **Coverage** — map every route's interactive elements to tests, validate on every run
+- **Overlay** — see coverage, flakiness, and test videos directly in your app during dev
+- **Reporter** — Playwright reporter that stores test runs, artifacts, and flakiness data
+- **Visual regression** — screenshot diffing with PR comments _(coming soon)_
 
-## Usage
+## Coverage
+
+### Quick start
 
 ```ts
 import { defineE2ECoverage, interactions } from "@ingot/prospect";
@@ -28,8 +33,6 @@ const e2e = defineE2ECoverage({
 
 export const { testId, routes, setup } = e2e;
 ```
-
-## API
 
 ### `defineE2ECoverage({ testId, routes })`
 
@@ -84,3 +87,58 @@ Prefix with element type for clarity:
 ### Optional
 
 Using `testId` and `routes` from coverage.ts in your tests is **optional**. You can use raw strings if you prefer — the coverage file is primarily a tracking/validation tool.
+
+## Overlay
+
+Dev-only React overlay that visualizes coverage and test health directly in your app.
+
+- **Green** — element is covered, tests pass reliably
+- **Red** — no test coverage
+- **Amber** — covered, but tests are flaky
+
+Hover any element to see which tests cover it. Click to watch the test video — even for passing tests, so you can see exactly what each test does.
+
+```tsx
+// Only loads in development — zero bytes in production
+import { CoverageOverlay } from "@ingot/prospect/overlay";
+
+// In your app layout (dev only):
+{
+  process.env.NODE_ENV === "development" && <CoverageOverlay coverage={routes} />;
+}
+```
+
+The overlay is framework-agnostic. Use whatever dev guard your bundler provides (`import.meta.env.DEV`, `process.env.NODE_ENV`, etc.).
+
+## Reporter
+
+Playwright reporter that captures test results, artifacts (videos, screenshots, traces), and flakiness data. Stores everything locally — no external service required.
+
+```ts
+// playwright.config.ts
+import { defineConfig } from "@playwright/test";
+
+export default defineConfig({
+  reporter: [["@ingot/prospect/reporter", { outputDir: ".prospect" }]],
+});
+```
+
+Data is stored in `.prospect/` (SQLite + artifact files). The overlay reads from this directory to show flakiness and test videos in your app.
+
+## Monorepo setup
+
+In monorepos, put your coverage definition in a shared package so both your app (overlay) and E2E tests can import it:
+
+```
+packages/e2e-coverage/   ← coverage.ts with defineE2ECoverage()
+  apps/web/              ← imports overlay + coverage (dev only)
+  apps/e2e/              ← imports coverage for tests + validation
+```
+
+## Visual regression _(coming soon)_
+
+Screenshot comparison with automatic PR comments showing visual diffs. Self-hosted — no per-screenshot pricing.
+
+## License
+
+MIT

@@ -1,6 +1,6 @@
 ---
 name: e2e-testing
-description: Write and debug Playwright E2E tests for this project. Use when adding new E2E tests, debugging test failures, working with the apps/e2e package, or auditing interactive element coverage. Covers the coverage.ts system, test structure, fixtures, selectors, and best practices.
+description: Write and debug Playwright E2E tests for this project. Use when adding new E2E tests, debugging test failures, working with the apps/e2e package, or auditing interactive element coverage. Covers the coverage.ts system, overlay, test structure, fixtures, selectors, and best practices.
 ---
 
 > **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.
@@ -9,7 +9,9 @@ description: Write and debug Playwright E2E tests for this project. Use when add
 
 # E2E Testing Guide
 
-This project uses **Playwright** for E2E tests in `apps/e2e/`. The core principle: **every user interaction MUST be tested.** E2E tests simulate a real human — if a user can click it, type in it, or select it, it MUST have a `data-testid` and a test.
+This project uses **Playwright** + **@ingot/prospect** for E2E tests. Prospect is the full Playwright companion — coverage mapping, a dev overlay, flakiness tracking, and test artifacts in one package.
+
+The core principle: **every user interaction MUST be tested.** E2E tests simulate a real human — if a user can click it, type in it, or select it, it MUST have a `data-testid` and a test.
 
 ## Running Tests
 
@@ -26,12 +28,96 @@ bunx playwright test tests/auth/       # specific directory
 
 | Path                              | Purpose                                              |
 | :-------------------------------- | :--------------------------------------------------- |
+| `packages/prospect/`              | Coverage framework + dev overlay (`@ingot/prospect`) |
 | `apps/e2e/playwright.config.ts`   | Config (baseURL, webServer, timeouts)                |
 | `apps/e2e/coverage.ts`            | Interactive element coverage map (source of truth)   |
-| `apps/e2e/global-setup.ts`        | Cleans .email-captures before each run               |
+| `apps/e2e/global-setup.ts`        | Validates coverage + cleans .email-captures          |
 | `apps/e2e/tests/fixtures/auth.ts` | Custom fixtures (testUser, signIn, expectEmail, etc) |
 | `apps/e2e/tests/auth/`            | Auth flow tests                                      |
 | `apps/e2e/tests/proxy/`           | Proxy tests                                          |
+
+---
+
+## @ingot/prospect — The Full Playwright Companion
+
+### What it provides
+
+| Feature                | Status  | Description                                          |
+| :--------------------- | :------ | :--------------------------------------------------- |
+| **Coverage mapping**   | Shipped | `defineE2ECoverage()` maps routes → elements → tests |
+| **Dev overlay**        | Shipped | See coverage visually in your app (green/red/amber)  |
+| **Flakiness tracking** | WIP     | Playwright reporter for run history + pass rates     |
+| **Test artifacts**     | WIP     | Videos, screenshots, traces stored locally           |
+| **Visual regression**  | Planned | Screenshot diffing with PR comments                  |
+
+### Dev Overlay
+
+The overlay renders directly in your app during development. It shows:
+
+- **Green** — element is covered, tests pass
+- **Red** — no test coverage (`test: null`)
+- **Amber** — covered but flaky _(requires reporter — WIP)_
+
+**Features:**
+
+- Hover any highlighted element to see test details (file, context, expected behavior)
+- Draggable badge with coverage stats (percentage, covered/total)
+- Toggle uncovered element visibility
+- Keyboard shortcut: `Ctrl+Shift+E`
+- MutationObserver rescans on DOM changes
+- Portal to `document.body` — works above modals
+- `pointer-events: none` on highlights — doesn't intercept clicks
+
+**Usage (consumer handles dev gating):**
+
+```tsx
+// Vite
+import.meta.env.DEV && <CoverageOverlay coverage={routes} />;
+
+// Next.js / webpack
+process.env.NODE_ENV === "development" && <CoverageOverlay coverage={routes} />;
+```
+
+Zero bytes in production — the import is tree-shaken when the condition is false.
+
+### Gradual Adoption
+
+Prospect supports **gradual, per-route adoption**. You don't need to map every route on day one:
+
+1. **Start with one route** — pick the most critical flow (e.g., sign-in)
+2. **Add `data-testid`** to every interactive element on that route
+3. **Define coverage** in `coverage.ts` for that route only
+4. **Write tests** for the covered interactions
+5. **Expand** to more routes over time
+
+The overlay only highlights elements with `data-testid` that appear in the coverage map. Routes not in the map are simply invisible to the system — no errors, no noise.
+
+**Per-system adoption** also works: start by covering auth flows, then forms, then admin, etc. Each system can be adopted independently.
+
+```ts
+// Start small — just sign-in
+const e2e = defineE2ECoverage({
+  testId,
+  routes: {
+    "/auth/sign-in": {
+      interactions: {
+        /* ... */
+      },
+    },
+    // Add more routes as you go
+  },
+});
+```
+
+### Monorepo Setup
+
+In monorepos, put coverage in a shared package so both the app (overlay) and E2E tests can import it:
+
+```
+packages/e2e-coverage/   ← coverage.ts with defineE2ECoverage()
+  apps/web/              ← imports overlay + coverage (dev only)
+  apps/e2e/              ← imports coverage for tests + validation
+```
 
 ---
 

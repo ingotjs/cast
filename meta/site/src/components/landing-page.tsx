@@ -646,13 +646,14 @@ export function LandingPage() {
           </div>
           <section className="hero">
             <h1>
-              Know what you
+              The full Playwright
               <br />
-              haven't tested.
+              companion.
             </h1>
             <p className="hero-desc">
-              Your AI agent analyzes every route, applies <code>data-test-id</code> to every interactive element, and
-              builds the coverage file automatically. Nothing ships untested.
+              Coverage mapping, flakiness tracking, test artifacts, and a dev overlay — all in one package. Your AI
+              agent scans every route, applies <code>data-test-id</code>, and builds the coverage file. You see
+              everything in an overlay without leaving your app.
             </p>
             <div className="hero-cmd hero-cmd--pm" data-pm-group="prospect-hero">
               <PmTabs active={activePm} onSwitch={setActivePm} />
@@ -777,7 +778,7 @@ export function LandingPage() {
             <div className="features-inner">
               <div className="section-header">
                 <h2>Why Prospect?</h2>
-                <p>Route-based E2E coverage tracking — type-safe, explicit, validated on every run.</p>
+                <p>Everything you need to understand your E2E tests — without leaving your app.</p>
               </div>
               <div className="feature-grid">
                 <div className="feature animate-on-scroll">
@@ -799,34 +800,10 @@ export function LandingPage() {
                       <line x1="16" y1="17" x2="8" y2="17" />
                     </svg>
                   </div>
-                  <h3>Declarative Coverage Maps</h3>
+                  <h3>Coverage Mapping</h3>
                   <p>
-                    <code>defineE2ECoverage()</code> maps routes to their interactive elements. Your coverage spec is
-                    code — type-safe, version-controlled, IDE-refactorable.
-                  </p>
-                </div>
-                <div className="feature animate-on-scroll">
-                  <div className="feature-icon">
-                    <svg
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="#f87171"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="8" x2="12" y2="12" />
-                      <line x1="12" y1="16" x2="12.01" y2="16" />
-                    </svg>
-                  </div>
-                  <h3>Explicit Gap Tracking</h3>
-                  <p>
-                    <code>test: null</code> marks coverage gaps. Visible in code review, impossible to ignore. No more
-                    hoping you tested everything.
+                    <code>defineE2ECoverage()</code> maps routes to interactive elements. Type-safe, version-controlled,
+                    validated on every test run. <code>test: null</code> marks gaps explicitly.
                   </p>
                 </div>
                 <div className="feature animate-on-scroll">
@@ -842,13 +819,36 @@ export function LandingPage() {
                       strokeLinejoin="round"
                       aria-hidden="true"
                     >
-                      <polyline points="20 6 9 17 4 12" />
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                      <circle cx="12" cy="12" r="3" />
                     </svg>
                   </div>
-                  <h3>Validation on Every Run</h3>
+                  <h3>Dev Overlay</h3>
                   <p>
-                    <code>setup()</code> plugs into Playwright's <code>globalSetup</code>. Missing test files, duplicate
-                    IDs, orphaned selectors — caught automatically before tests execute.
+                    See coverage, flakiness, and test videos directly in your app. Green for covered, red for gaps,
+                    amber for flaky. Click any element to watch its test run.
+                  </p>
+                </div>
+                <div className="feature animate-on-scroll">
+                  <div className="feature-icon">
+                    <svg
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="#fbbf24"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                    </svg>
+                  </div>
+                  <h3>Flakiness Tracking</h3>
+                  <p>
+                    Playwright reporter stores every run locally. Track pass rates, spot flaky tests, browse artifacts —
+                    no external service, no per-seat pricing.
                   </p>
                 </div>
                 <div className="feature animate-on-scroll">
@@ -864,16 +864,14 @@ export function LandingPage() {
                       strokeLinejoin="round"
                       aria-hidden="true"
                     >
-                      <rect x="3" y="3" width="7" height="7" />
-                      <rect x="14" y="3" width="7" height="7" />
-                      <rect x="3" y="14" width="7" height="7" />
-                      <rect x="14" y="14" width="7" height="7" />
+                      <polygon points="23 7 16 12 23 17 23 7" />
+                      <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                     </svg>
                   </div>
-                  <h3>Shared Component Groups</h3>
+                  <h3>Test Artifacts</h3>
                   <p>
-                    Extract headers, footers, and menus as variables. Spread them into routes. One source of truth —
-                    change a selector in one place, every route updates.
+                    Videos, screenshots, and traces stored locally. Watch any test run from the overlay — even passing
+                    tests — to see exactly what each test does.
                   </p>
                 </div>
               </div>
@@ -887,8 +885,8 @@ export function LandingPage() {
                   Coverage as <span className="highlight-green">code</span>
                 </h2>
                 <p>
-                  Define what interactions exist on each route. Map them to test files — or mark them <code>null</code>{" "}
-                  to track the gap explicitly. Prospect validates the whole picture on every test run.
+                  Map every route's interactive elements to tests. Mark gaps with <code>null</code>. The overlay shows
+                  it all visually — coverage, flakiness, and test videos — right in your running app.
                 </p>
               </div>
               <div className="showcase-code animate-on-scroll">

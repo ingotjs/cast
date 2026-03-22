@@ -54,6 +54,7 @@ const getUserLocale = (user: Record<string, unknown>): string =>
   typeof user.locale === "string" ? user.locale : consts.defaultLocale;
 
 export const auth = betterAuth({
+  baseURL: serverEnv.URL,
   database: drizzleAdapter(db, { provider: "sqlite", usePlural: true }),
   // Reference: https://www.better-auth.com/docs/concepts/database#secondary-storage
   secondaryStorage: kvSecondaryStorage,

@@ -38,7 +38,7 @@ Cast isn't just AI-compatible — it's **built for AI agents to be productive fr
 
 - **Unit & integration tests** via `bun:test` with in-memory SQLite — tests run against a real database engine, not mocks
 - **Test utilities** for creating authenticated users and calling oRPC procedures directly
-- **E2E tests** via [Playwright](https://playwright.dev/) — full auth flow coverage (sign-up, sign-in, sign-out, change password, delete account) with email capture verification
+- **E2E tests** via [Playwright](https://playwright.dev/) + [`@ingot/prospect`](https://www.npmjs.com/package/@ingot/prospect) — coverage mapping, flakiness tracking, test artifacts, and a dev overlay that shows coverage/flakiness directly in your app
 - **Pre-commit hook** via [Vite+](https://vite.dev/plus/) — `vp staged` runs format + lint on staged files before every commit. Broken code doesn't get committed.
 
 ### 5. Code Quality & Reliability
@@ -87,6 +87,7 @@ packages/auth     → Better Auth + KV storage + i18n
 packages/api      → oRPC router + procedures
 packages/email    → React Email + Resend + email capture (E2E)
 packages/ui       → shadcn v4 + Tailwind CSS + Base UI
+packages/prospect → Full Playwright companion (coverage, overlay, flakiness, artifacts)
 packages/config   → Shared TypeScript configs
 ```
 

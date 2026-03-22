@@ -6,6 +6,7 @@ import { PostHogErrorBoundary, PostHogProvider } from "@posthog/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { Suspense, lazy } from "react";
 
 import { AuthModalProvider } from "../components/auth/auth-modal";
 import { Footer } from "../components/footer";
@@ -13,6 +14,16 @@ import { Header } from "../components/header";
 import { Providers } from "../components/providers";
 import { clientEnv } from "../lib/env";
 import type { RouterContext } from "../lib/i18n";
+
+const ProspectOverlay = import.meta.env.DEV
+  ? lazy(async () => {
+      const [{ CoverageOverlay }, { routes }] = await Promise.all([
+        import("@ingot/prospect/overlay"),
+        import("@ingot/e2e-coverage"),
+      ]);
+      return { default: () => <CoverageOverlay coverage={routes} /> };
+    })
+  : () => null;
 
 const { appName } = consts;
 
@@ -26,16 +37,11 @@ const ogDescription = msg`The modern full-stack starter`;
 const AppContent = ({ children }: { children: React.ReactNode }) => (
   <>
     <AuthModalProvider>
-      <div className="h-[200px] -mb-[200px] bg-[var(--header-bg)]" aria-hidden="true" />
       <div className="flex min-h-dvh flex-col">
         <Header />
         <div className="flex-1">{children}</div>
         <Footer />
       </div>
-      <div
-        className="h-[200px] -mt-[200px] bg-[color-mix(in_oklab,var(--header-bg)_84%,transparent_16%)]"
-        aria-hidden="true"
-      />
     </AuthModalProvider>
     <TanStackDevtools
       config={{ position: "bottom-right" }}
@@ -46,6 +52,11 @@ const AppContent = ({ children }: { children: React.ReactNode }) => (
         },
       ]}
     />
+    {import.meta.env.DEV && (
+      <Suspense>
+        <ProspectOverlay />
+      </Suspense>
+    )}
   </>
 );
 

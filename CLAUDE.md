@@ -43,18 +43,19 @@
 
 ### Monorepo Structure
 
-| Package             | Alias             | Description                                                                |
-| :------------------ | :---------------- | :------------------------------------------------------------------------- |
-| `apps/web`          | —                 | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
-| `packages/db`       | `@ingot/db`       | Drizzle ORM + D1 schema, migrations, database client                       |
-| `packages/utils`    | `@ingot/utils`    | Shared consts (`shared/`), server env/logger/posthog (`server/`)           |
-| `packages/auth`     | `@ingot/auth`     | Better Auth config, KV storage, i18n                                       |
-| `packages/api`      | `@ingot/api`      | oRPC router + procedures (public/protected/admin)                          |
-| `packages/email`    | `@ingot/email`    | React Email templates + Resend + email capture (E2E)                       |
-| `packages/ui`       | `@ingot/ui`       | shadcn v4 + Tailwind CSS + Base UI                                         |
-| `apps/e2e`          | —                 | Playwright E2E tests (auth flows, email verification)                      |
-| `packages/prospect` | `@ingot/prospect` | E2E coverage framework (defineE2ECoverage, testId, setup validation)       |
-| `packages/config`   | `@ingot/config`   | Shared TypeScript configs                                                  |
+| Package                 | Alias                 | Description                                                                |
+| :---------------------- | :-------------------- | :------------------------------------------------------------------------- |
+| `apps/web`              | —                     | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
+| `packages/db`           | `@ingot/db`           | Drizzle ORM + D1 schema, migrations, database client                       |
+| `packages/utils`        | `@ingot/utils`        | Shared consts (`shared/`), server env/logger/posthog (`server/`)           |
+| `packages/auth`         | `@ingot/auth`         | Better Auth config, KV storage, i18n                                       |
+| `packages/api`          | `@ingot/api`          | oRPC router + procedures (public/protected/admin)                          |
+| `packages/email`        | `@ingot/email`        | React Email templates + Resend + email capture (E2E)                       |
+| `packages/ui`           | `@ingot/ui`           | shadcn v4 + Tailwind CSS + Base UI                                         |
+| `apps/e2e`              | —                     | Playwright E2E tests (auth flows, email verification)                      |
+| `packages/prospect`     | `@ingot/prospect`     | Full Playwright companion — coverage, overlay, flakiness, artifacts        |
+| `packages/e2e-coverage` | `@ingot/e2e-coverage` | Project-specific E2E coverage map (shared between web + e2e)               |
+| `packages/config`       | `@ingot/config`       | Shared TypeScript configs                                                  |
 
 **Dependency graph:** `@ingot/db` (leaf) ← `@ingot/auth` (+ `@ingot/email`, `@ingot/utils`) ← `@ingot/api`
 
