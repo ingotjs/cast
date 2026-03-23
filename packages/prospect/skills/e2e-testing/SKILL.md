@@ -1,6 +1,16 @@
 ---
-name: e2e-testing
-description: Write and debug Playwright E2E tests for this project. Use when adding new E2E tests, debugging test failures, working with the apps/e2e package, or auditing interactive element coverage. Covers the coverage.ts system, overlay, test structure, fixtures, selectors, and best practices.
+name: prospect/e2e-testing
+description: >
+  Write and debug Playwright E2E tests using @ingot/prospect. Covers
+  defineE2ECoverage, coverage.ts structure, data-testid conventions, test
+  fixtures, selectors, overlay, and best practices. Load when adding E2E
+  tests, debugging test failures, or auditing interactive element coverage.
+type: core
+library: prospect
+library_version: "0.0.0"
+sources:
+  - "ingotjs/cast:packages/prospect/define-coverage.ts"
+  - "ingotjs/cast:packages/prospect/setup.ts"
 ---
 
 > **Keyword Usage:** Use **MUST** and **NEVER** to enforce critical requirements. These signal mandatory behavior that AI agents MUST follow without exception.

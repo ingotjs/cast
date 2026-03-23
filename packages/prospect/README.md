@@ -31,16 +31,15 @@ const e2e = defineE2ECoverage({
   },
 });
 
-export const { testId, routes, setup } = e2e;
+export const { testId, routes } = e2e;
 ```
 
 ### `defineE2ECoverage({ testId, routes })`
 
-Returns `{ testId, routes, setup }`.
+Returns `{ testId, routes }`.
 
 - **testId** — nested `as const` object of `data-testid` strings. Tests import this for type-safe selectors.
 - **routes** — route-based map of interactive elements, their contexts, and test coverage.
-- **setup(options)** — returns a Playwright `globalSetup` function that validates coverage.
 
 ### `interactions(map)`
 
@@ -59,7 +58,20 @@ Helper that validates interaction map shape without widening key types. Use for 
 }
 ```
 
-### `setup(options)`
+### `setup(config, options)` (from `@ingot/prospect/setup`)
+
+Separate Node-only import — keeps the main export browser-safe.
+
+```ts
+import { setup } from "@ingot/prospect/setup";
+
+const validate = setup({ testId, routes }, { testDir: resolve(__dirname, "./tests") });
+
+// In Playwright globalSetup:
+export default function globalSetup() {
+  validate();
+}
+```
 
 | Option  | Type    | Description                                  |
 | :------ | :------ | :------------------------------------------- |
@@ -134,6 +146,49 @@ packages/e2e-coverage/   ← coverage.ts with defineE2ECoverage()
   apps/web/              ← imports overlay + coverage (dev only)
   apps/e2e/              ← imports coverage for tests + validation
 ```
+
+## AI Skills ([TanStack Intent](https://tanstack.com/intent/latest))
+
+Prospect ships agent skills that AI coding assistants (Claude Code, Cursor, etc.) can auto-discover and load. Skills guide the agent through coverage workflows, test writing patterns, and project setup.
+
+### Install
+
+```bash
+npx @tanstack/intent install
+```
+
+This scans `node_modules` for Intent-enabled packages and prints setup instructions for your agent config. For Claude Code, it generates mappings in your project's agent config that automatically load the right skill when you're working in a relevant area.
+
+### Manual setup (Claude Code)
+
+If you prefer manual setup, symlink the skills into `.claude/skills/`:
+
+```bash
+# E2E testing guide — auto-invoked when writing tests
+ln -s ../../node_modules/@ingot/prospect/skills/e2e-testing .claude/skills/_e2e-testing
+
+# /prospect audit command — run manually to scan routes for coverage gaps
+ln -s ../../node_modules/@ingot/prospect/skills/prospect .claude/skills/prospect
+```
+
+### Included skills
+
+| Skill                  | Type      | Description                                                                   |
+| :--------------------- | :-------- | :---------------------------------------------------------------------------- |
+| `prospect/e2e-testing` | Core      | Coverage patterns, `data-testid` conventions, test fixtures, selectors        |
+| `prospect/audit`       | Lifecycle | `/prospect` command — scans routes, adds `data-testid`, updates coverage spec |
+
+### `/prospect` command
+
+Run `/prospect` in your AI assistant to audit E2E coverage:
+
+```
+/prospect                    # Audit all routes
+/prospect /auth              # Audit only auth routes
+/prospect /account /admin    # Audit specific routes
+```
+
+The command scans your routes, ensures every interactive element has `data-testid`, and updates your coverage spec. Supports gradual adoption — start with one route and expand over time.
 
 ## Visual regression _(coming soon)_
 

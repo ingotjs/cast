@@ -12,13 +12,15 @@
     "playwright",
     "prospect",
     "reporter",
+    "tanstack-intent",
     "test-coverage",
     "testing",
     "visual-regression"
   ],
   "license": "MIT",
   "files": [
-    "dist"
+    "dist",
+    "skills"
   ],
   "type": "module",
   "exports": {
