@@ -81,7 +81,7 @@ export const UserMenu = () => {
               onClick={() => {
                 posthog?.capture("user_signed_out");
                 posthog?.reset();
-                signOut({
+                void signOut({
                   fetchOptions: {
                     onSuccess: () => {
                       window.location.href = "/";

@@ -40,7 +40,7 @@ export const PasskeysCard = () => {
   }, []);
 
   useEffect(() => {
-    fetchPasskeys();
+    void fetchPasskeys();
   }, [fetchPasskeys]);
 
   const addPasskey = async () => {
@@ -48,7 +48,8 @@ export const PasskeysCard = () => {
     const result = await passkeyClient.addPasskey();
 
     if (result?.error) {
-      toast.error(result.error.message ?? "Failed to add passkey");
+      const msg = result.error.message;
+      toast.error(typeof msg === "string" ? msg : "Failed to add passkey");
       setAdding(false);
       return;
     }
@@ -56,7 +57,7 @@ export const PasskeysCard = () => {
     posthog?.capture("passkey_added");
     toast.success("Passkey added");
     setAdding(false);
-    fetchPasskeys();
+    void fetchPasskeys();
   };
 
   const deletePasskey = async (id: string) => {
@@ -64,7 +65,8 @@ export const PasskeysCard = () => {
     const result = await authClient.passkey.deletePasskey({ id });
 
     if (result.error) {
-      toast.error(result.error.message ?? "Failed to delete passkey");
+      const msg = result.error.message;
+      toast.error(typeof msg === "string" ? msg : "Failed to delete passkey");
       setDeletingId(null);
       return;
     }

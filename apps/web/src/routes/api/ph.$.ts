@@ -31,16 +31,20 @@ const handler = async ({ request }: { request: Request }) => {
     fetchOptions.duplex = "half";
   }
 
-  const response = await fetch(targetUrl, fetchOptions);
+  try {
+    const response = await fetch(targetUrl, fetchOptions);
 
-  const responseHeaders = new Headers(response.headers);
-  responseHeaders.delete("content-encoding");
-  responseHeaders.delete("content-length");
+    const responseHeaders = new Headers(response.headers);
+    responseHeaders.delete("content-encoding");
+    responseHeaders.delete("content-length");
 
-  return new Response(response.body, {
-    status: response.status,
-    headers: responseHeaders,
-  });
+    return new Response(response.body, {
+      status: response.status,
+      headers: responseHeaders,
+    });
+  } catch {
+    return new Response(null, { status: 502 });
+  }
 };
 
 export const Route = createFileRoute("/api/ph/$")({

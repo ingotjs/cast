@@ -320,4 +320,4 @@ async function main() {
   console.log("");
 }
 
-main();
+void main();

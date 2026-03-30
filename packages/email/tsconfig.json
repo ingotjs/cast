@@ -4,6 +4,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "types": ["bun", "node"],
+    "noEmit": true,
     "allowJs": true
   },
   "include": ["**/*.ts", "**/*.tsx"],

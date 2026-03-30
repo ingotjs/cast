@@ -90,4 +90,4 @@ async function main() {
   console.log(`\n${appName} is ready. Run \`cd ${dest} && bun dev\` to start.\n`);
 }
 
-main();
+void main();

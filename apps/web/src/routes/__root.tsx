@@ -6,7 +6,7 @@ import { PostHogErrorBoundary, PostHogProvider } from "@posthog/react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { HeadContent, Scripts, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 
 import { AuthModalProvider } from "../components/auth/auth-modal";
 import { Footer } from "../components/footer";
@@ -34,6 +34,12 @@ const THEME_INIT_SCRIPT = `(function(){try{var stored=window.localStorage.getIte
 const ogTitle = msg`${appName}`;
 const ogDescription = msg`The modern full-stack starter`;
 
+const ClientOnly = ({ children }: { children: React.ReactNode }) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  return mounted ? children : null;
+};
+
 const AppContent = ({ children }: { children: React.ReactNode }) => (
   <>
     <AuthModalProvider>
@@ -53,9 +59,11 @@ const AppContent = ({ children }: { children: React.ReactNode }) => (
       ]}
     />
     {import.meta.env.DEV && (
-      <Suspense>
-        <ProspectOverlay />
-      </Suspense>
+      <ClientOnly>
+        <Suspense>
+          <ProspectOverlay />
+        </Suspense>
+      </ClientOnly>
     )}
   </>
 );

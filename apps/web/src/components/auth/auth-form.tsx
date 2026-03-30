@@ -48,7 +48,7 @@ export const AuthForm = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
         posthog?.capture("user_signed_in", { email: user.email });
       }
       if (onSuccess) onSuccess();
-      else navigate({ to: "/" });
+      else void navigate({ to: "/" });
       return;
     }
 
@@ -66,7 +66,7 @@ export const AuthForm = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
         posthog?.capture("user_signed_up", { email: user.email, name: user.name });
       }
       if (onSuccess) onSuccess();
-      else navigate({ to: "/" });
+      else void navigate({ to: "/" });
       return;
     }
 

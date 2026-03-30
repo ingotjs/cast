@@ -38,7 +38,7 @@ export const SessionsCard = () => {
   }, []);
 
   useEffect(() => {
-    fetchSessions();
+    void fetchSessions();
   }, [fetchSessions]);
 
   const revokeSession = async (token: string) => {

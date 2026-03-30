@@ -1,10 +1,11 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
 import { DEV_PORT } from "@ingot/utils/consts";
 import { lingui } from "@lingui/vite-plugin";
+import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
 import { devtools } from "@tanstack/devtools-vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
-import viteReact from "@vitejs/plugin-react";
+import viteReact, { reactCompilerPreset } from "@vitejs/plugin-react";
 import type { PluginOption } from "vite-plus";
 import { defineConfig } from "vite-plus";
 
@@ -13,7 +14,7 @@ import { emailCapturePlugin } from "./vite-email-capture-plugin";
 // Reference: https://developers.cloudflare.com/workers/frameworks/framework-guides/tanstack-start/
 
 const config = defineConfig({
-  server: { port: DEV_PORT },
+  server: { port: DEV_PORT, hmr: { overlay: false } },
   resolve: {
     tsconfigPaths: true,
   },
@@ -36,10 +37,10 @@ const config = defineConfig({
       viteEnvironment: { name: "ssr" },
     }),
     tanstackStart(),
-    viteReact({
-      babel: {
-        plugins: [["babel-plugin-react-compiler"], ["@lingui/babel-plugin-lingui-macro"]],
-      },
+    viteReact(),
+    babel({
+      presets: [reactCompilerPreset()],
+      plugins: ["@lingui/babel-plugin-lingui-macro"],
     }),
   ] as PluginOption[],
 });

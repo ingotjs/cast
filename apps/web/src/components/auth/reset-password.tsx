@@ -59,7 +59,7 @@ export const ResetPassword = ({ token }: { token?: string }) => {
 
     posthog?.capture("password_reset_completed");
     toast.success("Password reset successfully");
-    navigate({ to: "/auth/$path", params: { path: "sign-in" } });
+    void navigate({ to: "/auth/$path", params: { path: "sign-in" } });
   };
 
   if (!token) {

@@ -41,12 +41,12 @@ const emailSender = serverEnv.email
 const sendEmailNotification = ({ to, subject, html }: { to: string; subject: string; html: string }) => {
   if (emailSender) {
     // Don't await send — prevents timing attacks
-    emailSender.sendHtml({ to, subject, html });
+    void emailSender.sendHtml({ to, subject, html });
   } else {
     console.log(`[auth] Email to ${to}: ${subject}`);
   }
   // Always capture for E2E test verification
-  captureEmail({ to, subject, html });
+  void captureEmail({ to, subject, html });
 };
 
 /** Extract locale from a user object (additionalFields are typed as Record<string, unknown> in hooks) */

@@ -14,7 +14,7 @@
     "ts": "tsgo --noEmit"
   },
   "dependencies": {
-    "posthog-node": "5.28.2",
+    "posthog-node": "5.28.9",
     "zod": "catalog:"
   },
   "devDependencies": {

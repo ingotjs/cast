@@ -84,6 +84,7 @@ export const test = base.extend<AuthFixtures>({
     });
   },
 
+  // eslint-disable-next-line no-empty-pattern -- Playwright requires destructured object
   getEmails: async ({}, use) => {
     await use((email: string) => {
       const filename = email.replaceAll(/[^a-zA-Z0-9@._-]/g, "_");
@@ -108,6 +109,7 @@ export const test = base.extend<AuthFixtures>({
     });
   },
 
+  // eslint-disable-next-line no-empty-pattern -- Playwright requires destructured object
   clearEmails: async ({}, use) => {
     await use(() => {
       if (!existsSync(EMAIL_CAPTURE_DIR)) {

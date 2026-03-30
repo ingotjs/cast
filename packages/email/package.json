@@ -19,22 +19,22 @@
   },
   "dependencies": {
     "@lingui/core": "catalog:",
-    "@react-email/components": "1.0.9",
-    "@react-email/tailwind": "2.0.5",
+    "@react-email/components": "1.0.10",
+    "@react-email/tailwind": "2.0.6",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "resend": "6.9.3"
+    "resend": "6.10.0"
   },
   "devDependencies": {
     "@ingot/config": "*",
     "@ingot/utils": "*",
     "@lingui/cli": "catalog:",
-    "@react-email/preview-server": "5.2.9",
+    "@react-email/preview-server": "5.2.10",
     "@types/bun": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "react-email": "5.2.9",
+    "react-email": "5.2.10",
     "typescript": "catalog:"
   }
 }
