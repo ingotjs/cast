@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { logger } from "../../logger";
+import { logger } from "../server/logger";
 
 describe("logger", () => {
   test("logger has all log methods", () => {

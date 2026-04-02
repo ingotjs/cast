@@ -4,7 +4,7 @@
     ".claude",
     "**/routeTree.gen.ts",
     "**/worker-configuration.d.ts",
-    "**/_etc/locales/**/messages.js",
+    "**/locales/**/messages.js",
     "**/*.md",
     "vite.config.ts"
   ],

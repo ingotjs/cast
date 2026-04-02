@@ -6,7 +6,7 @@
   "exports": {
     ".": "./auth.ts",
     "./kv-storage": "./kv-storage.ts",
-    "./test-utils": "./_etc/tests/test-utils.ts"
+    "./test-utils": "./tests/test-utils.ts"
   },
   "scripts": {
     "db:auth": "better-auth generate --output ../db/schema/auth.ts -y",

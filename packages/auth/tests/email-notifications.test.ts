@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
 
-import { auth } from "../../auth";
+import { auth } from "../auth";
 import { cleanupTestUser, createTestUser, uniqueEmail } from "./test-utils";
 
 // Spy on console.log to verify email notifications (emailSender is null in test)

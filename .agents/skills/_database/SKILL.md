@@ -21,9 +21,9 @@ description: Database layer — Drizzle ORM, Cloudflare D1 (SQLite), Drizzle-Zod
 | Zod schemas | `packages/db/zod-schema.ts` — Drizzle-Zod select/insert/update schemas |
 | ULID helper | `packages/db/utils.ts` — `ulidPrimaryKey` (text + ULID)                 |
 | D1 types    | `packages/db/d1.d.ts` — minimal D1Database type declaration             |
-| Migrations  | `packages/db/_etc/drizzle/` — applied via `wrangler d1 migrations apply` |
-| Local data  | `.wrangler/state/` (gitignored) — miniflare simulates D1+KV locally     |
-| Test DB     | `packages/db/_etc/tests/setup.ts` — in-memory bun:sqlite for tests      |
+| Migrations  | `packages/db/drizzle/` — applied via `wrangler d1 migrations apply`  |
+| Local data  | `.wrangler/state/` (gitignored) — miniflare simulates D1+KV locally |
+| Test DB     | `packages/db/tests/setup.ts` — in-memory bun:sqlite for tests       |
 
 ## How It Works
 

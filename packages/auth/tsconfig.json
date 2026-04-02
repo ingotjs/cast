@@ -8,5 +8,5 @@
     "jsx": "react-jsx"
   },
   "include": ["."],
-  "exclude": ["node_modules", "**/_etc/tests"]
+  "exclude": ["node_modules", "**/tests"]
 }

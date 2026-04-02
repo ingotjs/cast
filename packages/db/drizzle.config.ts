@@ -10,7 +10,7 @@ import { defineConfig } from "drizzle-kit";
  * Apply remotely:      `bun db:migrate:remote`
  */
 export default defineConfig({
-  out: "./_etc/drizzle",
+  out: "./drizzle",
   schema: "./schema/index.ts",
   dialect: "sqlite",
 });

@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "build": "vp run build -r",
-    "setup": "bun _etc/setup.ts",
+    "setup": "bun setup.ts",
     "dev": "bun install --silent && bun run --cwd apps/web vite dev",
     "deploy": "npx wrangler deploy",
     "db:auth": "bun run --cwd packages/auth db:auth",
@@ -18,10 +18,10 @@
     "dev:email": "vp run @ingot/email#dev",
     "e2e": "bun run --cwd apps/e2e e2e",
     "e2e:ui": "bun run --cwd apps/e2e e2e:ui",
-    "wrangler-types": "bunx --bun wrangler types apps/web/_etc/worker-configuration.d.ts",
-    "ok": "syncpack fix --config _etc/.syncpackrc --log-levels error && bun run wrangler-types && vp run ts -r && vp fmt --write && vp lint --fix && bun test",
-    "ok:ci": "syncpack lint --config _etc/.syncpackrc --log-levels error && bun run wrangler-types && vp run ts -r && vp fmt --check && vp lint && bun test",
-    "knip": "knip -c _etc/knip.json",
+    "wrangler-types": "bunx --bun wrangler types apps/web/worker-configuration.d.ts",
+    "ok": "syncpack fix --config .syncpackrc --log-levels error && bun run wrangler-types && vp run ts -r && vp fmt --write && vp lint --fix && bun test",
+    "ok:ci": "syncpack lint --config .syncpackrc --log-levels error && bun run wrangler-types && vp run ts -r && vp fmt --check && vp lint && bun test",
+    "knip": "knip -c knip.json",
     "ok:full": "bun knip && bun ok && bun e2e",
     "clean": "bun run --filter '*' clean",
     "prepare": "vp config"
@@ -78,19 +78,19 @@
     "compileNamespace": "es",
     "catalogs": [
       {
-        "path": "<rootDir>/apps/web/src/_etc/locales/{locale}/messages",
+        "path": "<rootDir>/apps/web/src/locales/{locale}/messages",
         "include": [
           "apps/web/src/**/*.{ts,tsx}"
         ]
       },
       {
-        "path": "<rootDir>/packages/email/_etc/locales/{locale}/messages",
+        "path": "<rootDir>/packages/email/locales/{locale}/messages",
         "include": [
           "packages/email/**/*.{ts,tsx}"
         ],
         "exclude": [
           "**/node_modules/**",
-          "**/_etc/locales/**"
+          "**/locales/**"
         ]
       }
     ]

@@ -2,7 +2,7 @@ import { db } from "@ingot/db";
 import * as schema from "@ingot/db/schema";
 import { eq } from "drizzle-orm";
 
-import { auth } from "../../auth";
+import { auth } from "../auth";
 
 /** Extract session cookies from a Better Auth HTTP response */
 const extractCookieHeaders = (response: Response): Headers => {

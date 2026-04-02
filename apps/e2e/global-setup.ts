@@ -5,7 +5,7 @@ import { setup } from "@ingot/prospect/setup";
 
 import { routes, testId } from "./coverage";
 
-const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../packages/email/_etc/.email-captures");
+const EMAIL_CAPTURE_DIR = resolve(__dirname, "../../packages/email/.email-captures");
 
 const validateCoverage = setup({ testId, routes }, { testDir: resolve(__dirname, "./tests") });
 

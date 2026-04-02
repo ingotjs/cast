@@ -6,5 +6,5 @@
     "types": ["node"]
   },
   "include": ["shared", "server"],
-  "exclude": ["node_modules", "**/_etc/tests"]
+  "exclude": ["node_modules", "**/tests"]
 }

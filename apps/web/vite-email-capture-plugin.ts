@@ -7,7 +7,7 @@ import { join, resolve } from "node:path";
 
 import type { PluginOption } from "vite-plus";
 
-const CAPTURE_DIR = resolve(import.meta.dirname, "../../packages/email/_etc/.email-captures");
+const CAPTURE_DIR = resolve(import.meta.dirname, "../../packages/email/.email-captures");
 
 export function emailCapturePlugin(): PluginOption {
   return {

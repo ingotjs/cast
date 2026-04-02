@@ -173,11 +173,11 @@ Cast is **i18n-ready from day one** — every user-facing string flows through [
 
 Three separate Lingui catalogs keep bundles lean and concerns separated:
 
-| Catalog  | Path                           | Covers                                                          |
-| -------- | ------------------------------ | --------------------------------------------------------------- |
-| Frontend | `apps/web/src/_etc/locales/`   | UI labels, buttons, forms, toasts, meta tags, validation errors |
-| Backend  | `packages/auth/_etc/locales/`  | Auth error messages, API responses, validation errors           |
-| Email    | `packages/email/_etc/locales/` | Subject lines, body copy, CTAs, transactional email content     |
+| Catalog  | Path                      | Covers                                                          |
+| -------- | ------------------------- | --------------------------------------------------------------- |
+| Frontend | `apps/web/src/locales/`   | UI labels, buttons, forms, toasts, meta tags, validation errors |
+| Backend  | `packages/auth/locales/`  | Auth error messages, API responses, validation errors           |
+| Email    | `packages/email/locales/` | Subject lines, body copy, CTAs, transactional email content     |
 
 Each catalog compiles independently. Server strings never leak into the client bundle.
 

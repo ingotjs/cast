@@ -6,7 +6,7 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   globalSetup: "./global-setup.ts",
   testDir: "./tests",
-  outputDir: "./_etc/test-results",
+  outputDir: "./test-results",
   testMatch: "**/*.e2e.ts",
   timeout: 30_000,
   expect: { timeout: 5000 },

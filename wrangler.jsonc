@@ -11,7 +11,7 @@
       "binding": "DB",
       "database_name": "db",
       "database_id": "NOT_SET",
-      "migrations_dir": "packages/db/_etc/drizzle",
+      "migrations_dir": "packages/db/drizzle",
     },
   ],
   "kv_namespaces": [

@@ -1,8 +1,8 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
-  "ignoreFiles": [".agents/**", ".claude/**", "**/_etc/tests/**"],
+  "ignoreFiles": [".agents/**", ".claude/**", "**/tests/**"],
   "ignoreIssues": {
-    "**/_etc/locales/**": ["exports"],
+    "**/locales/**": ["exports"],
     "apps/e2e/coverage.ts": ["exports"],
     "bunfig.toml": ["unresolved"]
   },
@@ -45,7 +45,7 @@
     },
     "packages/db": {},
     "packages/email": {
-      "entry": ["_etc/lingui.config.ts", "locale.ts"],
+      "entry": ["lingui.config.ts", "locale.ts"],
       "ignoreDependencies": ["@react-email/tailwind", "react-dom", "@react-email/preview-server", "@types/react-dom"]
     },
     "packages/ui": {

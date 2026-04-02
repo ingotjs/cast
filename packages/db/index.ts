@@ -1,5 +1,5 @@
 // oxlint-disable-next-line typescript-eslint/triple-slash-reference -- ambient D1Database type needed for cross-package resolution
-/// <reference path="./_etc/d1.d.ts" />
+/// <reference path="./d1.d.ts" />
 import { drizzle } from "drizzle-orm/d1";
 
 import * as schema from "./schema";

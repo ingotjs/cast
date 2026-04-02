@@ -59,7 +59,7 @@
 
 **Dependency graph:** `@ingot/db` (leaf) ← `@ingot/auth` (+ `@ingot/email`, `@ingot/utils`) ← `@ingot/api`
 
-**`_etc/` convention:** Secondary files (configs, tests, generated output) live in `_etc/` directories to keep package roots clean. Root: `_etc/knip.json`, `_etc/.syncpackrc`. Packages: `_etc/tests/` for unit tests. Uses `_etc` (underscore) instead of `.etc` (dot) so tools traverse it by default.
+**Tests:** Unit tests live in `tests/` at the package root (e.g., `packages/api/tests/`). Locales in `locales/` at the package or source root.
 
 ### Type Checking
 
@@ -92,7 +92,7 @@
 | `react-perf/jsx-no-new-function-as-prop` | off             | React Compiler handles memoization                 |
 | `typescript/consistent-type-definitions` | error, `"type"` | NEVER use `interface` (except module augmentation) |
 
-**Ignored paths:** `.agents`, `.claude`, `**/routeTree.gen.ts`, `**/_etc/locales/**/messages.js`, `**/*.md`
+**Ignored paths:** `.agents`, `.claude`, `**/routeTree.gen.ts`, `**/locales/**/messages.js`, `**/*.md`
 
 </details>
 
@@ -136,7 +136,7 @@ Per-page `head()` with `seoMeta()` + i18n. Dynamic OG images. JSON-LD. Sitemap +
 
 - Versions MUST be pinned (no `^` / `~`) — enforced by [syncpack](https://syncpack.dev/) + `bunfig.toml`
 - [@socketsecurity/bun-security-scanner](https://www.npmjs.com/package/@socketsecurity/bun-security-scanner) checks for vulnerabilities on `bun install`
-- [Knip](https://knip.dev/) finds unused files, dependencies, and exports — run `bun knip`. Config: `_etc/knip.json`
+- [Knip](https://knip.dev/) finds unused files, dependencies, and exports — run `bun knip`. Config: `knip.json`
 
 ### Infrastructure & CI/CD
 
@@ -255,50 +255,50 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 
 ## Key Files
 
-| File                                         | Purpose                                                                              |
-| :------------------------------------------- | :----------------------------------------------------------------------------------- |
-| `packages/utils/shared/consts.ts`            | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink) |
-| `packages/utils/server/env.ts`               | Server env vars + feature-gated groups                                               |
-| `packages/utils/server/logger.ts`            | Structured console logger (Workers-compatible)                                       |
-| `packages/utils/server/posthog.ts`           | PostHog server client (error tracking + analytics)                                   |
-| `packages/db/index.ts`                       | Database client (D1 via `initDb()` + proxy)                                          |
-| `packages/db/schema/`                        | Drizzle schema (`auth.ts`), Zod schemas (`zod.ts`), barrel (`index.ts`)              |
-| `packages/db/utils.ts`                       | `ulidPrimaryKey` helper                                                              |
-| `packages/auth/auth.ts`                      | Better Auth config + i18n plugin + all email triggers                                |
-| `packages/auth/kv-storage.ts`                | Cloudflare KV adapter for Better Auth secondary storage (sessions + rate limiting)   |
-| `packages/auth/i18n.ts`                      | `createAuthI18n()` + `buildAuthTranslations()` — auth i18n utilities                 |
-| `packages/api/base.ts`                       | Procedure definitions (public/protected/admin)                                       |
-| `packages/api/router.ts`                     | oRPC router                                                                          |
-| `apps/web/src/lib/env.ts`                    | Client features + env groups                                                         |
-| `apps/web/src/lib/orpc.ts`                   | oRPC client (SSR + browser)                                                          |
-| `apps/web/src/lib/auth-client.ts`            | Better Auth React client                                                             |
-| `apps/web/src/lib/schemas.ts`                | Shared Zod schemas                                                                   |
-| `apps/web/src/lib/seo.ts`                    | `seoMeta()` — generates OG + Twitter + meta tags from title/desc                     |
-| `apps/web/src/lib/zod-form-resolver.ts`      | Zod v4 resolver for react-hook-form                                                  |
-| `apps/web/src/routes/api/icon.tsx`           | Dynamic favicon (dark mode)                                                          |
-| `apps/web/src/routes/api/og.tsx`             | Dynamic OG image                                                                     |
-| `apps/web/src/components/auth/`              | Auth forms                                                                           |
-| `apps/web/src/components/settings/`          | Account settings cards                                                               |
-| `apps/web/src/server.ts`                     | Server entry — Lingui i18n middleware for per-request locale                         |
-| `apps/web/src/router.tsx`                    | TanStack Router config                                                               |
-| `apps/web/vite.config.ts`                    | Vite config (lingui, tailwind, tanstack, cloudflare, react compiler)                 |
-| `wrangler.jsonc`                             | Wrangler config — D1 + KV bindings, compatibility flags, observability               |
-| `vite.config.ts`                             | Root Vite+ config (staged linting, oxlint options — NOT used for Vite dev/build)     |
-| `.oxlintrc.json`                             | Oxlint config (rules, extends, overrides)                                            |
-| `_etc/.syncpackrc`                           | Syncpack config                                                                      |
-| `_etc/knip.json`                             | Knip config (unused files, deps, exports)                                            |
-| `.github/workflows/ci.yml`                   | CI pipeline                                                                          |
-| `packages/email/email-capture.ts`            | Email capture for E2E test verification (dev/test only)                              |
-| `packages/email/templates.ts`                | Email render functions + localized subject helpers                                   |
-| `packages/email/locale.ts`                   | Re-exports `createEmailI18n()` from `i18n.ts`                                        |
-| `packages/email/emails/email-layout.tsx`     | Shared email layout component                                                        |
-| `packages/auth/_etc/locales/en/messages.po`  | Server i18n strings (auth error messages with `auth_` prefix)                        |
-| `packages/email/_etc/locales/en/messages.po` | Email i18n strings (generated by `lingui extract`)                                   |
-| `apps/web/src/_etc/locales/en/messages.po`   | Frontend i18n strings (generated by `lingui extract`)                                |
-| `apps/web/src/lib/i18n.ts`                   | Lingui i18n — `loadCatalog()`, `detectLocale()`, `RouterContext` type                |
-| `packages/email/i18n.ts`                     | `createEmailI18n()` — per-render i18n instance for email templates                   |
-| `package.json` `"lingui"`                    | Lingui config — catalog paths for web + email                                        |
-| `bunfig.toml`                                | Bun config (exact versions, min release age)                                         |
+| File                                     | Purpose                                                                              |
+| :--------------------------------------- | :----------------------------------------------------------------------------------- |
+| `packages/utils/shared/consts.ts`        | App constants + capability flags (appName, siteUrl, auth.password/passkey/magicLink) |
+| `packages/utils/server/env.ts`           | Server env vars + feature-gated groups                                               |
+| `packages/utils/server/logger.ts`        | Structured console logger (Workers-compatible)                                       |
+| `packages/utils/server/posthog.ts`       | PostHog server client (error tracking + analytics)                                   |
+| `packages/db/index.ts`                   | Database client (D1 via `initDb()` + proxy)                                          |
+| `packages/db/schema/`                    | Drizzle schema (`auth.ts`), Zod schemas (`zod.ts`), barrel (`index.ts`)              |
+| `packages/db/utils.ts`                   | `ulidPrimaryKey` helper                                                              |
+| `packages/auth/auth.ts`                  | Better Auth config + i18n plugin + all email triggers                                |
+| `packages/auth/kv-storage.ts`            | Cloudflare KV adapter for Better Auth secondary storage (sessions + rate limiting)   |
+| `packages/auth/i18n.ts`                  | `createAuthI18n()` + `buildAuthTranslations()` — auth i18n utilities                 |
+| `packages/api/base.ts`                   | Procedure definitions (public/protected/admin)                                       |
+| `packages/api/router.ts`                 | oRPC router                                                                          |
+| `apps/web/src/lib/env.ts`                | Client features + env groups                                                         |
+| `apps/web/src/lib/orpc.ts`               | oRPC client (SSR + browser)                                                          |
+| `apps/web/src/lib/auth-client.ts`        | Better Auth React client                                                             |
+| `apps/web/src/lib/schemas.ts`            | Shared Zod schemas                                                                   |
+| `apps/web/src/lib/seo.ts`                | `seoMeta()` — generates OG + Twitter + meta tags from title/desc                     |
+| `apps/web/src/lib/zod-form-resolver.ts`  | Zod v4 resolver for react-hook-form                                                  |
+| `apps/web/src/routes/api/icon.tsx`       | Dynamic favicon (dark mode)                                                          |
+| `apps/web/src/routes/api/og.tsx`         | Dynamic OG image                                                                     |
+| `apps/web/src/components/auth/`          | Auth forms                                                                           |
+| `apps/web/src/components/settings/`      | Account settings cards                                                               |
+| `apps/web/src/server.ts`                 | Server entry — Lingui i18n middleware for per-request locale                         |
+| `apps/web/src/router.tsx`                | TanStack Router config                                                               |
+| `apps/web/vite.config.ts`                | Vite config (lingui, tailwind, tanstack, cloudflare, react compiler)                 |
+| `wrangler.jsonc`                         | Wrangler config — D1 + KV bindings, compatibility flags, observability               |
+| `vite.config.ts`                         | Root Vite+ config (staged linting, oxlint options — NOT used for Vite dev/build)     |
+| `.oxlintrc.json`                         | Oxlint config (rules, extends, overrides)                                            |
+| `.syncpackrc`                            | Syncpack config                                                                      |
+| `knip.json`                              | Knip config (unused files, deps, exports)                                            |
+| `.github/workflows/ci.yml`               | CI pipeline                                                                          |
+| `packages/email/email-capture.ts`        | Email capture for E2E test verification (dev/test only)                              |
+| `packages/email/templates.ts`            | Email render functions + localized subject helpers                                   |
+| `packages/email/locale.ts`               | Re-exports `createEmailI18n()` from `i18n.ts`                                        |
+| `packages/email/emails/email-layout.tsx` | Shared email layout component                                                        |
+| `packages/auth/locales/en/messages.po`   | Server i18n strings (auth error messages with `auth_` prefix)                        |
+| `packages/email/locales/en/messages.po`  | Email i18n strings (generated by `lingui extract`)                                   |
+| `apps/web/src/locales/en/messages.po`    | Frontend i18n strings (generated by `lingui extract`)                                |
+| `apps/web/src/lib/i18n.ts`               | Lingui i18n — `loadCatalog()`, `detectLocale()`, `RouterContext` type                |
+| `packages/email/i18n.ts`                 | `createEmailI18n()` — per-render i18n instance for email templates                   |
+| `package.json` `"lingui"`                | Lingui config — catalog paths for web + email                                        |
+| `bunfig.toml`                            | Bun config (exact versions, min release age)                                         |
 
 <!--VITE PLUS START-->
 
