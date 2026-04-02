@@ -60,13 +60,25 @@ export const DeleteAccountCard = () => {
             >
               Delete my account
             </Button>
-            <Button type="button" variant="outline" onClick={() => setShowConfirm(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setShowConfirm(false);
+              }}
+            >
               Cancel
             </Button>
           </div>
         </form>
       ) : (
-        <Button variant="destructive" onClick={() => setShowConfirm(true)} data-testid="delete-account-button-trigger">
+        <Button
+          variant="destructive"
+          onClick={() => {
+            setShowConfirm(true);
+          }}
+          data-testid="delete-account-button-trigger"
+        >
           Delete account
         </Button>
       )}

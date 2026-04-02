@@ -30,7 +30,7 @@ export const banUser = adminProcedure
       banReason: z.string().optional(),
     })
   )
-  .handler(({ input, context }) =>
+  .handler(async ({ input, context }) =>
     auth.api.banUser({
       headers: context.headers,
       body: {
@@ -40,12 +40,14 @@ export const banUser = adminProcedure
     })
   );
 
-export const unbanUser = adminProcedure.input(z.object({ userId: z.string().min(1) })).handler(({ input, context }) =>
-  auth.api.unbanUser({
-    headers: context.headers,
-    body: { userId: input.userId },
-  })
-);
+export const unbanUser = adminProcedure
+  .input(z.object({ userId: z.string().min(1) }))
+  .handler(async ({ input, context }) =>
+    auth.api.unbanUser({
+      headers: context.headers,
+      body: { userId: input.userId },
+    })
+  );
 
 export const setRole = adminProcedure
   .input(
@@ -54,16 +56,18 @@ export const setRole = adminProcedure
       role: z.enum(["user", "admin"]),
     })
   )
-  .handler(({ input, context }) =>
+  .handler(async ({ input, context }) =>
     auth.api.setRole({
       headers: context.headers,
       body: { userId: input.userId, role: input.role },
     })
   );
 
-export const removeUser = adminProcedure.input(z.object({ userId: z.string().min(1) })).handler(({ input, context }) =>
-  auth.api.removeUser({
-    headers: context.headers,
-    body: { userId: input.userId },
-  })
-);
+export const removeUser = adminProcedure
+  .input(z.object({ userId: z.string().min(1) }))
+  .handler(async ({ input, context }) =>
+    auth.api.removeUser({
+      headers: context.headers,
+      body: { userId: input.userId },
+    })
+  );

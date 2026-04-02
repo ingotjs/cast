@@ -15,21 +15,22 @@ type CommonProps = {
   locale?: string;
 };
 
-export const renderResetPasswordEmail = (props: CommonProps & { resetLink: string }) =>
+export const renderResetPasswordEmail = async (props: CommonProps & { resetLink: string }) =>
   render(createElement(ResetPasswordEmail, props));
 
-export const renderMagicLinkEmail = (props: CommonProps & { token: string; magicLink: string }) =>
+export const renderMagicLinkEmail = async (props: CommonProps & { token: string; magicLink: string }) =>
   render(createElement(MagicLinkEmail, props));
 
-export const renderEmailVerificationEmail = (props: CommonProps & { verificationLink: string }) =>
+export const renderEmailVerificationEmail = async (props: CommonProps & { verificationLink: string }) =>
   render(createElement(EmailVerificationEmail, props));
 
-export const renderPasswordChangedEmail = (props: CommonProps & { resetPasswordLink: string }) =>
+export const renderPasswordChangedEmail = async (props: CommonProps & { resetPasswordLink: string }) =>
   render(createElement(PasswordChangedEmail, props));
 
-export const renderAccountDeletedEmail = (props: CommonProps) => render(createElement(AccountDeletedEmail, props));
+export const renderAccountDeletedEmail = async (props: CommonProps) =>
+  render(createElement(AccountDeletedEmail, props));
 
-export const renderWelcomeEmail = (props: CommonProps) => render(createElement(WelcomeEmail, props));
+export const renderWelcomeEmail = async (props: CommonProps) => render(createElement(WelcomeEmail, props));
 
 /** Localized email subject lines */
 export const getEmailSubject = {

@@ -36,7 +36,9 @@ const ogDescription = msg`The modern full-stack starter`;
 
 const ClientOnly = ({ children }: { children: React.ReactNode }) => {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   return mounted ? children : null;
 };
 

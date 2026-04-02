@@ -89,7 +89,7 @@ export const SessionsCard = () => {
                 variant="outline"
                 size="sm"
                 loading={revokingToken === session.token}
-                onClick={() => revokeSession(session.token)}
+                onClick={async () => revokeSession(session.token)}
               >
                 Revoke
               </Button>

@@ -21,14 +21,22 @@ export const useAuthModal = () => useContext(AuthModalContext);
 export const AuthModalProvider = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const open = useCallback(() => setIsOpen(true), []);
-  const close = useCallback(() => setIsOpen(false), []);
+  const open = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+  const close = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
   useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen) {
+      return;
+    }
 
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+      if (e.key === "Escape") {
+        close();
+      }
     };
 
     document.addEventListener("keydown", handleEsc);

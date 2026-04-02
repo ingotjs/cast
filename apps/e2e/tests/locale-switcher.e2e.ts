@@ -30,7 +30,7 @@ test.describe("Locale Switcher", () => {
     // Base UI Menu needs hydrated React — retry clicks until the menu opens
     await expect(async () => {
       await trigger.click();
-      await expect(page.getByTestId(testId.header.localeSwitcherItemEn)).toBeVisible({ timeout: 2_000 });
+      await expect(page.getByTestId(testId.header.localeSwitcherItemEn)).toBeVisible({ timeout: 2000 });
     }).toPass({ timeout: 15_000 });
   });
 
@@ -52,7 +52,7 @@ test.describe("Locale Switcher", () => {
     const trigger = page.getByTestId(testId.header.localeSwitcherTrigger);
     await expect(async () => {
       await trigger.click();
-      await expect(page.getByTestId(testId.header.localeSwitcherItemEn)).toBeVisible({ timeout: 2_000 });
+      await expect(page.getByTestId(testId.header.localeSwitcherItemEn)).toBeVisible({ timeout: 2000 });
     }).toPass({ timeout: 15_000 });
 
     // Click the English locale (re-selecting current locale — should be a no-op)

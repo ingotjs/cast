@@ -23,7 +23,9 @@ export function ElementHighlighter({ highlights, showUncovered, onHover }: Eleme
       rafRef.current = requestAnimationFrame(update);
     };
     rafRef.current = requestAnimationFrame(update);
-    return () => cancelAnimationFrame(rafRef.current);
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   const handlePointerMove = useCallback(
@@ -47,7 +49,9 @@ export function ElementHighlighter({ highlights, showUncovered, onHover }: Eleme
 
   useEffect(() => {
     window.addEventListener("pointermove", handlePointerMove, { passive: true, capture: true });
-    return () => window.removeEventListener("pointermove", handlePointerMove, true);
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove, true);
+    };
   }, [handlePointerMove]);
 
   const visible = highlights.filter((h) => (h.status === "uncovered" ? showUncovered : true));
@@ -73,7 +77,7 @@ export function ElementHighlighter({ highlights, showUncovered, onHover }: Eleme
               border: `2px solid ${isCovered ? COVERED_BORDER : UNCOVERED_BORDER}`,
               borderRadius: "4px",
               pointerEvents: "none",
-              zIndex: 999998,
+              zIndex: 999_998,
               transition: "opacity 0.15s ease",
             }}
           >

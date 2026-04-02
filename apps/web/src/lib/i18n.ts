@@ -1,6 +1,7 @@
 // Reference: https://lingui.dev/tutorials/react-rsc
 
-import { type I18n, setupI18n } from "@lingui/core";
+import { setupI18n } from "@lingui/core";
+import type { I18n } from "@lingui/core";
 
 /** Available locales — update when adding a new language */
 export const LOCALES = ["en"] as const;
@@ -26,19 +27,21 @@ export const detectLocale = (req: Request): string => {
   const cookie = req.headers.get("cookie");
   if (cookie) {
     const match = cookie.match(/(?:^|;\s*)locale=([a-z]{2}(?:-[A-Z]{2})?)/);
-    if (match?.[1]) return match[1];
+    if (match?.[1]) {
+      return match[1];
+    }
   }
 
   const acceptLang = req.headers.get("accept-language");
   if (acceptLang) {
     const preferred = acceptLang.split(",")[0]?.split("-")[0]?.trim();
-    if (preferred && (LOCALES as readonly string[]).includes(preferred)) return preferred;
+    if (preferred && (LOCALES as readonly string[]).includes(preferred)) {
+      return preferred;
+    }
   }
 
   return "en";
 };
 
 /** Detect locale on the client from the SSR-rendered <html lang> attribute */
-export const detectClientLocale = (): string => {
-  return document.documentElement.lang || "en";
-};
+export const detectClientLocale = (): string => document.documentElement.lang || "en";

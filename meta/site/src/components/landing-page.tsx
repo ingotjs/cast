@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { pkgConfig, pmCommands, type PkgName, type PmName } from "../lib/pkg-config";
+import { pkgConfig, pmCommands } from "../lib/pkg-config";
+import type { PkgName, PmName } from "../lib/pkg-config";
 import { CopyButton } from "./copy-button";
 import { PmTabs } from "./pm-switcher";
 
@@ -18,7 +19,9 @@ export function LandingPage() {
 
   const switchPkg = useCallback(
     (pkg: PkgName) => {
-      if (pkg === activePkg) return;
+      if (pkg === activePkg) {
+        return;
+      }
       setActivePkg(pkg);
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
@@ -27,8 +30,12 @@ export function LandingPage() {
 
   useEffect(() => {
     const cfg = pkgConfig[activePkg];
-    if (navNpmRef.current) navNpmRef.current.href = cfg.npm;
-    if (navGithubRef.current) navGithubRef.current.href = cfg.github;
+    if (navNpmRef.current) {
+      navNpmRef.current.href = cfg.npm;
+    }
+    if (navGithubRef.current) {
+      navGithubRef.current.href = cfg.github;
+    }
   }, [activePkg]);
 
   const handleTabKeyDown = useCallback(
@@ -36,8 +43,11 @@ export function LandingPage() {
       const pkgs: PkgName[] = ["cast", "prospect"];
       const idx = pkgs.indexOf(activePkg);
       let newIdx: number | undefined;
-      if (e.key === "ArrowRight" || e.key === "ArrowDown") newIdx = (idx + 1) % pkgs.length;
-      else if (e.key === "ArrowLeft" || e.key === "ArrowUp") newIdx = (idx - 1 + pkgs.length) % pkgs.length;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        newIdx = (idx + 1) % pkgs.length;
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        newIdx = (idx - 1 + pkgs.length) % pkgs.length;
+      }
       if (newIdx !== undefined) {
         e.preventDefault();
         switchPkg(pkgs[newIdx]);
@@ -51,12 +61,16 @@ export function LandingPage() {
 
   // Scroll animations — observe all .animate-on-scroll elements
   useEffect(() => {
-    if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      return;
+    }
 
     // Defer to next frame so DOM is fully committed
     const raf = requestAnimationFrame(() => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        document.querySelectorAll(".animate-on-scroll").forEach((el) => el.classList.add("visible"));
+        document.querySelectorAll(".animate-on-scroll").forEach((el) => {
+          el.classList.add("visible");
+        });
         return;
       }
       const observer = new IntersectionObserver(
@@ -74,7 +88,9 @@ export function LandingPage() {
         el.classList.remove("visible");
         observer.observe(el);
       });
-      cleanupRef.current = () => observer.disconnect();
+      cleanupRef.current = () => {
+        observer.disconnect();
+      };
     });
 
     return () => {
@@ -94,27 +110,7 @@ export function LandingPage() {
         <nav>
           <div className="nav-inner">
             <a href="/" className="nav-brand">
-              <svg viewBox="0 0 24 18" fill="none" aria-hidden="true">
-                <defs>
-                  <linearGradient id="ingot-top" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#D4A04A" />
-                    <stop offset="100%" stopColor="#C08B30" />
-                  </linearGradient>
-                  <linearGradient id="ingot-front" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#B8892E" />
-                    <stop offset="100%" stopColor="#8B6914" />
-                  </linearGradient>
-                  <linearGradient id="ingot-side" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="#A07820" />
-                    <stop offset="100%" stopColor="#7A5C10" />
-                  </linearGradient>
-                </defs>
-                <path d="M1 17L15 17L13 11L3 11Z" fill="url(#ingot-front)" />
-                <path d="M3 11L13 11L21 5L11 5Z" fill="url(#ingot-top)" />
-                <path d="M15 17L23 11L21 5L13 11Z" fill="url(#ingot-side)" />
-                <path d="M3 11L13 11L21 5L11 5Z" fill="rgba(255,255,255,0.15)" />
-              </svg>
-              @ingot
+              <img src="/logo.svg" alt="ingot" height="28" />
             </a>
             <div className="nav-links">
               <a
@@ -160,7 +156,9 @@ export function LandingPage() {
             aria-selected={activePkg === "cast"}
             aria-controls="page-cast"
             tabIndex={activePkg === "cast" ? 0 : -1}
-            onClick={() => switchPkg("cast")}
+            onClick={() => {
+              switchPkg("cast");
+            }}
           >
             <div className="tab-btn-top">
               <span className="tab-btn-name">@ingot/cast</span>
@@ -175,7 +173,9 @@ export function LandingPage() {
             aria-selected={activePkg === "prospect"}
             aria-controls="page-prospect"
             tabIndex={activePkg === "prospect" ? 0 : -1}
-            onClick={() => switchPkg("prospect")}
+            onClick={() => {
+              switchPkg("prospect");
+            }}
           >
             <div className="tab-btn-top">
               <span className="tab-btn-name">@ingot/prospect</span>
@@ -617,9 +617,9 @@ export function LandingPage() {
               <div className="code-block">
                 <div className="code-header">
                   <div className="macos-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span />
+                    <span />
+                    <span />
                   </div>
                 </div>
                 <pre>
@@ -905,9 +905,9 @@ export function LandingPage() {
               <div className="code-block" data-pm-group="prospect-quickstart">
                 <div className="code-header">
                   <div className="macos-dots">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <span />
+                    <span />
+                    <span />
                   </div>
                   <PmTabs active={activePm} onSwitch={setActivePm} />
                 </div>

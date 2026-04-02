@@ -47,8 +47,11 @@ export const AuthForm = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
         posthog?.identify(user.id, { email: user.email, name: user.name });
         posthog?.capture("user_signed_in", { email: user.email });
       }
-      if (onSuccess) onSuccess();
-      else void navigate({ to: "/" });
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        void navigate({ to: "/" });
+      }
       return;
     }
 
@@ -65,8 +68,11 @@ export const AuthForm = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
         posthog?.identify(user.id, { email: user.email, name: user.name });
         posthog?.capture("user_signed_up", { email: user.email, name: user.name });
       }
-      if (onSuccess) onSuccess();
-      else void navigate({ to: "/" });
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        void navigate({ to: "/" });
+      }
       return;
     }
 
@@ -75,7 +81,9 @@ export const AuthForm = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
   };
 
   const [hydrated, setHydrated] = useState(false);
-  useEffect(() => setHydrated(true), []);
+  useEffect(() => {
+    setHydrated(true);
+  }, []);
 
   return (
     <AuthCard title="Welcome" description="Sign in to your account or create a new one" showLegal>

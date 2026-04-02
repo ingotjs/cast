@@ -22,9 +22,15 @@ const emit = (level: string, msg: string, data?: LogData) => {
 };
 
 export const logger = {
-  info: (msg: string, data?: LogData) => emit("info", msg, data),
-  warn: (msg: string, data?: LogData) => emit("warn", msg, data),
-  error: (msg: string, data?: LogData) => emit("error", msg, data),
+  info: (msg: string, data?: LogData) => {
+    emit("info", msg, data);
+  },
+  warn: (msg: string, data?: LogData) => {
+    emit("warn", msg, data);
+  },
+  error: (msg: string, data?: LogData) => {
+    emit("error", msg, data);
+  },
   debug: (msg: string, data?: LogData) => {
     if (isDev) {
       emit("debug", msg, data);

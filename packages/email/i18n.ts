@@ -1,4 +1,5 @@
-import { type I18n, setupI18n } from "@lingui/core";
+import { setupI18n } from "@lingui/core";
+import type { I18n } from "@lingui/core";
 
 import { messages as enMessages } from "./_etc/locales/en/messages.js";
 

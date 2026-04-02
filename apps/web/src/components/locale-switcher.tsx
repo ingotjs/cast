@@ -8,7 +8,8 @@ import {
 import { useLingui } from "@lingui/react";
 import { Languages } from "lucide-react";
 
-import { type Locale, LOCALE_LABELS, LOCALES } from "@/lib/i18n";
+import { LOCALE_LABELS, LOCALES } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
 
 const setLocaleCookie = (locale: string) => {
   document.cookie = `locale=${locale}; path=/; max-age=${365 * 24 * 60 * 60}; SameSite=Lax`;
@@ -31,7 +32,9 @@ export const LocaleSwitcher = () => {
         <DropdownMenuRadioGroup
           value={currentLocale}
           onValueChange={(locale) => {
-            if (locale === currentLocale) return;
+            if (locale === currentLocale) {
+              return;
+            }
             setLocaleCookie(locale);
             window.location.reload();
           }}

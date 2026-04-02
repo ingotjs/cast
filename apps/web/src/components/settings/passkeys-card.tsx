@@ -100,7 +100,7 @@ export const PasskeysCard = () => {
                 variant="destructive"
                 size="icon-sm"
                 loading={deletingId === pk.id}
-                onClick={() => deletePasskey(pk.id)}
+                onClick={async () => deletePasskey(pk.id)}
                 aria-label="Delete passkey"
               >
                 <Trash2 className="size-3.5" />

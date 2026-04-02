@@ -2,7 +2,8 @@ import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { createIsomorphicFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 
-import { type RouterContext, detectClientLocale, detectLocale, loadCatalog } from "./lib/i18n";
+import { detectClientLocale, detectLocale, loadCatalog } from "./lib/i18n";
+import type { RouterContext } from "./lib/i18n";
 import { routeTree } from "./routeTree.gen";
 
 const getLocale = createIsomorphicFn()

@@ -53,7 +53,7 @@ export const SocialAuth = () => {
             size="lg"
             className="w-full"
             loading={loadingProvider === "google"}
-            onClick={() => handleSocial("google")}
+            onClick={async () => handleSocial("google")}
             data-testid="social-auth-button-google"
           >
             <GoogleIcon />

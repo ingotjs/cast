@@ -1,11 +1,12 @@
 // Reference: https://better-auth.com/docs/plugins/i18n
 // Reference: https://better-auth.com/docs/reference/errors
 
-import { type I18n, setupI18n } from "@lingui/core";
+import { setupI18n } from "@lingui/core";
+import type { I18n } from "@lingui/core";
 
 import { messages as enMessages } from "./_etc/locales/en/messages";
 
-const catalogs: Record<string, Record<string, string>> = { en: enMessages as Record<string, string> };
+const catalogs: Record<string, Record<string, string>> = { en: enMessages };
 
 /** Create an i18n instance for auth translations with the given locale */
 export const createAuthI18n = (locale = "en"): I18n => {
@@ -34,10 +35,14 @@ export const buildAuthTranslations = (): Record<string, Record<string, string>> 
   const translations: Record<string, Record<string, string>> = {};
 
   for (const locale of locales) {
-    if (locale === baseLocale) continue;
+    if (locale === baseLocale) {
+      continue;
+    }
 
     const catalog = catalogs[locale];
-    if (!catalog) continue;
+    if (!catalog) {
+      continue;
+    }
 
     const i18n = setupI18n();
     i18n.load(locale, catalog);

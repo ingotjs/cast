@@ -67,7 +67,7 @@
 
 ### Linting & Formatting
 
-[Vite+](https://vite.dev/plus/) (`vite-plus`) for Oxlint + Oxfmt + tsgolint (type-aware linting). Config: `.oxlintrc.json` + `.oxfmtrc.jsonc` + `vite.config.ts` (`lint.options.typeAware`). Pre-commit hooks via `vp staged` (`.vite-hooks/pre-commit`). Type-aware rules like `no-floating-promises` are enforced — use `void` for intentionally unhandled promises.
+[Vite+](https://vite.dev/plus/) (`vite-plus`) for Oxlint + Oxfmt + tsgolint (type-aware linting). Config: `.oxlintrc.json` (lint rules/extends) + `vite.config.ts` (fmt + `lint.options.typeAware`). Pre-commit hooks via `vp staged` (`.vite-hooks/pre-commit`). Type-aware rules like `no-floating-promises` are enforced — use `void` for intentionally unhandled promises.
 
 **Note:** Bun remains the package manager and test runner. Vite+ handles linting/formatting (`vp fmt`, `vp lint`, `vp staged`) and monorepo task orchestration (`vp run -r`). `vp install`, `vp test`, `vp dev`, `vp build` are NOT used — Bun handles those.
 
@@ -284,8 +284,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `apps/web/vite.config.ts`                    | Vite config (lingui, tailwind, tanstack, cloudflare, react compiler)                 |
 | `wrangler.jsonc`                             | Wrangler config — D1 + KV bindings, compatibility flags, observability               |
 | `vite.config.ts`                             | Root Vite+ config (staged linting, oxlint options — NOT used for Vite dev/build)     |
-| `.oxlintrc.json`                             | Oxlint config                                                                        |
-| `.oxfmtrc.jsonc`                             | Oxfmt config                                                                         |
+| `.oxlintrc.json`                             | Oxlint config (rules, extends, overrides)                                            |
 | `_etc/.syncpackrc`                           | Syncpack config                                                                      |
 | `_etc/knip.json`                             | Knip config (unused files, deps, exports)                                            |
 | `.github/workflows/ci.yml`                   | CI pipeline                                                                          |

@@ -17,7 +17,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { createInterface } from "node:readline";
 
-const askYesNo = (question: string, defaultYes = true): Promise<boolean> => {
+const askYesNo = async (question: string, defaultYes = true): Promise<boolean> => {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   const hint = defaultYes ? "[Y/n]" : "[y/N]";
   return new Promise((resolve) => {
@@ -37,10 +37,10 @@ const ROOT = resolve(import.meta.dirname, "..");
 const ENV_PATH = resolve(ROOT, ".env");
 const WRANGLER_CONFIG = resolve(ROOT, "wrangler.jsonc");
 
-const bold = (s: string) => `\x1b[1m${s}\x1b[0m`;
-const dim = (s: string) => `\x1b[2m${s}\x1b[0m`;
-const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
-const yellow = (s: string) => `\x1b[33m${s}\x1b[0m`;
+const bold = (s: string) => `\u001B[1m${s}\u001B[0m`;
+const dim = (s: string) => `\u001B[2m${s}\u001B[0m`;
+const green = (s: string) => `\u001B[32m${s}\u001B[0m`;
+const yellow = (s: string) => `\u001B[33m${s}\u001B[0m`;
 
 // ---------------------------------------------------------------------------
 // Shell helpers
@@ -60,7 +60,9 @@ const run = (cmd: string, opts?: { cwd?: string; silent?: boolean }) => {
 
 const runJson = <T>(cmd: string): T | null => {
   const out = run(cmd, { silent: true });
-  if (!out) return null;
+  if (!out) {
+    return null;
+  }
   try {
     return JSON.parse(out) as T;
   } catch {
@@ -76,9 +78,13 @@ const parseEnvFile = (content: string): Map<string, string> => {
   const vars = new Map<string, string>();
   for (const line of content.split("\n")) {
     const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) continue;
+    if (!trimmed || trimmed.startsWith("#")) {
+      continue;
+    }
     const eqIndex = trimmed.indexOf("=");
-    if (eqIndex === -1) continue;
+    if (eqIndex === -1) {
+      continue;
+    }
     vars.set(trimmed.slice(0, eqIndex), trimmed.slice(eqIndex + 1));
   }
   return vars;
@@ -86,7 +92,7 @@ const parseEnvFile = (content: string): Map<string, string> => {
 
 const readWranglerConfig = () => {
   const raw = readFileSync(WRANGLER_CONFIG, "utf8");
-  const stripped = raw.replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+  const stripped = raw.replaceAll(/\/\/.*$/gm, "").replaceAll(/\/\*[\s\S]*?\*\//g, "");
   return JSON.parse(stripped);
 };
 
@@ -122,7 +128,9 @@ function generateEnv() {
   const preserved: string[] = [];
   for (const key of optionalVars) {
     const val = existing.get(key);
-    if (val !== undefined) preserved.push(`${key}=${val}`);
+    if (val !== undefined) {
+      preserved.push(`${key}=${val}`);
+    }
   }
 
   if (preserved.length > 0) {
@@ -164,7 +172,9 @@ function provisionCloudflare() {
 
 function provisionD1(config: Record<string, unknown>): boolean {
   const d1Config = (config.d1_databases as Record<string, string>[] | undefined)?.[0];
-  if (!d1Config) return false;
+  if (!d1Config) {
+    return false;
+  }
 
   if (!isPlaceholder(d1Config.database_id)) {
     console.log(dim(`  D1 "${d1Config.database_name}" — already configured`));
@@ -194,7 +204,9 @@ function provisionD1(config: Record<string, unknown>): boolean {
 
 function provisionKV(config: Record<string, unknown>): boolean {
   const kvConfig = (config.kv_namespaces as Record<string, string>[] | undefined)?.[0];
-  if (!kvConfig) return false;
+  if (!kvConfig) {
+    return false;
+  }
 
   if (!isPlaceholder(kvConfig.id)) {
     console.log(dim(`  KV "${kvConfig.binding}" — already configured`));
@@ -224,7 +236,9 @@ function provisionKV(config: Record<string, unknown>): boolean {
 
 function provisionR2(config: Record<string, unknown>) {
   const r2Config = (config.r2_buckets as Record<string, string>[] | undefined)?.[0];
-  if (!r2Config) return;
+  if (!r2Config) {
+    return;
+  }
 
   const bucketName = r2Config.bucket_name;
   type R2Entry = { name: string };
@@ -245,7 +259,9 @@ function provisionR2(config: Record<string, unknown>) {
 function provisionQueue(config: Record<string, unknown>) {
   const queues = config.queues as Record<string, Record<string, string>[]> | undefined;
   const queueConfig = queues?.producers?.[0];
-  if (!queueConfig) return;
+  if (!queueConfig) {
+    return;
+  }
 
   const queueName = queueConfig.queue;
   type QueueEntry = { queue_name: string };
@@ -288,10 +304,14 @@ function installDeps() {
 
 async function offerDeploy() {
   // Only offer if authenticated with Cloudflare
-  if (!run("npx wrangler whoami", { silent: true })) return;
+  if (!run("npx wrangler whoami", { silent: true })) {
+    return;
+  }
 
   const shouldDeploy = await askYesNo("Deploy to Cloudflare now?");
-  if (!shouldDeploy) return;
+  if (!shouldDeploy) {
+    return;
+  }
 
   console.log(bold("\n── Deploy ──\n"));
 

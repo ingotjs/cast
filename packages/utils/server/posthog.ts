@@ -1,6 +1,6 @@
 import { PostHog } from "posthog-node";
 
-import { serverEnv } from "./env";
+import { isDevelopment, serverEnv } from "./env";
 
 // Reference: https://posthog.com/docs/error-tracking/installation/node
 
@@ -9,9 +9,6 @@ export const posthog = serverEnv.posthog
   ? new PostHog(serverEnv.posthog.VITE_PUBLIC_POSTHOG_KEY, {
       host: serverEnv.posthog.VITE_PUBLIC_POSTHOG_HOST,
       enableExceptionAutocapture: true,
-      // Prevent fetch failures from becoming unhandled rejections in dev (miniflare)
-      disableGeoip: true,
+      disabled: isDevelopment,
     })
   : undefined;
-
-posthog?.on("error", () => {});

@@ -79,10 +79,7 @@ export const createTestUser = async ({
 
   if (role && role !== "user") {
     // Update role in DB, then re-sign in for fresh session with new role
-    await (db as Parameters<typeof eq>[0] extends never ? never : typeof db)
-      .update(schema.users)
-      .set({ role })
-      .where(eq(schema.users.id, userId));
+    await db.update(schema.users).set({ role }).where(eq(schema.users.id, userId));
 
     headers = await signIn({ email, password });
   } else {
@@ -94,9 +91,7 @@ export const createTestUser = async ({
 
 /** Remove a test user and all associated data (cascades via FK) */
 export const cleanupTestUser = async (userId: string) => {
-  await (db as Parameters<typeof eq>[0] extends never ? never : typeof db)
-    .delete(schema.users)
-    .where(eq(schema.users.id, userId));
+  await db.delete(schema.users).where(eq(schema.users.id, userId));
 };
 
 /** Generate a unique email for test isolation */

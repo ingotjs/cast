@@ -8,7 +8,7 @@ type TestTooltipProps = {
 
 const tooltipStyle: React.CSSProperties = {
   position: "fixed",
-  zIndex: 999999,
+  zIndex: 999_999,
   maxWidth: 360,
   backgroundColor: "#1a1a2e",
   color: "#e0e0e0",

@@ -10,4 +10,4 @@ export default defineConfig({
       exclude: ["**/node_modules/**"],
     },
   ],
-}) as ReturnType<typeof defineConfig>;
+});

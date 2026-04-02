@@ -7,18 +7,18 @@ export type HighlightRect = {
   rect: DOMRect;
   status: HighlightStatus;
   testCount: number;
-  element: Element;
+  element: HTMLElement;
 };
 
 export type TooltipData = {
   testId: string;
-  interactions: Array<{
+  interactions: {
     context: string | undefined;
     condition: string | undefined;
     expected: string | undefined;
     test: string | null;
     visible: boolean | undefined;
-  }>;
+  }[];
   position: { x: number; y: number };
 };
 

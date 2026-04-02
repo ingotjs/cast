@@ -59,7 +59,7 @@ const Button = ({
   <ButtonPrimitive
     data-slot="button"
     className={cn(buttonVariants({ variant, size }), loading && "relative overflow-hidden", className)}
-    disabled={disabled || loading}
+    disabled={disabled ?? loading}
     {...props}
   >
     {loading ? (

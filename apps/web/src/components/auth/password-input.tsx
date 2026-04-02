@@ -12,7 +12,9 @@ const PasswordInput = ({ className, ...props }: Omit<React.ComponentProps<typeof
       <button
         type="button"
         className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-        onClick={() => setVisible((v) => !v)}
+        onClick={() => {
+          setVisible((v) => !v);
+        }}
         tabIndex={-1}
         aria-label={visible ? "Hide password" : "Show password"}
       >

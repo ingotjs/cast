@@ -125,8 +125,12 @@ function countCovered(routes: Record<string, Route>): number {
   function processInteractions(ints: Record<string, Interaction[]>) {
     for (const cases of Object.values(ints)) {
       for (const c of cases) {
-        if (c.test !== null) count++;
-        if (c.reveals) processInteractions(c.reveals);
+        if (c.test !== null) {
+          count++;
+        }
+        if (c.reveals) {
+          processInteractions(c.reveals);
+        }
       }
     }
   }
@@ -134,7 +138,9 @@ function countCovered(routes: Record<string, Route>): number {
   for (const route of Object.values(routes)) {
     if (route.access) {
       for (const access of Object.values(route.access)) {
-        if (access.test !== null) count++;
+        if (access.test !== null) {
+          count++;
+        }
       }
     }
     processInteractions(route.interactions);
@@ -164,11 +170,11 @@ export function setup<TTestId extends Record<string, Record<string, string>>>(
   return () => {
     const { errors, warnings } = validate(
       config.testId as Record<string, Record<string, string>>,
-      config.routes as Record<string, Route>,
+      config.routes,
       options
     );
 
-    printSummary(config.routes as Record<string, Route>);
+    printSummary(config.routes);
 
     if (warnings.length > 0) {
       const summary = warnings.map((w) => `  [${w.type}] ${w.message}`).join("\n");

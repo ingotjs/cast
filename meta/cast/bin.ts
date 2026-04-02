@@ -50,7 +50,9 @@ function replaceAppName(dir: string, appName: string) {
 
   for (const file of files) {
     const path = resolve(dir, file);
-    if (!existsSync(path)) continue;
+    if (!existsSync(path)) {
+      continue;
+    }
     const content = readFileSync(path, "utf8");
     writeFileSync(path, content.replaceAll("Cast", appName).replaceAll("cast", appName.toLowerCase()));
   }
@@ -62,7 +64,9 @@ function replaceAppName(dir: string, appName: string) {
 
 async function main() {
   let dest = process.argv[2];
-  if (!dest) dest = await input({ message: "Project directory", default: "my-app" });
+  if (!dest) {
+    dest = await input({ message: "Project directory", default: "my-app" });
+  }
 
   const dir = resolve(process.cwd(), dest);
   if (existsSync(dir)) {
@@ -73,8 +77,8 @@ async function main() {
   const appName = await input({
     message: "App name",
     default: dest
-      .replace(/[^a-zA-Z0-9]/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase())
+      .replaceAll(/[^a-zA-Z0-9]/g, " ")
+      .replaceAll(/\b\w/g, (c) => c.toUpperCase())
       .trim(),
   });
 

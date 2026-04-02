@@ -51,7 +51,9 @@ function buildCoverageMap(routes: Record<string, Route>): Map<string, CoverageEn
 
 function computeRouteStats(routes: Record<string, Route>, pathname: string): CoverageStats {
   const route = routes[pathname];
-  if (!route) return { covered: 0, uncovered: 0, total: 0, percentage: 0 };
+  if (!route) {
+    return { covered: 0, uncovered: 0, total: 0, percentage: 0 };
+  }
 
   let covered = 0;
   let uncovered = 0;
@@ -59,9 +61,14 @@ function computeRouteStats(routes: Record<string, Route>, pathname: string): Cov
   function count(interactions: Record<string, Interaction[]>) {
     for (const cases of Object.values(interactions)) {
       for (const c of cases) {
-        if (c.test !== null) covered++;
-        else uncovered++;
-        if (c.reveals) count(c.reveals);
+        if (c.test !== null) {
+          covered++;
+        } else {
+          uncovered++;
+        }
+        if (c.reveals) {
+          count(c.reveals);
+        }
       }
     }
   }
@@ -70,8 +77,11 @@ function computeRouteStats(routes: Record<string, Route>, pathname: string): Cov
 
   if (route.access) {
     for (const access of Object.values(route.access)) {
-      if (access.test !== null) covered++;
-      else uncovered++;
+      if (access.test !== null) {
+        covered++;
+      } else {
+        uncovered++;
+      }
     }
   }
 
@@ -102,24 +112,38 @@ function scanDOM(coverageMap: Map<string, CoverageEntry[]>): {
   const highlights: HighlightRect[] = [];
   const interactionMap = new Map<string, Interaction[]>();
 
-  const elements = document.querySelectorAll("[data-testid]");
+  const elements = document.querySelectorAll<HTMLElement>("[data-testid]");
 
   for (const el of elements) {
-    if (el.closest("[data-prospect-overlay]")) continue;
+    if (el.closest("[data-prospect-overlay]")) {
+      continue;
+    }
 
     const style = window.getComputedStyle(el);
-    if (style.display === "none" || style.visibility === "hidden") continue;
+    if (style.display === "none" || style.visibility === "hidden") {
+      continue;
+    }
 
     const rect = el.getBoundingClientRect();
-    if (rect.width < 4 || rect.height < 4) continue;
-    if (rect.bottom < 0 || rect.top > window.innerHeight) continue;
-    if (rect.right < 0 || rect.left > window.innerWidth) continue;
+    if (rect.width < 4 || rect.height < 4) {
+      continue;
+    }
+    if (rect.bottom < 0 || rect.top > window.innerHeight) {
+      continue;
+    }
+    if (rect.right < 0 || rect.left > window.innerWidth) {
+      continue;
+    }
 
-    const testIdValue = el.getAttribute("data-testid");
-    if (!testIdValue) continue;
+    const testIdValue = el.dataset.testid;
+    if (!testIdValue) {
+      continue;
+    }
 
     const entries = coverageMap.get(testIdValue);
-    if (!entries) continue;
+    if (!entries) {
+      continue;
+    }
 
     const allInteractions = entries.flatMap((e) => e.interactions);
     const coveredCount = allInteractions.filter((i) => i.test !== null).length;
@@ -153,7 +177,7 @@ const RESCAN_DEBOUNCE_MS = 300;
 
 const badgeBaseStyle: React.CSSProperties = {
   position: "fixed",
-  zIndex: 999999,
+  zIndex: 999_999,
   pointerEvents: "auto",
   touchAction: "none",
   userSelect: "none",
@@ -198,7 +222,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const pos = JSON.parse(saved) as { x: number; y: number };
-        if (typeof pos.x === "number" && typeof pos.y === "number") return pos;
+        if (typeof pos.x === "number" && typeof pos.y === "number") {
+          return pos;
+        }
       }
     } catch {
       /* empty */
@@ -238,7 +264,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
         return false;
       }
       coverageMapRef.current = buildCoverageMap(coverage);
-      requestAnimationFrame(() => runScan());
+      requestAnimationFrame(() => {
+        runScan();
+      });
       return true;
     });
   }, [coverage, runScan]);
@@ -252,15 +280,21 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
       }
     };
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [toggle]);
 
   // MutationObserver for DOM changes while active
   useEffect(() => {
-    if (!isActive) return;
+    if (!isActive) {
+      return;
+    }
 
     const debouncedRescan = () => {
-      if (rescanTimerRef.current) clearTimeout(rescanTimerRef.current);
+      if (rescanTimerRef.current) {
+        clearTimeout(rescanTimerRef.current);
+      }
       rescanTimerRef.current = setTimeout(runScan, RESCAN_DEBOUNCE_MS);
     };
 
@@ -279,7 +313,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
       observerRef.current?.disconnect();
       window.removeEventListener("popstate", debouncedRescan);
       window.removeEventListener("resize", debouncedRescan);
-      if (rescanTimerRef.current) clearTimeout(rescanTimerRef.current);
+      if (rescanTimerRef.current) {
+        clearTimeout(rescanTimerRef.current);
+      }
     };
   }, [isActive, runScan]);
 
@@ -288,7 +324,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
     (e: React.PointerEvent) => {
       e.stopPropagation();
       const badge = badgeRef.current;
-      if (!badge) return;
+      if (!badge) {
+        return;
+      }
       badge.setPointerCapture(e.pointerId);
       dragRef.current = {
         isDragging: false,
@@ -304,7 +342,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
 
   const handlePointerMove = useCallback((e: React.PointerEvent) => {
     const drag = dragRef.current;
-    if (!drag) return;
+    if (!drag) {
+      return;
+    }
     e.stopPropagation();
 
     const dx = e.clientX - drag.startX;
@@ -317,7 +357,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
 
     if (drag.isDragging) {
       const badge = badgeRef.current;
-      if (!badge) return;
+      if (!badge) {
+        return;
+      }
       const newX = Math.max(0, Math.min(e.clientX - drag.offsetX, window.innerWidth - badge.offsetWidth));
       const newBottom = Math.max(
         0,
@@ -335,7 +377,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
       e.stopPropagation();
       const drag = dragRef.current;
       const badge = badgeRef.current;
-      if (badge) badge.releasePointerCapture(e.pointerId);
+      if (badge) {
+        badge.releasePointerCapture(e.pointerId);
+      }
 
       if (drag && !drag.didDrag) {
         toggle();
@@ -350,7 +394,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
 
   const handleHover = useCallback(
     (id: string | null, position: { x: number; y: number } | null) => {
-      if (isTooltipHovered) return;
+      if (isTooltipHovered) {
+        return;
+      }
 
       if (!id || !position) {
         setTooltipData(null);
@@ -364,7 +410,7 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
       }
 
       const el = highlights.find((h) => h.id === id)?.element;
-      const testId = el?.getAttribute("data-testid") ?? id;
+      const testId = el?.dataset.testid ?? id;
 
       setTooltipData({
         testId,
@@ -386,7 +432,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
     setShowUncovered((prev) => !prev);
   }, []);
 
-  if (typeof window === "undefined") return null;
+  if (typeof window === "undefined") {
+    return null;
+  }
 
   return createPortal(
     <>
@@ -402,7 +450,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
-        onMouseDown={(e) => e.stopPropagation()}
+        onMouseDown={(e) => {
+          e.stopPropagation();
+        }}
         title="Toggle Prospect Overlay (Ctrl+Shift+E) — Drag to move"
       >
         <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px" }}>
@@ -440,7 +490,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
             </span>
             <button
               onClick={handleToggleUncovered}
-              onPointerDown={(e) => e.stopPropagation()}
+              onPointerDown={(e) => {
+                e.stopPropagation();
+              }}
               type="button"
               style={{
                 display: "flex",
@@ -497,7 +549,9 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
       {isActive && tooltipData && (
         <TestTooltip
           data={tooltipData}
-          onMouseEnter={() => setIsTooltipHovered(true)}
+          onMouseEnter={() => {
+            setIsTooltipHovered(true);
+          }}
           onMouseLeave={() => {
             setIsTooltipHovered(false);
             setTooltipData(null);

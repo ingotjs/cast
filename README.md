@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="meta/site/public/logo.svg" alt="ingot" height="48" />
+</p>
+
 # Cast
 
 **AI-first full-stack TypeScript starter.** Ship production apps in minutes, not weeks.
