@@ -1,5 +1,8 @@
 <p align="center">
-  <img src="meta/site/public/logo.svg" alt="ingot" height="48" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="meta/site/public/logo.svg" />
+    <img src="meta/site/public/logo-light.svg" alt="ingot" height="48" />
+  </picture>
 </p>
 
 # Cast
