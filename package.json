@@ -22,7 +22,7 @@
     "dev:email": "vp run @ingot/email#dev",
     "e2e": "bun run --cwd apps/e2e e2e",
     "e2e:ui": "bun run --cwd apps/e2e e2e:ui",
-    "wrangler-types": "bunx --bun wrangler types apps/web/worker-configuration.d.ts",
+    "wrangler-types": "bunx --bun wrangler types apps/web/worker-configuration.d.ts && vp fmt --write apps/web/worker-configuration.d.ts",
     "ok": "syncpack fix --config .syncpackrc --log-levels error && bun run wrangler-types && vp run ts -r && vp fmt --write && vp lint --fix && bun test",
     "ok:ci": "syncpack lint --config .syncpackrc --log-levels error && bun run wrangler-types && vp run ts -r && vp fmt --check && vp lint && bun test",
     "knip": "knip -c knip.json",
