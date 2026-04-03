@@ -1,9 +1,19 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
+import { BadgeLabel, BadgeStatsPanel } from "./coverage-overlay-badge.tsx";
+import {
+  badgeActiveStyle,
+  badgeInactiveStyle,
+  DRAG_THRESHOLD,
+  RESCAN_DEBOUNCE_MS,
+  STORAGE_KEY,
+} from "./coverage-overlay-styles.ts";
+import type { CoverageEntry } from "./coverage-overlay-utils.ts";
+import { buildCoverageMap, computeRouteStats, scanDOM } from "./coverage-overlay-utils.ts";
 import { ElementHighlighter } from "./element-highlighter.tsx";
 import { TestTooltip } from "./test-tooltip.tsx";
-import type { CoverageStats, HighlightRect, Interaction, Route, TooltipData } from "./types.ts";
+import type { HighlightRect, Interaction, Route, TooltipData } from "./types.ts";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -14,197 +24,6 @@ export type CoverageOverlayProps = {
   coverage: Record<string, Route>;
   /** Current route path. Falls back to window.location.pathname */
   currentRoute?: string;
-};
-
-// ---------------------------------------------------------------------------
-// Coverage map builder
-// ---------------------------------------------------------------------------
-
-type CoverageEntry = {
-  routeKey: string;
-  interactions: Interaction[];
-};
-
-function buildCoverageMap(routes: Record<string, Route>): Map<string, CoverageEntry[]> {
-  const map = new Map<string, CoverageEntry[]>();
-
-  function processInteractions(routeKey: string, interactions: Record<string, Interaction[]>) {
-    for (const [testIdValue, cases] of Object.entries(interactions)) {
-      const existing = map.get(testIdValue) ?? [];
-      existing.push({ routeKey, interactions: cases });
-      map.set(testIdValue, existing);
-
-      for (const c of cases) {
-        if (c.reveals) {
-          processInteractions(routeKey, c.reveals);
-        }
-      }
-    }
-  }
-
-  for (const [routeKey, route] of Object.entries(routes)) {
-    processInteractions(routeKey, route.interactions);
-  }
-
-  return map;
-}
-
-function computeRouteStats(routes: Record<string, Route>, pathname: string): CoverageStats {
-  const route = routes[pathname];
-  if (!route) {
-    return { covered: 0, uncovered: 0, total: 0, percentage: 0 };
-  }
-
-  let covered = 0;
-  let uncovered = 0;
-
-  function count(interactions: Record<string, Interaction[]>) {
-    for (const cases of Object.values(interactions)) {
-      for (const c of cases) {
-        if (c.test !== null) {
-          covered++;
-        } else {
-          uncovered++;
-        }
-        if (c.reveals) {
-          count(c.reveals);
-        }
-      }
-    }
-  }
-
-  count(route.interactions);
-
-  if (route.access) {
-    for (const access of Object.values(route.access)) {
-      if (access.test !== null) {
-        covered++;
-      } else {
-        uncovered++;
-      }
-    }
-  }
-
-  const total = covered + uncovered;
-  return { covered, uncovered, total, percentage: total > 0 ? Math.round((covered / total) * 100) : 0 };
-}
-
-// ---------------------------------------------------------------------------
-// DOM scanning
-// ---------------------------------------------------------------------------
-
-let idCounter = 0;
-const elementIdMap = new WeakMap<Element, string>();
-
-function getElementId(el: Element): string {
-  let id = elementIdMap.get(el);
-  if (!id) {
-    id = `prospect-${idCounter++}`;
-    elementIdMap.set(el, id);
-  }
-  return id;
-}
-
-function scanDOM(coverageMap: Map<string, CoverageEntry[]>): {
-  highlights: HighlightRect[];
-  interactionMap: Map<string, Interaction[]>;
-} {
-  const highlights: HighlightRect[] = [];
-  const interactionMap = new Map<string, Interaction[]>();
-
-  const elements = document.querySelectorAll<HTMLElement>("[data-testid]");
-
-  for (const el of elements) {
-    if (el.closest("[data-prospect-overlay]")) {
-      continue;
-    }
-
-    const style = window.getComputedStyle(el);
-    if (style.display === "none" || style.visibility === "hidden") {
-      continue;
-    }
-
-    const rect = el.getBoundingClientRect();
-    if (rect.width < 4 || rect.height < 4) {
-      continue;
-    }
-    if (rect.bottom < 0 || rect.top > window.innerHeight) {
-      continue;
-    }
-    if (rect.right < 0 || rect.left > window.innerWidth) {
-      continue;
-    }
-
-    const testIdValue = el.dataset.testid;
-    if (!testIdValue) {
-      continue;
-    }
-
-    const entries = coverageMap.get(testIdValue);
-    if (!entries) {
-      continue;
-    }
-
-    const allInteractions = entries.flatMap((e) => e.interactions);
-    const coveredCount = allInteractions.filter((i) => i.test !== null).length;
-    const elId = getElementId(el);
-
-    interactionMap.set(elId, allInteractions);
-
-    highlights.push({
-      id: elId,
-      rect,
-      status: coveredCount > 0 ? "covered" : "uncovered",
-      testCount: coveredCount,
-      element: el,
-    });
-  }
-
-  return { highlights, interactionMap };
-}
-
-// ---------------------------------------------------------------------------
-// Constants
-// ---------------------------------------------------------------------------
-
-const DRAG_THRESHOLD = 4;
-const STORAGE_KEY = "prospect-overlay-position";
-const RESCAN_DEBOUNCE_MS = 300;
-
-// ---------------------------------------------------------------------------
-// Styles
-// ---------------------------------------------------------------------------
-
-const badgeBaseStyle: React.CSSProperties = {
-  position: "fixed",
-  zIndex: 999_999,
-  pointerEvents: "auto",
-  touchAction: "none",
-  userSelect: "none",
-  display: "flex",
-  alignItems: "center",
-  gap: 6,
-  borderRadius: "9999px",
-  boxShadow: "0 4px 12px rgba(0,0,0,0.3)",
-  cursor: "grab",
-  fontFamily: "system-ui, -apple-system, sans-serif",
-  fontSize: "12px",
-  fontWeight: 500,
-  transition: "background-color 0.15s ease, border-color 0.15s ease",
-};
-
-const badgeInactiveStyle: React.CSSProperties = {
-  ...badgeBaseStyle,
-  backgroundColor: "#1a1a2e",
-  border: "1px solid rgba(255,255,255,0.15)",
-  color: "#999",
-};
-
-const badgeActiveStyle: React.CSSProperties = {
-  ...badgeBaseStyle,
-  backgroundColor: "#059669",
-  border: "1px solid #10b981",
-  color: "#fff",
 };
 
 // ---------------------------------------------------------------------------
@@ -455,88 +274,10 @@ export function CoverageOverlay({ coverage, currentRoute }: CoverageOverlayProps
         }}
         title="Toggle Prospect Overlay (Ctrl+Shift+E) — Drag to move"
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px" }}>
-          {/* Beaker icon */}
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <path d="M4.5 3h15M6 3v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V3M9 3v5.2a2 2 0 0 1-.65 1.47L6 12M15 3v5.2a2 2 0 0 0 .65 1.47L18 12" />
-          </svg>
-          <span>Prospect</span>
-        </div>
+        <BadgeLabel />
 
         {isActive && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              borderLeft: "1px solid rgba(255,255,255,0.3)",
-              padding: "6px 10px 6px 10px",
-              fontSize: "11px",
-            }}
-          >
-            <span style={{ fontWeight: 700 }}>{stats.percentage}%</span>
-            <span style={{ opacity: 0.8 }}>
-              {stats.covered}/{stats.total}
-            </span>
-            <button
-              onClick={handleToggleUncovered}
-              onPointerDown={(e) => {
-                e.stopPropagation();
-              }}
-              type="button"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 4,
-                border: "none",
-                borderRadius: "9999px",
-                padding: "2px 8px",
-                fontSize: "10px",
-                cursor: "pointer",
-                backgroundColor: showUncovered ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.1)",
-                color: showUncovered ? "#fff" : "rgba(255,255,255,0.7)",
-                transition: "background-color 0.1s ease",
-              }}
-              title={showUncovered ? "Hide uncovered elements" : "Show uncovered elements"}
-            >
-              {/* Eye icon */}
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                {showUncovered ? (
-                  <>
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94" />
-                    <path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19" />
-                    <line x1="1" y1="1" x2="23" y2="23" />
-                  </>
-                ) : (
-                  <>
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                    <circle cx="12" cy="12" r="3" />
-                  </>
-                )}
-              </svg>
-              <span style={{ color: "#fca5a5" }}>{stats.uncovered}</span>
-            </button>
-          </div>
+          <BadgeStatsPanel stats={stats} showUncovered={showUncovered} onToggleUncovered={handleToggleUncovered} />
         )}
       </div>
 
