@@ -11,7 +11,7 @@ export default defineConfig({
   },
 
   fmt: {
-    ignorePatterns: [".agents", ".claude", "**/routeTree.gen.ts"],
+    ignorePatterns: [".agents", ".claude", "**/routeTree.gen.ts", "**/*.d.ts"],
     arrowParens: "always",
     bracketSameLine: false,
     bracketSpacing: true,
