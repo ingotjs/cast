@@ -1,6 +1,8 @@
-import { DEV_URL } from "@ingot/utils/consts";
 // oxlint-disable node/no-process-env
 import { defineConfig } from "@playwright/test";
+
+// Keep in sync with packages/utils/shared/consts.ts DEV_URL
+const DEV_URL = "http://localhost:2000";
 
 // Reference: https://playwright.dev/docs/test-configuration
 export default defineConfig({

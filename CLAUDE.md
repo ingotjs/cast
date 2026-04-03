@@ -230,6 +230,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_i18n`, `
 - **NEVER use barrel files** (index.ts re-exports)
 - **MUST import directly from source files**
 - **NEVER use dynamic imports** unless genuine code splitting
+- **NEVER import workspace `.ts` packages from config files** (`vite.config.ts`, `playwright.config.ts`, etc.) — these run under Node.js, not Bun, and can't resolve raw `.ts`. Inline constants with a `// Keep in sync with ...` comment.
 
 ### Comments
 

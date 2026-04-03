@@ -1,5 +1,4 @@
 import { cloudflare } from "@cloudflare/vite-plugin";
-import { DEV_PORT } from "@ingot/utils/consts";
 import { lingui } from "@lingui/vite-plugin";
 import babel from "@rolldown/plugin-babel";
 import tailwindcss from "@tailwindcss/vite";
@@ -14,7 +13,8 @@ import { emailCapturePlugin } from "./vite-email-capture-plugin";
 // Reference: https://developers.cloudflare.com/workers/frameworks/framework-guides/tanstack-start/
 
 const config = defineConfig({
-  server: { port: DEV_PORT, hmr: { overlay: false } },
+  // Keep in sync with packages/utils/shared/consts.ts DEV_PORT
+  server: { port: 2000, hmr: { overlay: false } },
   resolve: {
     tsconfigPaths: true,
   },
