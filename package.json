@@ -2,8 +2,7 @@
   "private": true,
   "workspaces": [
     "apps/*",
-    "packages/*",
-    "meta/site"
+    "packages/*"
   ],
   "scripts": {
     "build": "vp run build -r",

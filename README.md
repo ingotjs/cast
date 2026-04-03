@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="meta/site/public/logo.svg" />
-    <img src="meta/site/public/logo-light.svg" alt="ingot" height="48" />
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo.svg" />
+    <img src=".github/assets/logo-light.svg" alt="ingot" height="48" />
   </picture>
 </p>
 
