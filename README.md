@@ -7,6 +7,8 @@
 
 # Cast
 
+**[Website](https://ingot.js.org)**
+
 **AI-first full-stack TypeScript starter.** Ship production apps in minutes, not weeks.
 
 Built on [TanStack Start](https://tanstack.com/start) + [Bun](https://bun.sh/) + [Vite+](https://vite.dev/plus/). Designed from the ground up for AI-assisted development — with 42 [Claude Code skills](https://skills.sh), comprehensive `CLAUDE.md` instructions, and a codebase structure that AI agents navigate effortlessly.
