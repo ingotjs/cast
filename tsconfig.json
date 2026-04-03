@@ -13,7 +13,6 @@
     { "path": "packages/api" },
     { "path": "packages/email" },
     { "path": "packages/ui" },
-    { "path": "packages/prospect" },
     { "path": "apps/web" }
   ]
 }

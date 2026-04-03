@@ -43,19 +43,17 @@
 
 ### Monorepo Structure
 
-| Package                 | Alias                 | Description                                                                |
-| :---------------------- | :-------------------- | :------------------------------------------------------------------------- |
-| `apps/web`              | —                     | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
-| `packages/db`           | `@ingot/db`           | Drizzle ORM + D1 schema, migrations, database client                       |
-| `packages/utils`        | `@ingot/utils`        | Shared consts (`shared/`), server env/logger/posthog (`server/`)           |
-| `packages/auth`         | `@ingot/auth`         | Better Auth config, KV storage, i18n                                       |
-| `packages/api`          | `@ingot/api`          | oRPC router + procedures (public/protected/admin)                          |
-| `packages/email`        | `@ingot/email`        | React Email templates + Resend + email capture (E2E)                       |
-| `packages/ui`           | `@ingot/ui`           | shadcn v4 + Tailwind CSS + Base UI                                         |
-| `apps/e2e`              | —                     | Playwright E2E tests (auth flows, email verification)                      |
-| `packages/prospect`     | `@ingot/prospect`     | Full Playwright companion — coverage, overlay, flakiness, artifacts        |
-| `packages/e2e-coverage` | `@ingot/e2e-coverage` | Project-specific E2E coverage map (shared between web + e2e)               |
-| `packages/config`       | `@ingot/config`       | Shared TypeScript configs                                                  |
+| Package           | Alias           | Description                                                                |
+| :---------------- | :-------------- | :------------------------------------------------------------------------- |
+| `apps/web`        | —               | TanStack Start app (Vite + Router + Cloudflare Workers). Admin at `/admin` |
+| `packages/db`     | `@ingot/db`     | Drizzle ORM + D1 schema, migrations, database client                       |
+| `packages/utils`  | `@ingot/utils`  | Shared consts (`shared/`), server env/logger/posthog (`server/`)           |
+| `packages/auth`   | `@ingot/auth`   | Better Auth config, KV storage, i18n                                       |
+| `packages/api`    | `@ingot/api`    | oRPC router + procedures (public/protected/admin)                          |
+| `packages/email`  | `@ingot/email`  | React Email templates + Resend + email capture (E2E)                       |
+| `packages/ui`     | `@ingot/ui`     | shadcn v4 + Tailwind CSS + Base UI                                         |
+| `apps/e2e`        | —               | Playwright E2E tests (auth flows, email verification)                      |
+| `packages/config` | `@ingot/config` | Shared TypeScript configs                                                  |
 
 **Dependency graph:** `@ingot/db` (leaf) ← `@ingot/auth` (+ `@ingot/email`, `@ingot/utils`) ← `@ingot/api`
 
@@ -152,11 +150,11 @@ Tests are REQUIRED when adding/modifying endpoints, server functions, utilities,
 
 ### E2E Testing (Playwright)
 
-[Playwright](https://playwright.dev/) E2E tests in `apps/e2e/`. Full details in **`_e2e-testing` skill**.
+[Playwright](https://playwright.dev/) E2E tests in `apps/e2e/`.
 
 ### Skills
 
-Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-testing`, `_i18n`). Installed skills from registries have no prefix. This makes it immediately obvious which skills are ours vs. third-party.
+Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_i18n`, `_auth`). Installed skills from registries have no prefix. This makes it immediately obvious which skills are ours vs. third-party.
 
 **Auto-invoke skills** — MUST activate the relevant skill when working in its domain:
 
@@ -164,7 +162,6 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | :---------------- | :----------------------------------------------------------------------------------- |
 | `_frontend`       | Writing/modifying frontend code in `apps/web/`                                       |
 | `_i18n`           | Adding/modifying user-facing text                                                    |
-| `_e2e-testing`    | Adding/modifying E2E tests                                                           |
 | `_auth`           | Auth flows, sessions, Better Auth config in `packages/auth/`                         |
 | `_email`          | Email templates, triggers in `packages/email/`                                       |
 | `_seo`            | New public routes, meta tags, SEO files                                              |
@@ -173,6 +170,7 @@ Custom skills (in `.agents/skills/`) MUST be prefixed with `_` (e.g., `_e2e-test
 | `_database`       | Schema, migrations, queries, oRPC procedures in `packages/db/` or `packages/api/`    |
 | `_infra`          | Wrangler, @cloudflare/vite-plugin, deployment, CI/CD pipeline                        |
 | `_testing`        | Writing/modifying unit or integration tests                                          |
+| `_e2e-testing`    | Adding/modifying E2E tests in `apps/e2e/`                                            |
 | `_linear`         | Working on Linear tickets or given a Linear link                                     |
 | `_skill-creation` | Creating or modifying custom `_` skills                                              |
 | `_brand-naming`   | Brainstorming names for projects, packages, companies, or checking name availability |

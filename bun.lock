@@ -19,8 +19,6 @@
       "name": "e2e",
       "version": "0.0.0",
       "devDependencies": {
-        "@ingot/e2e-coverage": "*",
-        "@ingot/prospect": "*",
         "@ingot/utils": "*",
         "@playwright/test": "1.58.2",
       },
@@ -62,8 +60,6 @@
       },
       "devDependencies": {
         "@cloudflare/vite-plugin": "1.30.2",
-        "@ingot/e2e-coverage": "*",
-        "@ingot/prospect": "*",
         "@lingui/babel-plugin-lingui-macro": "catalog:",
         "@lingui/vite-plugin": "catalog:",
         "@rolldown/plugin-babel": "0.2.2",
@@ -141,16 +137,6 @@
         "typescript": "catalog:",
       },
     },
-    "packages/e2e-coverage": {
-      "name": "@ingot/e2e-coverage",
-      "devDependencies": {
-        "@ingot/config": "*",
-        "@ingot/prospect": "*",
-        "@types/bun": "catalog:",
-        "@types/node": "catalog:",
-        "typescript": "catalog:",
-      },
-    },
     "packages/email": {
       "name": "@ingot/email",
       "version": "0.0.0",
@@ -174,26 +160,6 @@
         "react-email": "5.2.10",
         "typescript": "catalog:",
       },
-    },
-    "packages/prospect": {
-      "name": "@ingot/prospect",
-      "version": "0.0.0",
-      "devDependencies": {
-        "@ingot/config": "*",
-        "@types/bun": "catalog:",
-        "@types/node": "catalog:",
-        "@types/react": "catalog:",
-        "@types/react-dom": "catalog:",
-        "typescript": "catalog:",
-      },
-      "peerDependencies": {
-        "react": "catalog:",
-        "react-dom": "catalog:",
-      },
-      "optionalPeers": [
-        "react",
-        "react-dom",
-      ],
     },
     "packages/ui": {
       "name": "@ingot/ui",
@@ -625,11 +591,7 @@
 
     "@ingot/db": ["@ingot/db@workspace:packages/db"],
 
-    "@ingot/e2e-coverage": ["@ingot/e2e-coverage@workspace:packages/e2e-coverage"],
-
     "@ingot/email": ["@ingot/email@workspace:packages/email"],
-
-    "@ingot/prospect": ["@ingot/prospect@workspace:packages/prospect"],
 
     "@ingot/ui": ["@ingot/ui@workspace:packages/ui"],
 

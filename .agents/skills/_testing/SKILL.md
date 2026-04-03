@@ -49,4 +49,4 @@ const result = await client.admin.users.list({ limit: 10 });
 
 ## For E2E (Playwright) Tests
 
-See the **`_e2e-testing` skill** — separate patterns, fixtures, and conventions apply.
+E2E tests live in `apps/e2e/`. Coverage map and test IDs are in `apps/e2e/coverage.ts`.

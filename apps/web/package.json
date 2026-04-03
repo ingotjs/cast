@@ -43,8 +43,6 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "1.30.2",
-    "@ingot/e2e-coverage": "*",
-    "@ingot/prospect": "*",
     "@lingui/babel-plugin-lingui-macro": "catalog:",
     "@lingui/vite-plugin": "catalog:",
     "@rolldown/plugin-babel": "0.2.2",

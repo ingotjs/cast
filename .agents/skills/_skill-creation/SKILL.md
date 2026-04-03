@@ -13,7 +13,7 @@ Custom skills live in `.agents/skills/` and provide domain-specific context that
 
 ## Naming Conventions
 
-- Custom (project-specific) skills MUST be prefixed with `_` (e.g., `_auth`, `_frontend`, `_e2e-testing`)
+- Custom (project-specific) skills MUST be prefixed with `_` (e.g., `_auth`, `_frontend`, `_i18n`)
 - Installed skills from registries (e.g., `tanstack-start-best-practices`, `shadcn`) MUST NOT have the `_` prefix
 - This makes it immediately obvious which skills are ours vs. third-party
 

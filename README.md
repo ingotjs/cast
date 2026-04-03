@@ -45,7 +45,7 @@ Cast isn't just AI-compatible — it's **built for AI agents to be productive fr
 
 - **Unit & integration tests** via `bun:test` with in-memory SQLite — tests run against a real database engine, not mocks
 - **Test utilities** for creating authenticated users and calling oRPC procedures directly
-- **E2E tests** via [Playwright](https://playwright.dev/) + [`@ingot/prospect`](https://www.npmjs.com/package/@ingot/prospect) — coverage mapping, flakiness tracking, test artifacts, and a dev overlay that shows coverage/flakiness directly in your app
+- **E2E tests** via [Playwright](https://playwright.dev/) — auth flows, email verification, and interactive element coverage
 - **Pre-commit hook** via [Vite+](https://vite.dev/plus/) — `vp staged` runs format + lint on staged files before every commit. Broken code doesn't get committed.
 
 ### 5. Code Quality & Reliability
@@ -87,15 +87,14 @@ Scaffolds the project, runs setup, and starts the dev server. Open `http://local
 ## Architecture
 
 ```
-apps/web          → TanStack Start (Vite + Router + Nitro)
-packages/db       → Drizzle ORM + Cloudflare D1 (schema, migrations, client)
-packages/utils    → Constants, server env/logger/posthog (shared/, server/, client/)
-packages/auth     → Better Auth + KV storage + i18n
-packages/api      → oRPC router + procedures
-packages/email    → React Email + Resend + email capture (E2E)
-packages/ui       → shadcn v4 + Tailwind CSS + Base UI
-packages/prospect → Full Playwright companion (coverage, overlay, flakiness, artifacts)
-packages/config   → Shared TypeScript configs
+apps/web        → TanStack Start (Vite + Router + Nitro)
+packages/db     → Drizzle ORM + Cloudflare D1 (schema, migrations, client)
+packages/utils  → Constants, server env/logger/posthog (shared/, server/, client/)
+packages/auth   → Better Auth + KV storage + i18n
+packages/api    → oRPC router + procedures
+packages/email  → React Email + Resend + email capture (E2E)
+packages/ui     → shadcn v4 + Tailwind CSS + Base UI
+packages/config → Shared TypeScript configs
 ```
 
 `@ingot/db` (leaf) ← `@ingot/auth` ← `@ingot/api`
