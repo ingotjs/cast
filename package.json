@@ -12,7 +12,7 @@
   "scripts": {
     "build": "vp run build -r",
     "setup": "bun tools/setup/index.ts",
-    "dev": "bun install --silent && bun run --cwd apps/web vite dev",
+    "dev": "bun install --silent && bun db:migrate && bun run --cwd apps/web vite dev",
     "deploy": "npx wrangler deploy",
     "db:auth": "bun run --cwd packages/auth db:auth",
     "db:generate": "bun run --cwd packages/db db:generate && bun db:migrate",

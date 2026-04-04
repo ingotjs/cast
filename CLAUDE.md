@@ -19,7 +19,7 @@
 | Command                 | Description                                                      |
 | :---------------------- | :--------------------------------------------------------------- |
 | `bun setup`             | Generate `.env` + set GitHub secrets (interactive)               |
-| `bun dev`               | Start all apps in dev mode (auto-installs deps)                  |
+| `bun dev`               | Start all apps in dev mode (installs deps, migrates DB)          |
 | `bun dev:email`         | Email template preview (port 3002)                               |
 | `bun ok`                | Type check + lint + tests — **run after every task**             |
 | `bun ok:ci`             | Same without auto-fixes (CI)                                     |

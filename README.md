@@ -105,7 +105,7 @@ packages/config → Shared TypeScript configs
 
 | Command                 | Description                                      |
 | ----------------------- | ------------------------------------------------ |
-| `bun dev`               | Start dev server (Vite + Miniflare for D1/KV)    |
+| `bun dev`               | Start dev server (installs deps, migrates DB)    |
 | `bun dev:email`         | Email template preview (port 3002)               |
 | `bun ok`                | Type check + lint + test (run before committing) |
 | `bun ok:ci`             | Same without auto-fixes (CI)                     |
